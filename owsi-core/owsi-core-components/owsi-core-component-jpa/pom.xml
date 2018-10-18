@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>fr.openwide.core.components</groupId>
+		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
@@ -17,7 +17,7 @@
 		
 		<!-- OWSI Core dependencies -->
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-spring</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>owsi-core-dependencies</artifactId>
-		<groupId>fr.openwide.core.dependencies</groupId>
+		<groupId>fr.smile.core.dependencies</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	

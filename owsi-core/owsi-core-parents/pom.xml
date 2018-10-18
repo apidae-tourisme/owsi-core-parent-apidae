@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>fr.openwide.core</groupId>
+		<groupId>fr.smile.core</groupId>
 		<artifactId>owsi-core</artifactId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>fr.openwide.core.parents</groupId>
+	<groupId>fr.smile.core.parents</groupId>
 	<artifactId>owsi-core-parents</artifactId>
 	<packaging>pom</packaging>
 	

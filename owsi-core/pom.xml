@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>fr.openwide.core</groupId>
+		<groupId>fr.smile.core</groupId>
 		<artifactId>owsi-core-parent</artifactId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>

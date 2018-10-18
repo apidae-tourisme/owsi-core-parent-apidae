@@ -4,7 +4,7 @@
 	
 	<parent>
 		<artifactId>owsi-core-packages</artifactId>
-		<groupId>fr.openwide.core.packages</groupId>
+		<groupId>fr.smile.core.packages</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -16,7 +16,7 @@
 	<dependencies>
 	
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-wicket</artifactId>
 			<version>${project.version}</version>
 		</dependency>

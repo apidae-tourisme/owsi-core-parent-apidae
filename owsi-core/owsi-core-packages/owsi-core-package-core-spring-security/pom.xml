@@ -4,7 +4,7 @@
 	
 	<parent>
 		<artifactId>owsi-core-packages</artifactId>
-		<groupId>fr.openwide.core.packages</groupId>
+		<groupId>fr.smile.core.packages</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -18,7 +18,7 @@
 		<!-- OWSI Core -->
 		
 		<dependency>
-			<groupId>fr.openwide.core.dependencies</groupId>
+			<groupId>fr.smile.core.dependencies</groupId>
 			<artifactId>owsi-core-dependency-core-spring-security</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>

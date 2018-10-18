@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>owsi-core-dependencies</artifactId>
-		<groupId>fr.openwide.core.dependencies</groupId>
+		<groupId>fr.smile.core.dependencies</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -18,7 +18,7 @@
 		<!-- OWSI Core -->
 		
 		<dependency>
-			<groupId>fr.openwide.core.dependencies</groupId>
+			<groupId>fr.smile.core.dependencies</groupId>
 			<artifactId>owsi-core-dependency-core-logging</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>

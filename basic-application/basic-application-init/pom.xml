@@ -4,7 +4,7 @@
 	
 	<parent>
 		<artifactId>basic-application</artifactId>
-		<groupId>fr.openwide.core.archetype</groupId>
+		<groupId>fr.smile.core.archetype</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -16,7 +16,7 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>fr.openwide.core.archetype</groupId>
+			<groupId>fr.smile.core.archetype</groupId>
 			<artifactId>basic-application-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>

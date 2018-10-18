@@ -3,7 +3,7 @@
 	
 	<parent>
 		<artifactId>wicket-showcase</artifactId>
-		<groupId>fr.openwide.core.showcase</groupId>
+		<groupId>fr.smile.core.showcase</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -13,7 +13,7 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>fr.openwide.core.packages</groupId>
+			<groupId>fr.smile.core.packages</groupId>
 			<artifactId>owsi-core-package-core-spring-jpa-app</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
@@ -62,12 +62,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Jetty -->
-<!--		<dependency>-->
-<!--			<groupId>org.eclipse.jetty</groupId>-->
-<!--			<artifactId>jetty-server</artifactId>-->
-<!--			<version>${jetty-server.version}</version>-->
-<!--		</dependency>-->
 	</dependencies>
 	
 	<profiles>

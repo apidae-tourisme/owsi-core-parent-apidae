@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>fr.openwide.core.parents</groupId>
+		<groupId>fr.smile.core.parents</groupId>
 		<artifactId>owsi-core-parent-core-project</artifactId>
 		<version>0.18-SNAPSHOT</version>
 		<relativePath>../../owsi-core-parents/owsi-core-parent-core-project/pom.xml</relativePath>
 	</parent>
 	
-	<groupId>fr.openwide.core.showcase</groupId>
+	<groupId>fr.smile.core.showcase</groupId>
 	<artifactId>wicket-showcase</artifactId>
 	
 	<name>OWSI Core - Wicket Showcase</name>
@@ -25,39 +25,5 @@
 		<jetty-server.version>8.0.4.v20111024</jetty-server.version>
 		<google-geocoder.version>0.16</google-geocoder.version>
 	</properties>
-	
-	<!-- Project information -->
-
-	<organization>
-		<name>Open Wide</name>
-		<url>http://www.openwide.fr/</url>
-	</organization>
-
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	
-	<developers>
-		<developer>
-			<id>jgonzalez</id>
-			<name>Julien Gonzalez</name>
-			<email>julien.gonzalez@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-	</developers>
-	
-	<issueManagement>
-		<system>Trac</system>
-		<url>https://projects.openwide.fr/services/svn/trac/owsi-tools/report</url>
-	</issueManagement>
-	
-	<ciManagement>
-		<system>Hudson</system>
-		<url>https://projects.openwide.fr/services/ci/hudson/view/owsi-core/</url>
-	</ciManagement>
 	
 </project>

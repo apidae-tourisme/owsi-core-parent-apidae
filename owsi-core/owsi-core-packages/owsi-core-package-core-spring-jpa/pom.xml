@@ -4,7 +4,7 @@
 	
 	<parent>
 		<artifactId>owsi-core-packages</artifactId>
-		<groupId>fr.openwide.core.packages</groupId>
+		<groupId>fr.smile.core.packages</groupId>
 		<version>0.18-SNAPSHOT</version>
 	</parent>
 	
@@ -18,19 +18,19 @@
 		<!-- OWSI Core -->
 	
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-spring</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa</artifactId>
 			<version>${project.version}</version>
 		</dependency>

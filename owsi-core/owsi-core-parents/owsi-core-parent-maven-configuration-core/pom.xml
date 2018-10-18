@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>fr.openwide.core.parents</groupId>
+		<groupId>fr.smile.core.parents</groupId>
 		<artifactId>owsi-core-parent-maven-configuration-common</artifactId>
 		<version>0.18-SNAPSHOT</version>
 		<relativePath>../owsi-core-parent-maven-configuration-common/pom.xml</relativePath>
@@ -43,9 +43,9 @@
 		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
 		<owsi-core.javassist.version>3.20.0-GA</owsi-core.javassist.version>
 		
-		<owsi-core.bindgen.version>3.1.0</owsi-core.bindgen.version>
-		<owsi-core.bindgen-java.version>0.2.2</owsi-core.bindgen-java.version>
-		<owsi-core.bindgen-java-jdk7.version>0.2.2.jdk7</owsi-core.bindgen-java-jdk7.version>
+		<owsi-core.bindgen.version>3.1.1</owsi-core.bindgen.version>
+		<owsi-core.bindgen-java.version>0.2.3</owsi-core.bindgen-java.version>
+		<owsi-core.bindgen-java-jdk7.version>0.2.3.jdk7</owsi-core.bindgen-java-jdk7.version>
 		
 		<owsi-core.spring-security.version>4.2.2.RELEASE</owsi-core.spring-security.version>
 		
@@ -153,8 +153,8 @@
 		
 		<owsi-core.wicket.version>7.6.0</owsi-core.wicket.version>
 		<owsi-core.wiquery.version>7.0</owsi-core.wiquery.version>
-		<owsi-core.wicket-select2.version>1.2.0</owsi-core.wicket-select2.version>
-		<owsi-core.wqplot.version>7.1.0.owsi1</owsi-core.wqplot.version>
+		<owsi-core.wicket-select2.version>1.2.1</owsi-core.wicket-select2.version>
+		<owsi-core.wqplot.version>7.1.1</owsi-core.wqplot.version>
 		
 		<owsi-core.less4j.version>1.17.2</owsi-core.less4j.version>
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
@@ -173,7 +173,7 @@
 		<owsi-core.elasticsearch.version>2.4.5</owsi-core.elasticsearch.version>
 		<owsi-core.gson.version>2.6.2</owsi-core.gson.version>
 		
-		<owsi-core.localization-properties-consistency-maven-plugin.version>1.0.0</owsi-core.localization-properties-consistency-maven-plugin.version>
+		<owsi-core.localization-properties-consistency-maven-plugin.version>1.0.1</owsi-core.localization-properties-consistency-maven-plugin.version>
 	</properties>
 	
 	<prerequisites>
@@ -184,7 +184,7 @@
 		<dependencies>
 
 				<dependency>
-					<groupId>fr.openwide.core.components</groupId>
+					<groupId>fr.smile.core.components</groupId>
 					<artifactId>bindgen-java</artifactId>
 					<version>${owsi-core.bindgen-java.version}</version>
 				</dependency>
@@ -1359,7 +1359,7 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>fr.openwide.maven.plugins</groupId>
+					<groupId>fr.smile.maven.plugins</groupId>
 					<artifactId>localization-properties-consistency-maven-plugin</artifactId>
 					<version>${owsi-core.localization-properties-consistency-maven-plugin.version}</version>
 					<executions>
@@ -1483,50 +1483,44 @@
 		</profile>
 	</profiles>
 	
-	<repositories>
-		<repository>
-			<id>nexus-owsi-core</id>
-			<name>Nexus OWSI Core</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		
-		<repository>
-			<id>nexus-owsi-core-snapshots</id>
-			<name>Nexus OWSI Core Snapshots</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-		
-	</repositories>
-	
+        <repositories>
+            <repository>
+                  <id>nexus.internal.releases</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+                  <snapshots>
+                     <enabled>false</enabled>
+                  </snapshots>
+            </repository>
+            <repository>
+                  <id>nexus.internal.snapshots</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+                  <releases>
+                     <enabled>true</enabled>
+                  </releases>
+            </repository>
+
+            <repository>
+                <id>nexus.internal.third-party</id>
+                <url>https://nexus.vitry.intranet/content/repositories/nonCentralArtifacts/</url>
+            </repository>
+
+        </repositories>
+
 	<pluginRepositories>
 		<pluginRepository>
-			<id>nexus-owsi-core</id>
-			<name>Nexus OWSI Core</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+                  <id>nexus.internal.releases</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+                  <snapshots>
+                     <enabled>false</enabled>
+                  </snapshots>
 		</pluginRepository>
 		
 		<pluginRepository>
-			<id>nexus-owsi-core-snapshots</id>
-			<name>Nexus OWSI Core Snapshots</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
+                  <id>nexus.internal.snapshots</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+                  <snapshots>
+                     <enabled>true</enabled>
+                  </snapshots>
 		</pluginRepository>
 		
 		<pluginRepository>
