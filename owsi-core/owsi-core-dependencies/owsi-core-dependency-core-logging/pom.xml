@@ -4,8 +4,8 @@
 
 	<parent>
 		<artifactId>owsi-core-dependencies</artifactId>
-		<groupId>fr.openwide.core.dependencies</groupId>
-		<version>0.17</version>
+		<groupId>fr.smile.core.dependencies</groupId>
+		<version>0.18</version>
 	</parent>
 	
 	<artifactId>owsi-core-dependency-core-logging</artifactId>

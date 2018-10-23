@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>fr.openwide.core.components</groupId>
+		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.17</version>
+		<version>0.18</version>
 	</parent>
 
 	<artifactId>owsi-core-component-jpa-more</artifactId>
@@ -17,20 +17,20 @@
 		<!-- OWSI Core dependencies -->
 		
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.openwide.core.dependencies</groupId>
+			<groupId>fr.smile.core.dependencies</groupId>
 			<artifactId>owsi-core-dependency-core-spring-security</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-infinispan</artifactId>
 			<version>${project.version}</version>
 		</dependency>

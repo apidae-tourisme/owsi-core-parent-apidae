@@ -4,8 +4,8 @@
 	
 	<parent>
 		<artifactId>owsi-core-packages</artifactId>
-		<groupId>fr.openwide.core.packages</groupId>
-		<version>0.17</version>
+		<groupId>fr.smile.core.packages</groupId>
+		<version>0.18</version>
 	</parent>
 	
 	<artifactId>owsi-core-package-core-spring-jpa-app</artifactId>
@@ -18,27 +18,27 @@
 		<!-- OWSI Core -->
 	
 		<dependency>
-			<groupId>fr.openwide.core.packages</groupId>
+			<groupId>fr.smile.core.packages</groupId>
 			<artifactId>owsi-core-package-core-spring-jpa</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.openwide.core.packages</groupId>
+			<groupId>fr.smile.core.packages</groupId>
 			<artifactId>owsi-core-package-core-spring-security</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 	
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa-more</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa-security</artifactId>
 			<version>${project.version}</version>
 		</dependency>

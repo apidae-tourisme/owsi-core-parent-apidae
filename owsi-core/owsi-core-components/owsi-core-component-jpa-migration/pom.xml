@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>fr.openwide.core.components</groupId>
+		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.17</version>
+		<version>0.18</version>
 	</parent>
 	
 	<artifactId>owsi-core-component-jpa-migration</artifactId>
@@ -14,12 +14,12 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa-more</artifactId>
 			<version>${project.version}</version>
 		</dependency>

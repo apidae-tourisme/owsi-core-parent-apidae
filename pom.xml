@@ -2,9 +2,9 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>fr.openwide.core</groupId>
+	<groupId>fr.smile.core</groupId>
 	<artifactId>owsi-core-parent</artifactId>
-	<version>0.17</version>
+	<version>0.18</version>
 	<packaging>pom</packaging>
 	
 	<name>OWSI Core - Parent</name>
@@ -157,11 +157,6 @@
 	
 	<!-- Project information -->
 
-	<organization>
-		<name>Open Wide</name>
-		<url>http://www.openwide.fr/</url>
-	</organization>
-
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -170,84 +165,50 @@
 		</license>
 	</licenses>
 
-	<developers>
-		<developer>
-			<id>gsmet</id>
-			<name>Guillaume Smet</name>
-			<email>guillaume.smet@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>lalmeras</id>
-			<name>Laurent Almeras</name>
-			<email>laurent.almeras@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>jgonzalez</id>
-			<name>Julien Gonzalez</name>
-			<email>julien.gonzalez@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>rjoly</id>
-			<name>Renaud Joly</name>
-			<email>renaud.joly@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>yrodiere</id>
-			<name>Yoann Rodière</name>
-			<email>yoann.rodiere@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>flacreuse</id>
-			<name>Florian Lacreuse</name>
-			<email>florian.lacreuse@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>nbarithel</id>
-			<name>Nicolas Barithel</name>
-			<email>nicolas.barithel@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-		<developer>
-			<id>jbenichou</id>
-			<name>Julien Bénichou</name>
-			<email>julien.benichou@openwide.fr</email>
-			<organization>Open Wide</organization>
-		</developer>
-	</developers>
-	
-	<distributionManagement>
-		<repository>
-			<id>nexus-owsi-core</id>
-			<name>Nexus OWSI Core</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus-owsi-core-snapshots</id>
-			<name>Nexus OWSI Core Snapshots</name>
-			<url>https://projects.openwide.fr/services/nexus/content/repositories/owsi-core-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <repositories>
+            <repository>
+                  <id>nexus.internal.releases</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+                  <snapshots>
+                     <enabled>false</enabled>
+                  </snapshots>
+            </repository>
+            <repository>
+                  <id>nexus.internal.snapshots</id>
+                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+                  <releases>
+                     <enabled>true</enabled>
+                  </releases>
+            </repository>
 
-	<issueManagement>
-		<system>Trac</system>
-		<url>https://projects.openwide.fr/services/svn/trac/owsi-tools/report</url>
-	</issueManagement>
+            <repository>
+                <id>nexus.internal.third-party</id>
+                <url>https://nexus.vitry.intranet/content/repositories/nonCentralArtifacts/</url>
+            </repository>
 
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://projects.openwide.fr/services/ci/hudson/jenkins/owsi-core/</url>
-	</ciManagement>
+        </repositories>
 
-	<scm>
-		<developerConnection>scm:git:git@github.com:openwide-java/owsi-core-parent.git</developerConnection>
-		<url>https://github.com/openwide-java/owsi-core-parent</url>
-		<tag>HEAD</tag>
-	</scm>
-	
+    <distributionManagement>
+        <repository>
+            <id>nexus.internal.releases</id>
+            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.internal.snapshots</id>
+            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+        </snapshotRepository>
+        <site>
+           <id>maven.doc.smile</id>
+           <url>scp://pic-java.vitry.intranet/var/www/${project.groupId}/${project.artifactId}</url>
+        </site>
+    </distributionManagement>
+
+
+    <scm>
+        <connection>scm:git:git@git.smile.fr:skill-center-lyon/owsi-core/owsi-core-parent.git</connection>
+        <developerConnection>scm:git:git@git.smile.fr:skill-center-lyon/owsi-core/owsi-core-parent.git</developerConnection>
+        <url>https://git.smile.fr/skill-center-lyon/owsi-core/owsi-core-parent</url>
+        <tag>HEAD</tag>
+    </scm>
+
 </project>

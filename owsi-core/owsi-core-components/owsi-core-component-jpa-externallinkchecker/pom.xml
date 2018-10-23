@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>fr.openwide.core.components</groupId>
+		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.17</version>
+		<version>0.18</version>
 	</parent>
 
 	<artifactId>owsi-core-component-jpa-externallinkchecker</artifactId>
@@ -17,7 +17,7 @@
 		<!-- OWSI Core dependencies -->
 
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-jpa</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -51,7 +51,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.openwide.core.components</groupId>
+			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-rest-jersey2</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

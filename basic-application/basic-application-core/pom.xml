@@ -4,8 +4,8 @@
 	
 	<parent>
 		<artifactId>basic-application</artifactId>
-		<groupId>fr.openwide.core.archetype</groupId>
-		<version>0.17</version>
+		<groupId>fr.smile.core.archetype</groupId>
+		<version>0.18</version>
 	</parent>
 	
 	<artifactId>basic-application-core</artifactId>
@@ -16,7 +16,7 @@
 		
 		<!-- OWSI Core -->
 		<dependency>
-			<groupId>fr.openwide.core.packages</groupId>
+			<groupId>fr.smile.core.packages</groupId>
 			<artifactId>owsi-core-package-core-spring-jpa-app</artifactId>
 			<version>${owsi-core.version}</version>
 			<type>pom</type>
