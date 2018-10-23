@@ -90,7 +90,6 @@
 				<executions>
 					<execution>
 						<id>upload-war-to-server</id>
-						<phase>deploy</phase>
 						<goals>
 							<goal>upload-single</goal>
 						</goals>
