@@ -407,6 +407,11 @@ public class InfinispanClusterServiceImpl implements IInfinispanClusterService {
 				runnable.run();
 				return true;
 			} else {
+				//if myself
+				if (previousLockAttribution.getOwner().equals(getAddress())) {
+					getLocksCache().remove(withLock);
+					return doWithLock(withLock, runnable);
+				}
 				// else return false
 				return false;
 			}
