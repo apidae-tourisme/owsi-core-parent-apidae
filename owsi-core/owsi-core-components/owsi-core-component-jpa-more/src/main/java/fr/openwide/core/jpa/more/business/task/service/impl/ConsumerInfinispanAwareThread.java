@@ -61,9 +61,9 @@ class ConsumerInfinispanAwareThread extends ConsumerThread {
 						public void run() {
 							try {
 								Long queuedTaskHolderId = queue.poll(100, TimeUnit.MILLISECONDS);
-								taskId.set(queuedTaskHolderId);
 								
 								if (queuedTaskHolderId != null) {
+									taskId.set(queuedTaskHolderId);
 									setWorking(true);
 									// if not active, we are about to stop, ignoring task
 									if (active) {
