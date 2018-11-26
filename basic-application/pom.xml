@@ -6,7 +6,7 @@
 		<groupId>fr.smile.core.parents</groupId>
 		<artifactId>owsi-core-parent-core-project</artifactId>
 		<relativePath>../owsi-core/owsi-core-parents/owsi-core-parent-core-project/pom.xml</relativePath>
-		<version>0.19</version>
+		<version>0.20</version>
 	</parent>
 	
 	<groupId>fr.smile.core.archetype</groupId>
