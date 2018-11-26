@@ -33,6 +33,7 @@ public interface IQueuedTaskHolderManager {
 
 	void start();
 
+	@Transactional
 	void stop();
 
 	@Transactional
