@@ -9,3 +9,7 @@ target2
 *.idea
 *.iml
 
+//doc sphinx
+.venv/
+docs/_build
+
