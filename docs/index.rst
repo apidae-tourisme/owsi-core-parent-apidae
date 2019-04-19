@@ -19,6 +19,11 @@ OWSI-Core Documentation
    release-notes/Migrating-to-0.14
    release-notes/Migrating-to-0.15
    release-notes/Migrating-to-0.16
+   release-notes/Migrating-to-0.17
+   release-notes/Migrating-to-0.18
+   release-notes/Migrating-to-0.19
+   release-notes/Migrating-to-0.20
+   release-notes/Migrating-to-0.21
 
 .. _howtos:
 

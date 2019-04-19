@@ -1,3 +1,5 @@
+.. _migration_0.16:
+
 Migrating to 0.16
 =================
 
