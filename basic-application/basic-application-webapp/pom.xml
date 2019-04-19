@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>basic-application</artifactId>
 		<groupId>fr.smile.core.archetype</groupId>
-		<version>0.21</version>
+		<version>0.22-SNAPSHOT</version>
 	</parent>
 	
 	<packaging>war</packaging>
