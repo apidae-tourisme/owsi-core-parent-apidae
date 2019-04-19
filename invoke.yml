@@ -1,0 +1,31 @@
+---
+
+#######################################
+### Constants used in documentation ###
+#######################################
+
+version: '0.21'
+
+project: 'owsi-core'
+copyright: '2018, Smile'
+author: 'Smile'
+
+
+#######################################
+###  Constants used to publish doc  ###
+#######################################
+
+### remote doc server configuration
+# server host or IP
+remote_doc_server: 'pic-java.vitry.intranet'
+# username used to push documentation on the remote server
+remote_doc_server_username: 'mavendoc'
+# password for the username used to push documentation on the remote server
+remote_doc_server_password: 'mavendoc'
+# directory prefix in which the documentation is pushed (for example /var/www)
+remote_doc_server_path_prefix: '/var/www'
+# project specific directory in which the documentation is pushed.
+# this path is appended to the path_prefix above to define the directory in which the documentation is pushed
+# this path is also appended to the url used to expose your documentation (through the remote doc server)
+publishing_dir: 'SKCL/owsi-core'
+
