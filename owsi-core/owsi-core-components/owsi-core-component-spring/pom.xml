@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.21</version>
+		<version>0.22</version>
 	</parent>
 
 	<artifactId>owsi-core-component-spring</artifactId>
@@ -53,8 +53,8 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>net.sf.ehcache.internal</groupId>
-			<artifactId>ehcache-core</artifactId>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
 		</dependency>
 		
 		<!-- Test dependencies -->
@@ -81,5 +81,5 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 </project>

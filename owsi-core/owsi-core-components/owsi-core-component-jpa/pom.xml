@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.21</version>
+		<version>0.22</version>
 	</parent>
 
 	<artifactId>owsi-core-component-jpa</artifactId>
@@ -40,14 +40,14 @@
 			<exclusions>
 				<exclusion>
 					<groupId>net.sf.ehcache</groupId>
-					<artifactId>ehcache-core</artifactId>
+					<artifactId>ehcache</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		
 		<dependency>
-			<groupId>net.sf.ehcache.internal</groupId>
-			<artifactId>ehcache-core</artifactId>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
 		</dependency>
 	
 		<!-- hibernate-search -->
@@ -186,6 +186,8 @@
 			<name>JBoss Maven Repository</name>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</pluginRepository>
+			<!-- this repository is no longer OK and send invalid responses registered as corrupted artifacts -->
+
 	</pluginRepositories>
 
 </project>

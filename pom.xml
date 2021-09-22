@@ -4,7 +4,7 @@
 	
 	<groupId>fr.smile.core</groupId>
 	<artifactId>owsi-core-parent</artifactId>
-	<version>0.21</version>
+	<version>0.22</version>
 	<packaging>pom</packaging>
 	
 	<name>OWSI Core - Parent</name>
@@ -165,17 +165,17 @@
 		</license>
 	</licenses>
 
-        <repositories>
+        <!-- <repositories>
             <repository>
                   <id>nexus.internal.releases</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+                  <url>https://nexus.galaxy.intranet/content/repositories/InternalSmileReleases/</url>
                   <snapshots>
                      <enabled>false</enabled>
                   </snapshots>
             </repository>
             <repository>
                   <id>nexus.internal.snapshots</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+                  <url>https://nexus.galaxy.intranet/content/repositories/InternalSmileSnapshots/</url>
                   <releases>
                      <enabled>true</enabled>
                   </releases>
@@ -183,26 +183,32 @@
 
             <repository>
                 <id>nexus.internal.third-party</id>
-                <url>https://nexus.vitry.intranet/content/repositories/nonCentralArtifacts/</url>
+                <url>https://nexus.galaxy.intranet/content/repositories/nonCentralArtifacts/</url>
             </repository>
 
-        </repositories>
+        </repositories> -->
 
-    <distributionManagement>
+    <!-- <distributionManagement>
         <repository>
             <id>nexus.internal.releases</id>
-            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
+            <url>https://nexus.galaxy.intranet/content/repositories/InternalSmileReleases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus.internal.snapshots</id>
-            <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
+            <url>https://nexus.galaxy.intranet/content/repositories/InternalSmileSnapshots/</url>
         </snapshotRepository>
         <site>
            <id>maven.doc.smile</id>
-           <url>scp://pic-java.vitry.intranet/var/www/${project.groupId}/${project.artifactId}</url>
+           <url>scp://pic-java.galaxy.intranet/var/www/${project.groupId}/${project.artifactId}</url>
         </site>
-    </distributionManagement>
+    </distributionManagement> -->
 
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
     <scm>
         <connection>scm:git:git@git.smile.fr:skill-center-lyon/owsi-core/owsi-core-parent.git</connection>

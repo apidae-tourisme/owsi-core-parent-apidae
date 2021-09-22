@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.21</version>
+		<version>0.22</version>
 	</parent>
 
 	<artifactId>owsi-core-component-wicket-more</artifactId>
@@ -162,14 +162,7 @@
 	</build>
 	
 	<repositories>
-		<repository>
-			<id>org.bindgen</id>
-			<name>Bindgen Repository</name>
-			<url>http://repo.joist.ws</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+
 	</repositories>
 	
 </project>

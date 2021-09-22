@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.smile.core.parents</groupId>
 		<artifactId>owsi-core-parent-maven-configuration-common</artifactId>
-		<version>0.21</version>
+		<version>0.22</version>
 		<relativePath>../owsi-core-parent-maven-configuration-common/pom.xml</relativePath>
 	</parent>
 	
@@ -43,8 +43,8 @@
 		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
 		<owsi-core.javassist.version>3.20.0-GA</owsi-core.javassist.version>
 		
-		<owsi-core.bindgen.version>3.1.1</owsi-core.bindgen.version>
-		<owsi-core.bindgen-java.version>0.2.3</owsi-core.bindgen-java.version>
+		<owsi-core.bindgen.version>3.1.2</owsi-core.bindgen.version>
+		<owsi-core.bindgen-java.version>0.2.4</owsi-core.bindgen-java.version>
 		<owsi-core.bindgen-java-jdk7.version>0.2.3.jdk7</owsi-core.bindgen-java-jdk7.version>
 		
 		<owsi-core.spring-security.version>4.2.2.RELEASE</owsi-core.spring-security.version>
@@ -153,8 +153,8 @@
 		
 		<owsi-core.wicket.version>7.6.0</owsi-core.wicket.version>
 		<owsi-core.wiquery.version>7.0</owsi-core.wiquery.version>
-		<owsi-core.wicket-select2.version>1.2.1</owsi-core.wicket-select2.version>
-		<owsi-core.wqplot.version>7.1.1</owsi-core.wqplot.version>
+		<owsi-core.wicket-select2.version>1.2.2</owsi-core.wicket-select2.version>
+		<owsi-core.wqplot.version>7.1.1.owsi2</owsi-core.wqplot.version>
 		
 		<owsi-core.less4j.version>1.17.2</owsi-core.less4j.version>
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
@@ -627,8 +627,8 @@
 			<!-- Cache (also used for Hibernate second level cache) -->
 			
 				<dependency>
-					<groupId>net.sf.ehcache.internal</groupId>
-					<artifactId>ehcache-core</artifactId>
+					<groupId>net.sf.ehcache</groupId>
+					<artifactId>ehcache</artifactId>
 					<version>${owsi-core.ehcache.version}</version>
 				</dependency>
 			
@@ -1340,7 +1340,7 @@
 										<exclude>javassist:javassist</exclude>
 										<exclude>apache-xerces:xml-apis</exclude>
 										<exclude>javax.servlet:servlet-api</exclude>
-										<exclude>net.sf.ehcache:ehcache-core</exclude>
+										<exclude>net.sf.ehcache.internal:ehcache-core</exclude>
 										<exclude>postgresql:postgresql</exclude>
 									</excludes>
 								</bannedDependencies>
@@ -1482,55 +1482,10 @@
 			</properties>
 		</profile>
 	</profiles>
-	
-        <repositories>
-            <repository>
-                  <id>nexus.internal.releases</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
-                  <snapshots>
-                     <enabled>false</enabled>
-                  </snapshots>
-            </repository>
-            <repository>
-                  <id>nexus.internal.snapshots</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
-                  <releases>
-                     <enabled>true</enabled>
-                  </releases>
-            </repository>
 
-            <repository>
-                <id>nexus.internal.third-party</id>
-                <url>https://nexus.vitry.intranet/content/repositories/nonCentralArtifacts/</url>
-            </repository>
-
-        </repositories>
 
 	<pluginRepositories>
-		<pluginRepository>
-                  <id>nexus.internal.releases</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileReleases/</url>
-                  <snapshots>
-                     <enabled>false</enabled>
-                  </snapshots>
-		</pluginRepository>
-		
-		<pluginRepository>
-                  <id>nexus.internal.snapshots</id>
-                  <url>https://nexus.vitry.intranet/content/repositories/InternalSmileSnapshots/</url>
-                  <snapshots>
-                     <enabled>true</enabled>
-                  </snapshots>
-		</pluginRepository>
-		
-		<pluginRepository>
-			<id>org.bindgen</id>
-			<name>Bindgen Repository</name>
-			<url>http://repo.joist.ws</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
+
 	</pluginRepositories>
 	
 </project>

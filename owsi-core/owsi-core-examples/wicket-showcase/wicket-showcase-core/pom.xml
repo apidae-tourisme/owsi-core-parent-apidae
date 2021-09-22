@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>wicket-showcase</artifactId>
 		<groupId>fr.smile.core.showcase</groupId>
-		<version>0.21</version>
+		<version>0.22</version>
 	</parent>
 	
 	<artifactId>wicket-showcase-core</artifactId>
@@ -108,13 +108,6 @@
 	</build>
 	
 	<repositories>
-		<repository>
-			<id>org.bindgen</id>
-			<name>Bindgen Repository</name>
-			<url>http://repo.joist.ws</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+
 	</repositories>
 </project>
