@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.22</version>
+		<version>0.22-SNAPSHOT</version>
 	</parent>
 	<artifactId>owsi-core-component-wicket-more-jqplot</artifactId>
 	
@@ -26,5 +26,14 @@
 		</dependency>
 		
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>wickery-jqplot</id>
+			<name>Github packages</name>
+			<url>https://maven.pkg.github.com/apidae-tourisme/wickery-jqplot</url>
+		</repository>
+	</repositories>
+
 	
 </project>
