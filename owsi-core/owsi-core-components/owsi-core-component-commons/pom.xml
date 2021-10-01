@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.22</version>
+		<version>0.22-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>owsi-core-component-commons</artifactId>
@@ -139,6 +139,20 @@
 	</build>
 	
 	<repositories>
-		
+		<repository>
+			<id>bindgen</id>
+			<name>Github packages</name>
+			<url>https://maven.pkg.github.com/apidae-tourisme/bindgen</url>
+		</repository>
+		<repository>
+			<id>bindgen-java</id>
+			<name>Github packages</name>
+			<url>https://maven.pkg.github.com/apidae-tourisme/bindgen-java</url>
+		</repository>
+		<repository>
+			<id>wicket-select2</id>
+			<name>Github packages</name>
+			<url>https://maven.pkg.github.com/apidae-tourisme/wicket-select2</url>
+		</repository>
 	</repositories>
 </project>

@@ -2,17 +2,11 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Release, deploy and create next iteration
+name: Build and deploy snapshot version of the project
 
 on:
-  workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Release number version to create"
-        required: true
-      next_version:
-        description: "SNAPSHOT number of the next development version"
-        required: true
+  push:
+    branches: [master]
 
 jobs:
   build:
@@ -24,6 +18,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          cache: maven
       - name: customize settings.xml
         run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Verify
@@ -32,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
 
-  prepare-release:
+  deploy:
     runs-on: ubuntu-latest
     needs: [build]
     permissions:
@@ -40,8 +35,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v2
-        with:
-          token: ${{secrets.TOKEN_RELEASE}}
       - name: Set up JDK 8
         uses: actions/setup-java@v2
         with:
@@ -50,18 +43,8 @@ jobs:
           cache: maven
       - name: customize settings.xml
         run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
-      - name: Configure Git user email
-        run: git config user.email "actions@github.com"
-      - name: Configure Git username
-        run: git config user.name "GitHub Actions"
-      - name: prepare
-        run: mvn --batch-mode -Dtag=${{ github.event.inputs.release_version }} release:prepare -DreleaseVersion=${{ github.event.inputs.release_version }} -DdevelopmentVersion=${{ github.event.inputs.next_version }}
-      - name: perform
-        run: mvn --batch-mode release:perform -Darguments="-Dmaven.javadoc.skip=true"
+      - name: Build
+        run: mvn --batch-mode -Ddistribution=owsi-core-release deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
-<<<<<<< HEAD
-=======
-
->>>>>>> 15989fab2fe5c737c48b508af753c4f3033354d7
