@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>wicket-showcase</artifactId>
 		<groupId>fr.smile.core.showcase</groupId>
-		<version>0.22</version>
+		<version>0.22-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>wicket-showcase-core</artifactId>
@@ -106,8 +106,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<repositories>
 
+	<repositories>
+		<repository>
+			<id>geocoder-java</id>
+			<name>Github packages</name>
+			<url>https://maven.pkg.github.com/apidae-tourisme/geocoder-java</url>
+		</repository>
 	</repositories>
 </project>
