@@ -61,7 +61,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
-<<<<<<< HEAD
-=======
-
->>>>>>> 15989fab2fe5c737c48b508af753c4f3033354d7
