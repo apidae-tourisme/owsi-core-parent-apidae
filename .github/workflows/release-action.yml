@@ -54,10 +54,28 @@ jobs:
         run: git config user.email "actions@github.com"
       - name: Configure Git username
         run: git config user.name "GitHub Actions"
-      - name: prepare
-        run: mvn clean install -DperformRelease -Dmaven.test.skip=true -Ddistribution=owsi-core-release && mvn --batch-mode -Ddistribution=owsi-core-release -Dtag=${{ github.event.inputs.release_version }} release:prepare -DreleaseVersion=${{ github.event.inputs.release_version }} -DdevelopmentVersion=${{ github.event.inputs.next_version }}
-      - name: perform
-        run: mvn --batch-mode -Ddistribution=owsi-core-release release:perform -Darguments="-Dmaven.javadoc.skip=true"
+      - run: echo running on branch ${GITHUB_REF##*/}
+      - name: Set release version
+        run: |
+          mvn versions:set -DnewVersion=$RELEASE -DprocessAllModules -DgenerateBackupPoms=false
+          git add . && git commit -m "[github action]: prepare release $RELEASE"
+          git tag $RELEASE
+        env:
+          RELEASE: ${{ github.event.inputs.release_version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+      - name: Deploy release
+        run: mvn --batch-mode -Ddistribution=owsi-core-release deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
+      - name: Prepare next development version
+        run: |
+          mvn versions:set -DnewVersion=$SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
+          git add . && git commit -m "[github action]: new development version $SNAPSHOT"
+          git push origin ${GITHUB_REF##*/} --tags
+        env:
+          SNAPSHOT: ${{ github.event.inputs.next_version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+
