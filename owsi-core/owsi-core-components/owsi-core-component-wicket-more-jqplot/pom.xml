@@ -6,34 +6,33 @@
 		<version>0.24-SNAPSHOT</version>
 	</parent>
 	<artifactId>owsi-core-component-wicket-more-jqplot</artifactId>
-	
+
 	<name>OWSI Core - Component - Wicket - More Wicket fun - JQPlot</name>
-	
+
 	<dependencies>
 		<!-- OWSI Core dependencies -->
-		
+
 		<dependency>
 			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-wicket-more</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- WiQuery-jqPlot -->
 		<dependency>
 			<groupId>nl.topicus</groupId>
 			<artifactId>wqplot</artifactId>
 			<version>${owsi-core.wqplot.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<repositories>
-		<repository>
-			<id>wickery-jqplot</id>
-			<name>Github packages</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/wickery-jqplot</url>
-		</repository>
+			<repository>
+					<id>bucket-release-repo</id>
+					<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+			</repository>
 	</repositories>
 
-	
+
 </project>

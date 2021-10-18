@@ -24,8 +24,6 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: customize settings.xml
-        run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Verify
         run: mvn clean install -DperformRelease -Dmaven.test.skip=true -Ddistribution=owsi-core-release
         env:
@@ -48,8 +46,6 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
-      - name: customize settings.xml
-        run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Configure Git user email
         run: git config user.email "actions@github.com"
       - name: Configure Git username
@@ -78,4 +74,6 @@ jobs:
           SNAPSHOT: ${{ github.event.inputs.next_version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
-
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
