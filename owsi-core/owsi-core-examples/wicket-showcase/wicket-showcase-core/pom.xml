@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>wicket-showcase</artifactId>
 		<groupId>fr.smile.core.showcase</groupId>
 		<version>0.24-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>wicket-showcase-core</artifactId>
-	
+
 	<name>OWSI Core - Wicket Showcase Core</name>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>fr.smile.core.packages</groupId>
@@ -18,37 +18,37 @@
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
-		
+
 		<!-- Pooling -->
-		
+
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Test dependencies -->
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- H2 database -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>${h2database.version}</version>
 		</dependency>
-		
-		<!-- Java API for Google geocoder v3 --> 
+
+		<!-- Java API for Google geocoder v3 -->
 		<dependency>
 			<groupId>com.google.code.geocoder-java</groupId>
 			<artifactId>geocoder-java</artifactId>
@@ -61,9 +61,9 @@
 			</exclusions>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>development</id>
@@ -75,12 +75,12 @@
 			</properties>
 		</profile>
 	</profiles>
-	
+
 	<build>
 		<filters>
 			<filter>${profile.filter.file}</filter>
 		</filters>
-		
+
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -91,14 +91,14 @@
 				<filtering>false</filtering>
 			</resource>
 		</resources>
-		
+
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 			</testResource>
 		</testResources>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.bsc.maven</groupId>
@@ -108,10 +108,9 @@
 	</build>
 
 	<repositories>
-		<repository>
-			<id>geocoder-java</id>
-			<name>Github packages</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/geocoder-java</url>
-		</repository>
+			<repository>
+					<id>bucket-release-repo</id>
+					<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+			</repository>
 	</repositories>
 </project>

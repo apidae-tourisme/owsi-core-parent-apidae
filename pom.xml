@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>fr.smile.core</groupId>
 	<artifactId>owsi-core-parent</artifactId>
 	<version>0.24-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<name>OWSI Core - Parent</name>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		
+
 		<owsi-core.maven-release-plugin.version>2.5.2</owsi-core.maven-release-plugin.version>
 		<maven-jgitflow-plugin.version>1.0-m5.1</maven-jgitflow-plugin.version>
 		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
 	</properties>
-	
+
 	<profiles>
 		<profile>
 			<id>owsi-core-release</id>
@@ -112,8 +112,16 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<build>
+		<extensions>
+				<!-- this is to enable the scp protocol in site deploy -->
+				<extension>
+					<groupId>com.gkatzioura.maven.cloud</groupId>
+					<artifactId>s3-storage-wagon</artifactId>
+					<version>2.3</version>
+				</extension>
+	 </extensions>
 		<plugins>
 			<plugin>
 				<groupId>external.atlassian.jgitflow</groupId>
@@ -154,7 +162,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<!-- Project information -->
 
 	<licenses>
@@ -166,21 +174,10 @@
 	</licenses>
 
 	<repositories>
-		<repository>
-			<id>bindgen</id>
-			<name>Github packages</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/bindgen</url>
-		</repository>
-		<repository>
-			<id>bindgen-java</id>
-			<name>Github packages</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/bindgen-java</url>
-		</repository>
-		<repository>
-			<id>wicket-select2</id>
-			<name>Github packages</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/wicket-select2</url>
-		</repository>
+			<repository>
+					<id>bucket-release-repo</id>
+					<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+			</repository>
 	</repositories>
 
 	<scm>
@@ -191,11 +188,14 @@
 	</scm>
 
 	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>github OWSI Core</name>
-			<url>https://maven.pkg.github.com/apidae-tourisme/owsi-core-parent-apidae</url>
-		</repository>
+			<snapshotRepository>
+					<id>snapshot-bucket</id>
+					<url>s3://apidae-sit-packages/snapshot</url>
+			</snapshotRepository>
+			<repository>
+					<id>release-bucket</id>
+					<url>s3://apidae-sit-packages/release</url>
+			</repository>
 	</distributionManagement>
 
 </project>

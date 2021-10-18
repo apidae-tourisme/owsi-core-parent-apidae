@@ -19,8 +19,6 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
-      - name: customize settings.xml
-        run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Verify
         run: mvn clean install -DperformRelease -Dmaven.test.skip=true -Ddistribution=owsi-core-release
         env:
@@ -41,10 +39,11 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
-      - name: customize settings.xml
-        run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Build
         run: mvn --batch-mode -Ddistribution=owsi-core-release deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}

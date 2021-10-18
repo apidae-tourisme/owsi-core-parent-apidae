@@ -18,8 +18,6 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: customize settings.xml
-        run: rm -f ~/.m2/settings.xml && cp .github/settings.xml ~/.m2/
       - name: Verify
         run: mvn clean install -DperformRelease -Dmaven.test.skip=true -Ddistribution=owsi-core-release
         env:
