@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
       - name: Deploy release
-        run: mvn --batch-mode -Ddistribution=owsi-core-release deploy
+        run: mvn --batch-mode -Dmaven.test.skip=true -Ddistribution=owsi-core-release -DperformRelease deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
