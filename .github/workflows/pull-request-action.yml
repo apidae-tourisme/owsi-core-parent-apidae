@@ -9,8 +9,28 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgis/postgis:12-master
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: owsicore_test
+          POSTGRES_USER: owsicore_test
+          POSTGRES_DB: owsicore_test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --name owsicore-db
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 6432:5432
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
@@ -18,8 +38,12 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Verify
-        run: mvn clean install -DperformRelease -Dmaven.test.skip=true -Ddistribution=owsi-core-release
+          cache: maven
+      - name: Build and test
+        run: |
+          docker ps -a
+          docker exec owsicore-db psql -U owsicore_test -d owsicore_test -c "CREATE SCHEMA owsicore" &&
+          mvn clean install -Ddistribution=owsi-core-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
