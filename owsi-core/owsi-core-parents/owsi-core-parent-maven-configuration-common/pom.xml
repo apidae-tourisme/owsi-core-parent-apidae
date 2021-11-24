@@ -231,8 +231,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${owsi-core.maven-surefire-plugin.version}</version>
 					<configuration>
-						<argLine>${owsi-core.maven-surefire-plugin.argLine}</argLine>
-						<skipTests>true</skipTests>
+						<argLine>${owsi-core.maven-surefire-plugin.argLine}</argLine>TestGenericService
 					</configuration>
 				</plugin>
 				<plugin>
