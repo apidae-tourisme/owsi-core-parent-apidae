@@ -24,7 +24,7 @@ class ConsumerInfinispanAwareThread extends ConsumerThread {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanClusterServiceImpl.class);
 
-	@Autowired
+	@Autowired(required = false)
 	private IInfinispanClusterService infinispanClusterService;
 	
 	private final ILock lock;
