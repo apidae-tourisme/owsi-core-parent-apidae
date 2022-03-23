@@ -4,7 +4,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.bindgen.BindingRoot;
-import org.bindgen.binding.AbstractBinding;
+import fr.openwide.core.commons.util.binding.ICoreBinding;
 import org.javatuples.Unit;
 
 import com.google.common.base.Predicate;
@@ -94,7 +94,7 @@ abstract class AbstractGenericOneMappableParameterMainStateImpl
 
 	@Override
 	public IAddedParameterMappingState<TSelf> renderInUrl(String parameterName,
-			AbstractBinding<? super TParam1, ?> binding) {
+			ICoreBinding<? super TParam1, ?> binding) {
 		return pickLast().renderInUrl(parameterName, binding);
 	}
 
