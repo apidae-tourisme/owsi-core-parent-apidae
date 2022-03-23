@@ -110,7 +110,7 @@ Webapp
 ~~~~~~
 
 * Some more logs have been added to `GenericEntityModel` and `AbstractThreadSafeLoadableDetachableModel`. See https://github.com/openwide-java/owsi-core-parent/wiki/UI-Models#debugging for more information.
-* `DynamicImage`s, obtained through `IImageResourceLinkGenerator`s, now have their anticache parameter disabled by default. This may increase performance in Ajax refreshes where the same image appears multiple times. But it also means you will have to add a sensible anticache parameter to your image resources, such as `?t=<the last time your image was changed>`. You may do this when building your link descriptor, for instance with `fr.openwide.core.wicket.more.link.descriptor.builder.state.parameter.chosen.common.IOneChosenParameterState.renderInUrl(String, AbstractBinding<? super TChosenParam1, ?>)`.
+* `DynamicImage`s, obtained through `IImageResourceLinkGenerator`s, now have their anticache parameter disabled by default. This may increase performance in Ajax refreshes where the same image appears multiple times. But it also means you will have to add a sensible anticache parameter to your image resources, such as `?t=<the last time your image was changed>`. You may do this when building your link descriptor, for instance with `fr.openwide.core.wicket.more.link.descriptor.builder.state.parameter.chosen.common.IOneChosenParameterState.renderInUrl(String, ICoreBinding<? super TChosenParam1, ?>)`.
 * `IFormModelValidator` now extends `IDetachable`. You should implement `detach` as necessary.
 * `ModelValidatingForm.addFormModelValidator(IFormModelValidator, IFormModelValidator ...)` has been renamed to simply `add`.
 * `ModelValidatingForm.addFormModelValidator(Collection)` has been removed.

@@ -12,6 +12,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import fr.openwide.core.commons.util.binding.ICoreBinding;
 import fr.openwide.core.wicket.more.link.descriptor.builder.impl.parameter.mapping.CollectionLinkParameterMappingEntry;
 import fr.openwide.core.wicket.more.link.descriptor.builder.impl.parameter.mapping.SimpleLinkParameterMappingEntry;
 import fr.openwide.core.wicket.more.link.descriptor.builder.state.parameter.chosen.ITwoMappableParameterOneChosenParameterState;
@@ -82,7 +83,7 @@ public abstract class AbstractChosenParameterStateImpl<TSelf, TInitialState>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IAddedParameterMappingState<TInitialState> renderInUrl(String parameterName, AbstractBinding binding) {
+	public IAddedParameterMappingState<TInitialState> renderInUrl(String parameterName, ICoreBinding binding) {
 		return map(InjectOnlyLinkParameterMappingEntry.factory(parameterName, binding));
 	}
 

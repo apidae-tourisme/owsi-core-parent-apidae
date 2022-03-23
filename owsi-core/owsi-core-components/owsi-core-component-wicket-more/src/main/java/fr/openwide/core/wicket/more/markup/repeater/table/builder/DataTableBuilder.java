@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import fr.openwide.core.commons.util.binding.AbstractCoreBinding;
+import fr.openwide.core.commons.util.binding.ICoreBinding;
 import fr.openwide.core.jpa.more.business.sort.ISort;
 import fr.openwide.core.wicket.behavior.ClassAttributeAppender;
 import fr.openwide.core.wicket.markup.html.basic.CoreLabel;
@@ -230,14 +230,14 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 	}
 
 	@Override
-	public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, final AbstractCoreBinding<? super T, C> binding) {
+	public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, final ICoreBinding<? super T, C> binding) {
 		return addLabelColumn(new BindingLabelColumn<T, S, C>(headerModel, binding));
 	}
 	
 	private static class BindingLabelColumn<T, S extends ISort<?>, C> extends CoreLabelColumn<T, S> {
 		private static final long serialVersionUID = 1L;
-		private final AbstractCoreBinding<? super T, C> binding;
-		public BindingLabelColumn(IModel<String> displayModel, AbstractCoreBinding<? super T, C> binding) {
+		private final ICoreBinding<? super T, C> binding;
+		public BindingLabelColumn(IModel<String> displayModel, ICoreBinding<? super T, C> binding) {
 			super(displayModel);
 			this.binding = binding;
 		}
@@ -249,15 +249,15 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 
 	@Override
 	public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel,
-			final AbstractCoreBinding<? super T, C> binding, final Renderer<? super C> renderer) {
+			final ICoreBinding<? super T, C> binding, final Renderer<? super C> renderer) {
 		return addLabelColumn(new BindingRendererLabelColumn<T, S, C>(headerModel, binding, renderer));
 	}
 	
 	private static class BindingRendererLabelColumn<T, S extends ISort<?>, C> extends CoreLabelColumn<T, S> {
 		private static final long serialVersionUID = 1L;
-		private final AbstractCoreBinding<? super T, C> binding;
+		private final ICoreBinding<? super T, C> binding;
 		private final Renderer<? super C> renderer;
-		public BindingRendererLabelColumn(IModel<String> displayModel, AbstractCoreBinding<? super T, C> binding, Renderer<? super C> renderer) {
+		public BindingRendererLabelColumn(IModel<String> displayModel, ICoreBinding<? super T, C> binding, Renderer<? super C> renderer) {
 			super(displayModel);
 			this.binding = binding;
 			this.renderer = renderer;
@@ -270,13 +270,13 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 
 	@Override
 	public IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel,
-			AbstractCoreBinding<? super T, ? extends Date> binding, IDatePattern datePattern) {
+			ICoreBinding<? super T, ? extends Date> binding, IDatePattern datePattern) {
 		return addLabelColumn(headerModel, binding, Renderer.fromDatePattern(datePattern));
 	}
 	
 	@Override
 	public <C> IAddedCoreColumnState<T, S> addBootstrapLabelColumn(IModel<String> headerModel,
-			final AbstractCoreBinding<? super T, C> binding, final BootstrapRenderer<? super C> renderer) {
+			final ICoreBinding<? super T, C> binding, final BootstrapRenderer<? super C> renderer) {
 		return addColumn(new CoreBootstrapLabelColumn<T, S, C>(headerModel, binding, renderer));
 	}
 	
@@ -288,7 +288,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 	
 	@Override
 	public <C> IAddedBootstrapBadgeColumnState<T, S, C> addBootstrapBadgeColumn(IModel<String> headerModel,
-			final AbstractCoreBinding<? super T, C> binding, final BootstrapRenderer<? super C> renderer) {
+			final ICoreBinding<? super T, C> binding, final BootstrapRenderer<? super C> renderer) {
 		CoreBootstrapBadgeColumn<T, S, C> column = new CoreBootstrapBadgeColumn<T, S, C>(headerModel, binding, renderer);
 		columns.put(column, null);
 		return new AddedBootstrapBadgeColumnState<C>(column);
@@ -304,7 +304,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 	
 	@Override
 	public <C> IAddedBooleanLabelColumnState<T, S> addBooleanLabelColumn(IModel<String> headerModel,
-			final AbstractCoreBinding<? super T, Boolean> binding) {
+			final ICoreBinding<? super T, Boolean> binding) {
 		CoreBooleanLabelColumn<T, S> column = new CoreBooleanLabelColumn<T, S>(headerModel, binding);
 		columns.put(column, null);
 		return new AddedBooleanLabelColumnState(column);
@@ -446,12 +446,12 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, AbstractCoreBinding<? super T, C> binding) {
+		public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, ICoreBinding<? super T, C> binding) {
 			return DataTableBuilder.this.addLabelColumn(headerModel, binding);
 		}
 
 		@Override
-		public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, AbstractCoreBinding<? super T, C> binding,
+		public <C> IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, ICoreBinding<? super T, C> binding,
 				Renderer<? super C> renderer) {
 			return DataTableBuilder.this.addLabelColumn(headerModel, binding, renderer);
 		}
@@ -468,13 +468,13 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, AbstractCoreBinding<? super T, ? extends Date> binding,
+		public IAddedLabelColumnState<T, S> addLabelColumn(IModel<String> headerModel, ICoreBinding<? super T, ? extends Date> binding,
 				IDatePattern datePattern) {
 			return DataTableBuilder.this.addLabelColumn(headerModel, binding, datePattern);
 		}
 
 		@Override
-		public <C> IAddedCoreColumnState<T, S> addBootstrapLabelColumn(IModel<String> headerModel, AbstractCoreBinding<? super T, C> binding,
+		public <C> IAddedCoreColumnState<T, S> addBootstrapLabelColumn(IModel<String> headerModel, ICoreBinding<? super T, C> binding,
 				BootstrapRenderer<? super C> renderer) {
 			return DataTableBuilder.this.addBootstrapLabelColumn(headerModel, binding, renderer);
 		}
@@ -486,7 +486,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <C> IAddedBootstrapBadgeColumnState<T, S, C> addBootstrapBadgeColumn(IModel<String> headerModel, AbstractCoreBinding<? super T, C> binding,
+		public <C> IAddedBootstrapBadgeColumnState<T, S, C> addBootstrapBadgeColumn(IModel<String> headerModel, ICoreBinding<? super T, C> binding,
 				BootstrapRenderer<? super C> renderer) {
 			return DataTableBuilder.this.addBootstrapBadgeColumn(headerModel, binding, renderer);
 		}
@@ -499,7 +499,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		
 		@Override
 		public <C> IAddedBooleanLabelColumnState<T, S> addBooleanLabelColumn(IModel<String> headerModel,
-				final AbstractCoreBinding<? super T, Boolean> binding) {
+				final ICoreBinding<? super T, Boolean> binding) {
 			return DataTableBuilder.this.addBooleanLabelColumn(headerModel, binding);
 		}
 
@@ -678,7 +678,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 
 		@Deprecated
 		@Override
-		public <C> IAddedLabelColumnState<T, S> withLink(AbstractCoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory) {
+		public <C> IAddedLabelColumnState<T, S> withLink(ICoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory) {
 			return withLink(binding, new LinkGeneratorFactoryToOneParameterLinkDescriptorMapperAdapter<>(linkGeneratorFactory));
 		}
 
@@ -690,7 +690,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 
 		@Deprecated
 		@Override
-		public <C> IAddedLabelColumnState<T, S> withSideLink(AbstractCoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory) {
+		public <C> IAddedLabelColumnState<T, S> withSideLink(ICoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory) {
 			return withSideLink(binding, new LinkGeneratorFactoryToOneParameterLinkDescriptorMapperAdapter<>(linkGeneratorFactory));
 		}
 		
@@ -708,7 +708,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <C> IAddedLabelColumnState<T, S> withLink(AbstractCoreBinding<? super T, C> binding,
+		public <C> IAddedLabelColumnState<T, S> withLink(ICoreBinding<? super T, C> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper) {
 			return withLink(new BindingOneParameterLinkDescriptorMapper<>(binding, linkGeneratorMapper));
 		}
@@ -727,7 +727,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <C> IAddedLabelColumnState<T, S> withSideLink(AbstractCoreBinding<? super T, C> binding,
+		public <C> IAddedLabelColumnState<T, S> withSideLink(ICoreBinding<? super T, C> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper) {
 			return withSideLink(new BindingOneParameterLinkDescriptorMapper<>(binding, linkGeneratorMapper));
 		}
@@ -790,7 +790,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <E> IAddedBootstrapBadgeColumnState<T, S, C> withLink(AbstractCoreBinding<? super T, E> binding,
+		public <E> IAddedBootstrapBadgeColumnState<T, S, C> withLink(ICoreBinding<? super T, E> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<E>> linkGeneratorMapper) {
 			return withLink(new BindingOneParameterLinkDescriptorMapper<>(binding, linkGeneratorMapper));
 		}
@@ -809,7 +809,7 @@ public final class DataTableBuilder<T, S extends ISort<?>> implements IColumnSta
 		}
 
 		@Override
-		public <E> IAddedBootstrapBadgeColumnState<T, S, C> withSideLink(AbstractCoreBinding<? super T, E> binding,
+		public <E> IAddedBootstrapBadgeColumnState<T, S, C> withSideLink(ICoreBinding<? super T, E> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<E>> linkGeneratorMapper) {
 			return withSideLink(new BindingOneParameterLinkDescriptorMapper<>(binding, linkGeneratorMapper));
 		}
