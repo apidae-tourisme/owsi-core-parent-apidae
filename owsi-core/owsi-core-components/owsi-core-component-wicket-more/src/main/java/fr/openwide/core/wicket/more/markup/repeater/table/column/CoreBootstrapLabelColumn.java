@@ -6,7 +6,7 @@ import org.apache.wicket.model.IModel;
 
 import com.google.common.base.Function;
 
-import fr.openwide.core.commons.util.binding.AbstractCoreBinding;
+import fr.openwide.core.commons.util.binding.ICoreBinding;
 import fr.openwide.core.jpa.more.business.sort.ISort;
 import fr.openwide.core.wicket.more.markup.html.bootstrap.label.component.BootstrapLabel;
 import fr.openwide.core.wicket.more.markup.html.bootstrap.label.renderer.BootstrapRenderer;
@@ -22,7 +22,7 @@ public class CoreBootstrapLabelColumn<T, S extends ISort<?>, C> extends Abstract
 
 	private final BootstrapRenderer<? super C> renderer;
 
-	public CoreBootstrapLabelColumn(IModel<?> headerLabelModel, AbstractCoreBinding<? super T, C> binding,
+	public CoreBootstrapLabelColumn(IModel<?> headerLabelModel, ICoreBinding<? super T, C> binding,
 			final BootstrapRenderer<? super C> renderer) {
 		super(headerLabelModel);
 		this.modelFactory = BindingModel.factory(binding);

@@ -11,7 +11,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.bindgen.binding.AbstractBinding;
+import fr.openwide.core.commons.util.binding.ICoreBinding;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
@@ -238,11 +238,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	 * <strong>Be careful</strong>: using this method needs null values to be indexed.
 	 * You can use {@link NullEncodingGenericEntityIdFieldBridge} instead of the classical {@link GenericEntityIdFieldBridge} for example.
 	 */
-	protected Query matchNull(AbstractBinding<?, ?> binding) {
+	protected Query matchNull(ICoreBinding<?, ?> binding) {
 		return getFactory().matchNull(binding);
 	}
 	
-	protected Query matchNull(QueryBuilder builder, AbstractBinding<?, ?> binding) {
+	protected Query matchNull(QueryBuilder builder, ICoreBinding<?, ?> binding) {
 		return getFactory().matchNull(builder, binding);
 	}
 	
@@ -255,11 +255,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match if given
-	protected <P> Query matchIfGiven(AbstractBinding<?, P> binding, P value) {
+	protected <P> Query matchIfGiven(ICoreBinding<?, P> binding, P value) {
 		return getFactory().matchIfGiven(binding, value);
 	}
 	
-	protected <P> Query matchIfGiven(QueryBuilder builder, AbstractBinding<?, P> binding, P value) {
+	protected <P> Query matchIfGiven(QueryBuilder builder, ICoreBinding<?, P> binding, P value) {
 		return getFactory().matchIfGiven(builder, binding, value);
 	}
 	
@@ -272,11 +272,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match one term if given
-	protected Query matchOneTermIfGiven(AbstractBinding<?, String> binding, String terms) {
+	protected Query matchOneTermIfGiven(ICoreBinding<?, String> binding, String terms) {
 		return getFactory().matchOneTermIfGiven(binding, terms);
 	}
 	
-	protected Query matchOneTermIfGiven(QueryBuilder builder, AbstractBinding<?, String> binding, String terms) {
+	protected Query matchOneTermIfGiven(QueryBuilder builder, ICoreBinding<?, String> binding, String terms) {
 		return getFactory().matchOneTermIfGiven(builder, binding, terms);
 	}
 	
@@ -290,12 +290,12 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	
 	// 	>	Match all terms if given
 	@SafeVarargs
-	protected final Query matchAllTermsIfGiven(Analyzer analyzer, String terms, AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+	protected final Query matchAllTermsIfGiven(Analyzer analyzer, String terms, ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchAllTermsIfGiven(analyzer, terms, binding, otherBindings);
 	}
 	
 	@SafeVarargs
-	protected final Query matchAllTermsIfGiven(String terms, AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+	protected final Query matchAllTermsIfGiven(String terms, ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchAllTermsIfGiven(terms, binding, otherBindings);
 	}
 
@@ -309,12 +309,12 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	
 	// 	>	Match autocomplete
 	@SafeVarargs
-	protected final Query matchAutocompleteIfGiven(Analyzer analyzer, String terms, AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+	protected final Query matchAutocompleteIfGiven(Analyzer analyzer, String terms, ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchAutocompleteIfGiven(analyzer, terms, binding, otherBindings);
 	}
 	
 	@SafeVarargs
-	protected final Query matchAutocompleteIfGiven(String terms, AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+	protected final Query matchAutocompleteIfGiven(String terms, ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchAutocompleteIfGiven(terms, binding, otherBindings);
 	}
 
@@ -333,13 +333,13 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	// 	>	Match fuzzy
 	@SafeVarargs
 	protected final Query matchFuzzyIfGiven(Analyzer analyzer, String terms, Integer maxEditDistance,
-			AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+			ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchFuzzyIfGiven(analyzer, terms, maxEditDistance, binding, otherBindings);
 	}
 	
 	@SafeVarargs
 	protected final Query matchFuzzyIfGiven(String terms, Integer maxEditDistance,
-			AbstractBinding<?, String> binding, AbstractBinding<?, String> ... otherBindings) {
+			ICoreBinding<?, String> binding, ICoreBinding<?, String> ... otherBindings) {
 		return getFactory().matchFuzzyIfGiven(terms, maxEditDistance, binding, otherBindings);
 	}
 
@@ -352,11 +352,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Be included if given
-	protected <P> Query beIncludedIfGiven(AbstractBinding<?, ? extends Collection<P>> binding, P value) {
+	protected <P> Query beIncludedIfGiven(ICoreBinding<?, ? extends Collection<P>> binding, P value) {
 		return getFactory().beIncludedIfGiven(binding, value);
 	}
 	
-	protected <P> Query beIncludedIfGiven(QueryBuilder builder, AbstractBinding<?, ? extends Collection<P>> binding, P value) {
+	protected <P> Query beIncludedIfGiven(QueryBuilder builder, ICoreBinding<?, ? extends Collection<P>> binding, P value) {
 		return getFactory().beIncludedIfGiven(builder, binding, value);
 	}
 	
@@ -369,11 +369,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match one if given
-	protected <P> Query matchOneIfGiven(AbstractBinding<?, P> binding, Collection<? extends P> possibleValues) {
+	protected <P> Query matchOneIfGiven(ICoreBinding<?, P> binding, Collection<? extends P> possibleValues) {
 		return getFactory().matchOneIfGiven(binding, possibleValues);
 	}
 	
-	protected <P> Query matchOneIfGiven(QueryBuilder builder, AbstractBinding<?, P> binding, Collection<? extends P> possibleValues) {
+	protected <P> Query matchOneIfGiven(QueryBuilder builder, ICoreBinding<?, P> binding, Collection<? extends P> possibleValues) {
 		return getFactory().matchOneIfGiven(builder, binding, possibleValues);
 	}
 	
@@ -386,11 +386,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match all if given
-	protected <P> Query matchAllIfGiven(AbstractBinding<?, ? extends Collection<P>> binding, Collection<? extends P> possibleValues) {
+	protected <P> Query matchAllIfGiven(ICoreBinding<?, ? extends Collection<P>> binding, Collection<? extends P> possibleValues) {
 		return getFactory().matchAllIfGiven(binding, possibleValues);
 	}
 
-	protected <P> Query matchAllIfGiven(QueryBuilder builder, AbstractBinding<?, ? extends Collection<P>> binding,
+	protected <P> Query matchAllIfGiven(QueryBuilder builder, ICoreBinding<?, ? extends Collection<P>> binding,
 			Collection<? extends P> possibleValues) {
 		return getFactory().matchAllIfGiven(builder, binding, possibleValues);
 	}
@@ -404,11 +404,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match if true
-	protected Query matchIfTrue(AbstractBinding<?, Boolean> binding, boolean value, Boolean mustMatch) {
+	protected Query matchIfTrue(ICoreBinding<?, Boolean> binding, boolean value, Boolean mustMatch) {
 		return getFactory().matchIfTrue(binding, value, mustMatch);
 	}
 	
-	protected Query matchIfTrue(QueryBuilder builder, AbstractBinding<?, Boolean> binding, boolean value, Boolean mustMatch) {
+	protected Query matchIfTrue(QueryBuilder builder, ICoreBinding<?, Boolean> binding, boolean value, Boolean mustMatch) {
 		return getFactory().matchIfTrue(builder, binding, value, mustMatch);
 	}
 	
@@ -421,11 +421,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 	}
 	
 	// 	>	Match range (min, max, both)
-	protected <P> Query matchRangeMin(AbstractBinding<?, P> binding, P min) {
+	protected <P> Query matchRangeMin(ICoreBinding<?, P> binding, P min) {
 		return getFactory().matchRangeMin(binding, min);
 	}
 	
-	protected <P> Query matchRangeMin(QueryBuilder builder, AbstractBinding<?, P> binding, P min) {
+	protected <P> Query matchRangeMin(QueryBuilder builder, ICoreBinding<?, P> binding, P min) {
 		return getFactory().matchRangeMin(builder, binding, min);
 	}
 	
@@ -437,11 +437,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 		return getFactory().matchRangeMin(builder, fieldPath, min);
 	}
 	
-	protected <P> Query matchRangeMax(AbstractBinding<?, P> binding, P max) {
+	protected <P> Query matchRangeMax(ICoreBinding<?, P> binding, P max) {
 		return getFactory().matchRangeMax(binding, max);
 	}
 	
-	protected <P> Query matchRangeMax(QueryBuilder builder, AbstractBinding<?, P> binding, P max) {
+	protected <P> Query matchRangeMax(QueryBuilder builder, ICoreBinding<?, P> binding, P max) {
 		return getFactory().matchRangeMax(builder, binding, max);
 	}
 	
@@ -453,11 +453,11 @@ public abstract class AbstractHibernateSearchSearchQuery<T, S extends ISort<Sort
 		return getFactory().matchRangeMax(builder, fieldPath, max);
 	}
 	
-	protected <P> Query matchRange(AbstractBinding<?, P> binding, P min, P max) {
+	protected <P> Query matchRange(ICoreBinding<?, P> binding, P min, P max) {
 		return getFactory().matchRange(binding, min, max);
 	}
 	
-	protected <P> Query matchRange(QueryBuilder builder, AbstractBinding<?, P> binding, P min, P max) {
+	protected <P> Query matchRange(QueryBuilder builder, ICoreBinding<?, P> binding, P min, P max) {
 		return getFactory().matchRange(builder, binding, min, max);
 	}
 	
