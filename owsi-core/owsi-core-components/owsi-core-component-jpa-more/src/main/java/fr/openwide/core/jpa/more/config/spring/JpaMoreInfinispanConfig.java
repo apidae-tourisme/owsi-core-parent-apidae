@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -58,8 +59,8 @@ public class JpaMoreInfinispanConfig {
 	}
 
 	@Bean(destroyMethod = "stop")
-	public IInfinispanClusterService infinispanClusterService(IPropertyService propertyService, IRolesProvider rolesProvider,
-			IActionFactory springActionFactory, IInfinispanClusterCheckerService infinispanClusterCheckerService,
+	public IInfinispanClusterService infinispanClusterService(IPropertyService propertyService, @Autowired(required = false) IRolesProvider rolesProvider,
+			IActionFactory springActionFactory, @Autowired(required = false) IInfinispanClusterCheckerService infinispanClusterCheckerService,
 			EntityManagerFactory entityManagerFactory) {
 		if (propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_ENABLED)) {
 			String nodeName = propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_NODE_NAME);
