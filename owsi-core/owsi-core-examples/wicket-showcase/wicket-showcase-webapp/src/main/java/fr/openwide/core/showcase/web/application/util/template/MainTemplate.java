@@ -38,7 +38,6 @@ import fr.openwide.core.showcase.web.application.widgets.page.BootstrapJsPage;
 import fr.openwide.core.showcase.web.application.widgets.page.CalendarPage;
 import fr.openwide.core.showcase.web.application.widgets.page.CarouselPage;
 import fr.openwide.core.showcase.web.application.widgets.page.FileDownloadPage;
-import fr.openwide.core.showcase.web.application.widgets.page.FileUploadPage;
 import fr.openwide.core.showcase.web.application.widgets.page.ListFilterPage;
 import fr.openwide.core.showcase.web.application.widgets.page.ModalPage;
 import fr.openwide.core.showcase.web.application.widgets.page.SelectBoxPage;
@@ -214,7 +213,6 @@ public abstract class MainTemplate extends AbstractWebPageTemplate {
 								AutosizePage.linkDescriptor().navigationMenuItem(new ResourceModel("widgets.menu.autosize")),
 								SortableListPage.linkDescriptor().navigationMenuItem(new ResourceModel("widgets.menu.sortable")),
 								SelectBoxPage.linkDescriptor().navigationMenuItem(new ResourceModel("widgets.menu.selectbox")),
-								FileUploadPage.linkDescriptor().navigationMenuItem(new ResourceModel("widgets.menu.fileupload")),
 								FileDownloadPage.linkDescriptor().navigationMenuItem(new ResourceModel("widgets.menu.filedownload"))
 						)),
 				TitlesPage.linkDescriptor().navigationMenuItem(new ResourceModel("navigation.titles")),
