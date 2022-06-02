@@ -154,7 +154,7 @@
 		<owsi-core.wicket.version>7.6.0</owsi-core.wicket.version>
 		<owsi-core.wiquery.version>7.0</owsi-core.wiquery.version>
 		<owsi-core.wicket-select2.version>1.2.2</owsi-core.wicket-select2.version>
-		<owsi-core.wqplot.version>7.1.1.owsi2</owsi-core.wqplot.version>
+		<owsi-core.wqplot.version>7.2.0.owsi2</owsi-core.wqplot.version>
 
 		<owsi-core.less4j.version>1.17.2</owsi-core.less4j.version>
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
