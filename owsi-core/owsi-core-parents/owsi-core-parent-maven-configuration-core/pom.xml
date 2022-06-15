@@ -96,7 +96,7 @@
 		<owsi-core.xml-apis.version>1.4.01</owsi-core.xml-apis.version>
 
 		<owsi-core.slf4j.version>1.7.36</owsi-core.slf4j.version>
-		<owsi-core.reload4j.version>1.2.20</owsi-core.reload4j.version>
+		<owsi-core.reload4j.version>1.2.19</owsi-core.reload4j.version>
 
 		<owsi-core.opencsv.version>3.7</owsi-core.opencsv.version>
 		<owsi-core.freemarker.version>2.3.23</owsi-core.freemarker.version>
