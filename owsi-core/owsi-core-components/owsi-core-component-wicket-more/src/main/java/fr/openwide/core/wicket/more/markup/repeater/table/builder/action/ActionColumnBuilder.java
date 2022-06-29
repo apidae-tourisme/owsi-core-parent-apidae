@@ -14,7 +14,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import fr.openwide.core.commons.util.binding.ICoreBinding;
+import fr.openwide.core.commons.util.binding.AbstractCoreBinding;
 import fr.openwide.core.jpa.more.business.sort.ISort;
 import fr.openwide.core.wicket.more.condition.Condition;
 import fr.openwide.core.wicket.more.link.descriptor.generator.ILinkGenerator;
@@ -64,7 +64,7 @@ public class ActionColumnBuilder<T, S extends ISort<?>> implements IActionColumn
 		
 		@Override
 		public <C> IActionColumnAddedLinkState<T, S> addLink(BootstrapRenderer<? super T> renderer,
-				ICoreBinding<? super T, C> binding,
+				AbstractCoreBinding<? super T, C> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> mapper) {
 			return ActionColumnBuilder.this.addLink(renderer, binding, mapper);
 		}
@@ -77,7 +77,7 @@ public class ActionColumnBuilder<T, S extends ISort<?>> implements IActionColumn
 		
 		@Override
 		public <C> IActionColumnAddedLinkState<T, S> addLabelledLink(BootstrapRenderer<? super T> renderer,
-				ICoreBinding<? super T, C> binding,
+				AbstractCoreBinding<? super T, C> binding,
 				ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> mapper) {
 			return ActionColumnBuilder.this.addLabelledLink(renderer, binding, mapper);
 		}
@@ -375,7 +375,7 @@ public class ActionColumnBuilder<T, S extends ISort<?>> implements IActionColumn
 
 	@Override
 	public <C> IActionColumnAddedLinkState<T, S> addLink(BootstrapRenderer<? super T> renderer,
-			ICoreBinding<? super T, C> binding,
+			AbstractCoreBinding<? super T, C> binding,
 			ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> mapper) {
 		return addLink(renderer, new BindingOneParameterLinkDescriptorMapper<>(binding, mapper));
 	}
@@ -388,7 +388,7 @@ public class ActionColumnBuilder<T, S extends ISort<?>> implements IActionColumn
 
 	@Override
 	public <C> IActionColumnAddedLinkState<T, S> addLabelledLink(BootstrapRenderer<? super T> renderer,
-			ICoreBinding<? super T, C> binding,
+			AbstractCoreBinding<? super T, C> binding,
 			ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> mapper) {
 		return addLabelledLink(renderer, new BindingOneParameterLinkDescriptorMapper<>(binding, mapper));
 	}

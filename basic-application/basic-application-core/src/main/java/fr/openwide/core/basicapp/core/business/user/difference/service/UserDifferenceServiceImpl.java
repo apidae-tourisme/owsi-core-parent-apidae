@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import fr.openwide.core.basicapp.core.business.user.model.User;
 import fr.openwide.core.basicapp.core.util.binding.Bindings;
-import fr.openwide.core.commons.util.binding.ICoreBinding;
+import fr.openwide.core.commons.util.binding.AbstractCoreBinding;
 import fr.openwide.core.jpa.more.business.difference.service.AbstractGenericEntityDifferenceServiceImpl;
 
 @Service
@@ -15,7 +15,7 @@ public class UserDifferenceServiceImpl extends AbstractGenericEntityDifferenceSe
 		implements IUserDifferenceService {
 
 	@Override
-	protected Iterable<? extends ICoreBinding<? extends User, ?>> getSimpleInitializationFieldsBindings() {
+	protected Iterable<? extends AbstractCoreBinding<? extends User, ?>> getSimpleInitializationFieldsBindings() {
 		// not used at the moment, we only use the minimal difference fields.
 		return ImmutableList.of(
 		);
