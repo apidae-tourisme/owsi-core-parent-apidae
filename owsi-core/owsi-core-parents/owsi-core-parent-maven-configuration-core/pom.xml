@@ -43,8 +43,8 @@
 		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
 		<owsi-core.javassist.version>3.20.0-GA</owsi-core.javassist.version>
 
-		<owsi-core.bindgen.version>4.0.2</owsi-core.bindgen.version>
-		<owsi-core.bindgen-java.version>4.0.2</owsi-core.bindgen-java.version>
+		<owsi-core.bindgen.version>3.1.2</owsi-core.bindgen.version>
+		<owsi-core.bindgen-java.version>0.2.4</owsi-core.bindgen-java.version>
 		<owsi-core.bindgen-java-jdk7.version>0.2.3.jdk7</owsi-core.bindgen-java-jdk7.version>
 
 		<owsi-core.spring-security.version>4.2.2.RELEASE</owsi-core.spring-security.version>
@@ -97,6 +97,7 @@
 
 		<owsi-core.slf4j.version>1.7.36</owsi-core.slf4j.version>
 		<owsi-core.reload4j.version>1.2.19</owsi-core.reload4j.version>
+
 
 		<owsi-core.opencsv.version>3.7</owsi-core.opencsv.version>
 		<owsi-core.freemarker.version>2.3.23</owsi-core.freemarker.version>

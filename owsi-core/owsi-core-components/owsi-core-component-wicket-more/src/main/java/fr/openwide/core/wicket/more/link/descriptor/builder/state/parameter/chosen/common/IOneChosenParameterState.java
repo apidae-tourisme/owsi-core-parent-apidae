@@ -7,7 +7,6 @@ import org.javatuples.Unit;
 
 import com.google.common.base.Predicate;
 
-import fr.openwide.core.commons.util.binding.ICoreBinding;
 import fr.openwide.core.wicket.more.link.descriptor.builder.state.parameter.mapping.IAddedParameterMappingState;
 import fr.openwide.core.wicket.more.link.descriptor.generator.ILinkGenerator;
 import fr.openwide.core.wicket.more.link.descriptor.parameter.extractor.ILinkParametersExtractor;
@@ -71,7 +70,7 @@ public interface IOneChosenParameterState
 	 * Similar to {@link #renderInUrl(String)}, but renders the object pointed to by the given binding on the currently
 	 * selected model's object, instead of simply rendering the currently selected model's object.
 	 */
-	IAddedParameterMappingState<TInitialState> renderInUrl(String parameterName, ICoreBinding<? super TChosenParam1, ?> binding);
+	IAddedParameterMappingState<TInitialState> renderInUrl(String parameterName, AbstractBinding<? super TChosenParam1, ?> binding);
 	
 	/**
 	 * {@link #validator(ILinkParameterValidatorFactory) Add a validator to the resulting link descriptor} that will

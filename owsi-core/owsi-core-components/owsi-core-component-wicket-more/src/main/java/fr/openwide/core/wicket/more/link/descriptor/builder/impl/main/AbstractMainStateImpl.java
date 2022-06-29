@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Args;
 import org.bindgen.BindingRoot;
-import fr.openwide.core.commons.util.binding.ICoreBinding;
+import org.bindgen.binding.AbstractBinding;
 import org.javatuples.Pair;
 import org.javatuples.Tuple;
 import org.springframework.core.convert.TypeDescriptor;
@@ -183,7 +183,7 @@ abstract class AbstractMainStateImpl
 	
 	@Override
 	public <R, T> IAddedParameterMappingState<TSelf> renderInUrl(String parameterName,
-			IModel<R> rootModel, ICoreBinding<R, T> binding) {
+			IModel<R> rootModel, AbstractBinding<R, T> binding) {
 		return map(new InjectOnlyLinkParameterMappingEntry<>(parameterName, BindingModel.of(rootModel, binding)));
 	}
 	

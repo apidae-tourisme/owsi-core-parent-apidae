@@ -5,7 +5,7 @@ import org.apache.wicket.model.IModel;
 
 import com.google.common.base.Function;
 
-import fr.openwide.core.commons.util.binding.ICoreBinding;
+import fr.openwide.core.commons.util.binding.AbstractCoreBinding;
 import fr.openwide.core.jpa.more.business.sort.ISort;
 import fr.openwide.core.wicket.more.condition.Condition;
 import fr.openwide.core.wicket.more.link.descriptor.factory.LinkGeneratorFactory;
@@ -52,7 +52,7 @@ public interface IAddedLabelColumnState<T, S extends ISort<?>> extends IAddedCor
 	 * @deprecated Use {@link #withLink(AbstractCoreBinding, ILinkDescriptorMapper)} instead.
 	 */
 	@Deprecated
-	<C> IAddedLabelColumnState<T, S> withLink(ICoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory);
+	<C> IAddedLabelColumnState<T, S> withLink(AbstractCoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory);
 
 	/**
 	 * @deprecated Use {@link #withSideLink(ILinkDescriptorMapper)} instead.
@@ -64,19 +64,19 @@ public interface IAddedLabelColumnState<T, S extends ISort<?>> extends IAddedCor
 	 * @deprecated Use {@link #withSideLink(AbstractCoreBinding, ILinkDescriptorMapper)} instead.
 	 */
 	@Deprecated
-	<C> IAddedLabelColumnState<T, S> withSideLink(ICoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory);
+	<C> IAddedLabelColumnState<T, S> withSideLink(AbstractCoreBinding<? super T, C> binding, LinkGeneratorFactory<C> linkGeneratorFactory);
 
 	IAddedLabelColumnState<T, S> withLink(ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<T>> linkGeneratorMapper);
 	
 	<C> IAddedLabelColumnState<T, S> withLink(Function<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
 
-	<C> IAddedLabelColumnState<T, S> withLink(ICoreBinding<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
+	<C> IAddedLabelColumnState<T, S> withLink(AbstractCoreBinding<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
 
 	IAddedLabelColumnState<T, S> withSideLink(ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<T>> linkGeneratorMapper);
 	
 	<C> IAddedLabelColumnState<T, S> withSideLink(Function<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
 
-	<C> IAddedLabelColumnState<T, S> withSideLink(ICoreBinding<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
+	<C> IAddedLabelColumnState<T, S> withSideLink(AbstractCoreBinding<? super T, C> binding, ILinkDescriptorMapper<? extends ILinkGenerator, ? super IModel<C>> linkGeneratorMapper);
 
 	/**
 	 * @deprecated This is the default behavior, calling this method is no longer needed.
