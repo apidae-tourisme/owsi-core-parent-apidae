@@ -83,6 +83,12 @@ jobs:
           RELEASE: ${{ github.event.inputs.release_version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: eu-west-3
       - name: Deploy release
         run: mvn --batch-mode -Dmaven.test.skip=true -Ddistribution=owsi-core-release -DperformRelease deploy
         env:
