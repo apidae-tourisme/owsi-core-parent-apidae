@@ -1,11 +1,12 @@
 package fr.openwide.core.jpa.security.crypto.password;
 
 import fr.openwide.core.spring.util.StringUtils;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 
 public class CoreLowerCaseShaPasswordEncoder extends CoreShaPasswordEncoder {
 
-	public CoreLowerCaseShaPasswordEncoder(int strength) {
-		super(strength);
+	public CoreLowerCaseShaPasswordEncoder() {
+		super();
 	}
 	
 	@Override

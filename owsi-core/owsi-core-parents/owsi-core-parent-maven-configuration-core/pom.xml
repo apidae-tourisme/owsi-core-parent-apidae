@@ -17,7 +17,7 @@
 	<properties>
 		<owsi-core.version>${project.version}</owsi-core.version>
 
-		<owsi-core.spring.version>4.3.19.RELEASE</owsi-core.spring.version>
+		<owsi-core.spring.version>5.2.20.RELEASE</owsi-core.spring.version>
 		<owsi-core.aspectj.version>1.8.10</owsi-core.aspectj.version>
 
 		<owsi-core.hibernate-core.version>5.2.10.Final</owsi-core.hibernate-core.version>
@@ -47,7 +47,7 @@
 		<owsi-core.bindgen-java.version>4.0.2</owsi-core.bindgen-java.version>
 		<owsi-core.bindgen-java-jdk7.version>0.2.3.jdk7</owsi-core.bindgen-java-jdk7.version>
 
-		<owsi-core.spring-security.version>4.2.2.RELEASE</owsi-core.spring-security.version>
+		<owsi-core.spring-security.version>5.2.15.RELEASE</owsi-core.spring-security.version>
 
 		<owsi-core.spring-ldap.version>2.3.1.RELEASE</owsi-core.spring-ldap.version>
 
@@ -117,7 +117,7 @@
 
 		<owsi-core.json-lib.version>2.3</owsi-core.json-lib.version>
 		<owsi-core.jackson.version>1.9.13</owsi-core.jackson.version>
-		<owsi-core.jackson2-core.version>2.8.9</owsi-core.jackson2-core.version>
+		<owsi-core.jackson2-core.version>2.9.4</owsi-core.jackson2-core.version>
 		<owsi-core.jackson2-annotations.version>${owsi-core.jackson2-core.version}</owsi-core.jackson2-annotations.version>
 		<owsi-core.jackson2-databind.version>${owsi-core.jackson2-core.version}</owsi-core.jackson2-databind.version>
 		<owsi-core.jackson2-jaxrs.version>${owsi-core.jackson2-core.version}</owsi-core.jackson2-jaxrs.version>

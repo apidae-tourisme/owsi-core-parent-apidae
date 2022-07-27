@@ -28,7 +28,7 @@ public class InfinispanQueueTaskManagerServiceImpl implements IInfinispanQueueTa
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanQueueTaskManagerServiceImpl.class);
 
-	@Autowired
+	@Autowired(required = false)
 	private IInfinispanClusterService infinispanClusterService;
 
 	@Autowired

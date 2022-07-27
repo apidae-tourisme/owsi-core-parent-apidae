@@ -83,8 +83,7 @@ public abstract class AbstractJpaSecurityConfig {
 				if (BCRYPT_PATTERN.matcher(encodedPassword).matches()) {
 					return super.matches(rawPassword, encodedPassword);
 				} else {
-					CoreShaPasswordEncoder passwordEncoder = new CoreShaPasswordEncoder(256);
-					passwordEncoder.setSalt(propertyService.get(PASSWORD_SALT));
+					PasswordEncoder passwordEncoder = new CoreShaPasswordEncoder();
 					return passwordEncoder.matches(rawPassword, encodedPassword);
 				}
 			}
