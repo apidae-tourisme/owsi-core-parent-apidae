@@ -16,10 +16,40 @@
 		
 		<!-- OWSI Core -->
 		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-spring</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-jpa</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>fr.smile.core.packages</groupId>
-			<artifactId>owsi-core-package-core-spring-jpa-app</artifactId>
-			<version>${owsi-core.version}</version>
+			<artifactId>owsi-core-package-core-spring-security</artifactId>
+			<version>${project.version}</version>
 			<type>pom</type>
+		</dependency>
+	
+		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-jpa-more</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-jpa-security</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 		<!-- Pooling -->

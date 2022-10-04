@@ -17,7 +17,6 @@
 	
 	<modules>
 		<module>owsi-core-package-core-spring-security</module>
-		<module>owsi-core-package-core-spring-jpa-app</module>
 
 		<module>owsi-core-package-web-wicket</module>
 		<module>owsi-core-package-web-wicket-app</module>
