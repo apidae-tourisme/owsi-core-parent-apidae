@@ -18,7 +18,6 @@
 	<modules>
 		<module>owsi-core-package-web-wicket</module>
 		<module>owsi-core-package-web-wicket-app</module>
-		<module>owsi-core-package-web-spring-security</module>
 	</modules>
 	
 </project>
