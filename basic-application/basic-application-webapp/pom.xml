@@ -24,10 +24,9 @@
 		
 		<!-- OWSI Core -->
 		<dependency>
-			<groupId>fr.smile.core.packages</groupId>
-			<artifactId>owsi-core-package-web-wicket-app</artifactId>
-			<version>${owsi-core.version}</version>
-			<type>pom</type>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-wicket-more</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
