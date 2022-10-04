@@ -34,8 +34,8 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.smile.core.packages</groupId>
-			<artifactId>owsi-core-package-core-spring-security</artifactId>
+			<groupId>fr.smile.core.dependencies</groupId>
+			<artifactId>owsi-core-dependency-core-spring-security</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
