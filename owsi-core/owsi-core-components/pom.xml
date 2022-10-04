@@ -31,7 +31,6 @@
 		<module>owsi-core-component-wicket-more</module>
 		<module>owsi-core-component-wicket-more-jqplot</module>
 		
-		<module>owsi-core-component-rest-jersey</module>
 		<module>owsi-core-component-web-security</module>
 		<module>owsi-core-component-rest-jersey2</module>
 		<module>owsi-core-component-infinispan</module>

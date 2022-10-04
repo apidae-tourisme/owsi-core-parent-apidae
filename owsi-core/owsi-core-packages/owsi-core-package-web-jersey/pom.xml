@@ -13,15 +13,4 @@
 	
 	<name>OWSI Core - Package - Web - Jersey</name>
 	
-	<dependencies>
-		<!-- Rest/Jersey -->
-		
-		<dependency>
-			<groupId>fr.smile.core.components</groupId>
-			<artifactId>owsi-core-component-rest-jersey</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-	</dependencies>
-	
 </project>
