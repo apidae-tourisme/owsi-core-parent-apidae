@@ -31,7 +31,6 @@
 				<module>owsi-core-dependencies</module>
 				<module>owsi-core-parents</module>
 				<module>owsi-core-components</module>
-				<module>owsi-core-packages</module>
 			</modules>
 		</profile>
 		<profile>
@@ -45,7 +44,6 @@
 				<module>owsi-core-dependencies</module>
 				<module>owsi-core-parents</module>
 				<module>owsi-core-components</module>
-				<module>owsi-core-packages</module>
 			</modules>
 		</profile>
 		<profile>
