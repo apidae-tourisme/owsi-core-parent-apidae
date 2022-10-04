@@ -16,7 +16,6 @@
 	<name>OWSI Core - Packages</name>
 	
 	<modules>
-		<module>owsi-core-package-web-wicket</module>
 		<module>owsi-core-package-web-wicket-app</module>
 	</modules>
 	
