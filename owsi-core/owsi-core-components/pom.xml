@@ -34,7 +34,6 @@
 		<module>owsi-core-component-rest-jersey</module>
 		<module>owsi-core-component-web-security</module>
 		<module>owsi-core-component-rest-jersey2</module>
-		<module>owsi-core-component-jpa-migration</module>
 		<module>owsi-core-component-infinispan</module>
 		<module>owsi-core-component-elasticsearch-plugin</module>
 	</modules>
