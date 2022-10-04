@@ -31,10 +31,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>fr.smile.core.packages</groupId>
-			<artifactId>owsi-core-package-web-spring-security</artifactId>
-			<version>${owsi-core.version}</version>
-			<type>pom</type>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-web-security</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
