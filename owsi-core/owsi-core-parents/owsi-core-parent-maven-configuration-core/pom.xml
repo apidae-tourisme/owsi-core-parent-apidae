@@ -1333,7 +1333,7 @@
 									<version>[${minimal.maven.version},)</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
-									<version>${jdk.version}</version>
+									<version>${minimal.jdk.version}</version>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
