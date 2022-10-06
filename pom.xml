@@ -15,122 +15,34 @@
 
 		<owsi-core.maven-release-plugin.version>2.5.2</owsi-core.maven-release-plugin.version>
 		<maven-jgitflow-plugin.version>1.0-m5.1</maven-jgitflow-plugin.version>
-		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
+		
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
-	<profiles>
-		<profile>
-			<id>owsi-core-release</id>
-			<activation>
-				<property>
-					<name>distribution</name>
-					<value>owsi-core-release</value>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>all</id>
-			<activation>
-				<property>
-					<name>!distribution</name>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>jdk7</id>
-			<activation>
-				<property>
-					<name>jdk7</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-toolchains-plugin</artifactId>
-						<configuration>
-							<toolchains>
-								<jdk>
-									<version>1.7</version>
-								</jdk>
-							</toolchains>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk8</id>
-			<activation>
-				<property>
-					<name>jdk8</name>
-				</property>
-			</activation>
-			<properties>
-				<maven.compiler.source>1.8</maven.compiler.source>
-				<maven.compiler.target>1.8</maven.compiler.target>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-toolchains-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>toolchain</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<toolchains>
-								<jdk>
-									<version>1.8</version>
-								</jdk>
-							</toolchains>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>target2</id>
-			<activation>
-				<property>
-					<name>target2</name>
-				</property>
-			</activation>
-			<build>
-				<directory>${project.basedir}/target2</directory>
-			</build>
-		</profile>
-	</profiles>
+	<modules>
+		<module>owsi-core</module>
+	</modules>
 
 	<build>
 		<extensions>
-				<!-- this is to enable the scp protocol in site deploy -->
-				<extension>
-					<groupId>com.gkatzioura.maven.cloud</groupId>
-					<artifactId>s3-storage-wagon</artifactId>
-					<version>2.3</version>
-				</extension>
-	 </extensions>
+			<!-- this is to enable the scp protocol in site deploy -->
+			<extension>
+				<groupId>com.gkatzioura.maven.cloud</groupId>
+				<artifactId>s3-storage-wagon</artifactId>
+				<version>2.3</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>external.atlassian.jgitflow</groupId>
 				<artifactId>jgitflow-maven-plugin</artifactId>
 				<version>${maven-jgitflow-plugin.version}</version>
 				<dependencies>
-    					<dependency>
-					      <groupId>com.jcraft</groupId>
-					      <artifactId>jsch</artifactId>
-					      <version>0.1.54</version>
+					<dependency>
+						<groupId>com.jcraft</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.54</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -148,11 +60,6 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-toolchains-plugin</artifactId>
-					<version>${maven-toolchains-plugin.version}</version>
-				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
@@ -173,10 +80,10 @@
 	</licenses>
 
 	<repositories>
-			<repository>
-					<id>bucket-release-repo</id>
-					<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
-			</repository>
+		<repository>
+			<id>bucket-release-repo</id>
+			<url>https://apidae-sit-packages.s3.eu-west-3.amazonaws.com/release</url>
+		</repository>
 	</repositories>
 
 	<scm>
@@ -187,14 +94,14 @@
 	</scm>
 
 	<distributionManagement>
-			<snapshotRepository>
-					<id>snapshot-bucket</id>
-					<url>s3://apidae-sit-packages/snapshot</url>
-			</snapshotRepository>
-			<repository>
-					<id>release-bucket</id>
-					<url>s3://apidae-sit-packages/release</url>
-			</repository>
+		<snapshotRepository>
+			<id>snapshot-bucket</id>
+			<url>s3://apidae-sit-packages/snapshot</url>
+		</snapshotRepository>
+		<repository>
+			<id>release-bucket</id>
+			<url>s3://apidae-sit-packages/release</url>
+		</repository>
 	</distributionManagement>
 
 </project>

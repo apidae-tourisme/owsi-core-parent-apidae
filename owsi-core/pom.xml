@@ -18,40 +18,10 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	
-	<profiles>
-		<profile>
-			<id>owsi-core-release</id>
-			<activation>
-				<property>
-					<name>distribution</name>
-					<value>owsi-core-release</value>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core-dependencies</module>
-				<module>owsi-core-parents</module>
-				<module>owsi-core-components</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>all</id>
-			<activation>
-				<property>
-					<name>!distribution</name>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core-dependencies</module>
-				<module>owsi-core-parents</module>
-				<module>owsi-core-components</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>cli</id>
-			<build>
-				<directory>${project.basedir}/target-cli</directory>
-			</build>
-		</profile>
-	</profiles>
-		
+	<modules>
+		<module>owsi-core-dependencies</module>
+		<module>owsi-core-parents</module>
+		<module>owsi-core-components</module>
+	</modules>
+	
 </project>

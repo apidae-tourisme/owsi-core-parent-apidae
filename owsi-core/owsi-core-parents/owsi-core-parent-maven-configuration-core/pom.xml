@@ -140,7 +140,6 @@
 
 		<owsi-core.jersey.version>1.19.3</owsi-core.jersey.version>
 		<owsi-core.jersey2.version>2.25.1</owsi-core.jersey2.version>
-		<owsi-core.glassfish-asm-all-repackaged.version>2.5.0-b05</owsi-core.glassfish-asm-all-repackaged.version>
 
 		<owsi-core.jstl.version>1.2</owsi-core.jstl.version>
 		<owsi-core.jsp-api.version>2.2</owsi-core.jsp-api.version>
@@ -1135,21 +1134,6 @@
 					<groupId>org.glassfish.jersey.ext</groupId>
 					<artifactId>jersey-spring3</artifactId>
 					<version>${owsi-core.jersey2.version}</version>
-					<exclusions>
-						<exclusion>
-							<!-- from version >= 2.5.0-b06, asm-all is packaged with
-							     a module-info.class that cannot be handled by
-							     animal-sniffer ; switch to 2.5.0-b05 (same lib,
-							     different packaging)-->
-							<groupId>org.glassfish.hk2.external</groupId>
-							<artifactId>asm-all-repackaged</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.hk2.external</groupId>
-					<artifactId>asm-all-repackaged</artifactId>
-					<version>${owsi-core.glassfish-asm-all-repackaged.version}</version>
 				</dependency>
 
 			<!-- Servlet / JSP -->
@@ -1421,76 +1405,6 @@
 				</extension>
 	 </extensions>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>eclipse-build</id>
-			<!--
-			An automatically-set profile that disables proccessors' sources generation.
-			They are still ran in order to automatically set the generated sourcepaths on the eclipse projects. This is
-			done at the same time for both main sources and test sources, presumably because doing otherwise upsets Eclipse.
-			Detail: the processors are generally too resource-consuming to be ran as part of
-			the automatic Eclipse build, which is triggered by each file change.
-			-->
-			<activation>
-				<property>
-					<name>m2e.version</name>
-				</property>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>animal-sniffer-maven-plugin</artifactId>
-							<version>${owsi-core.animal-sniffer-maven-plugin.version}</version>
-							<executions>
-								<execution>
-									<id>check-java-version</id>
-									<phase>compile</phase>
-									<goals>
-										<goal>check</goal>
-									</goals>
-									<configuration>
-										<ignores>
-											<!-- Test bindings are generated in the main code, but they reference
-											test classes that are absent from the main code, which makes animal-sniffer
-											cry. We tell him not to mind about that.
-											-->)
-											<ignore>fr.openwide.core.test.*</ignore>
-										</ignores>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-		<profile>
-			<id>eclipse-processor</id>
-			<!--
-			A profile for sources generation. Simply maps the maven-processor-plugin executions to the generate-sources
-			phase (even for test sources), so that we only need to run generate-sources and nothing else.
-			-->
-			<properties>
-				<generated-sources-test.directory>${generated-sources.directory}</generated-sources-test.directory>
-			</properties>
-		</profile>
-		<profile>
-			<id>jdk7</id>
-			<activation>
-				<property>
-					<name>jdk7</name>
-				</property>
-			</activation>
-			<properties>
-				<!-- override bindgen-java version to handle jdk7 compatible build -->
-				<owsi-core.bindgen-java.version>${owsi-core.bindgen-java-jdk7.version}</owsi-core.bindgen-java.version>
-			</properties>
-		</profile>
-	</profiles>
-
 
 	<pluginRepositories>
 		<pluginRepository>
