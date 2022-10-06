@@ -17,31 +17,7 @@
 	<modules>
 		<module>owsi-core-parent-maven-configuration-common</module>
 		<module>owsi-core-parent-maven-configuration-core</module>
+		<module>owsi-core-parent-core-project</module>
 	</modules>
 
-	<profiles>
-		<profile>
-			<id>jdk7</id>
-			<activation>
-				<property>
-					<name>jdk7</name>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core-parent-core-project-jdk7</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>jdk8</id>
-			<activation>
-				<property>
-					<name>!jdk7</name>
-				</property>
-			</activation>
-			<modules>
-				<module>owsi-core-parent-core-project-jdk7</module>
-				<module>owsi-core-parent-core-project</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>
