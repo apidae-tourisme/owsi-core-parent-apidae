@@ -15,6 +15,11 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+
 		<!-- OWSI Core -->
 
 		<dependency>
