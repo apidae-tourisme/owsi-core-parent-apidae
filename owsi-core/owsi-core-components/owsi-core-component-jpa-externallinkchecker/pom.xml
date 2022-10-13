@@ -68,7 +68,15 @@
 			<artifactId>jersey-client</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- intellij does not use plugin dependencies !! -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${owsi-core.querydsl.version}</version>
+			<!-- do not include as runtime dependencies -->
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

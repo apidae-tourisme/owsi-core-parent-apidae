@@ -54,6 +54,15 @@
 			<artifactId>slf4j-reload4j</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- intellij does not use plugin dependencies !! -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${owsi-core.querydsl.version}</version>
+			<!-- do not include as runtime dependencies -->
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	
 	<build>
