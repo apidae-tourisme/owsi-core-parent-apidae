@@ -114,6 +114,24 @@
 			<version>${owsi-core.mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- intellij does not use plugin dependencies !! -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${owsi-core.querydsl.version}</version>
+			<!-- do not include as runtime dependencies -->
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- intellij need this dependency, otherwise this error is thrown during build : 'java: cannot access com.google.errorprone.annotations.CanIgnoreReturnValue' -->
+		<dependency>
+			<groupId>com.google.errorprone</groupId>
+			<artifactId>error_prone_annotations</artifactId>
+			<version>2.16</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
