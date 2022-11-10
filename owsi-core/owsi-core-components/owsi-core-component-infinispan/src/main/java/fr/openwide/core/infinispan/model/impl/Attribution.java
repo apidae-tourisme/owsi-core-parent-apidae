@@ -3,7 +3,7 @@ package fr.openwide.core.infinispan.model.impl;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.jgroups.Address;
+import org.infinispan.remoting.transport.Address;
 
 import fr.openwide.core.infinispan.model.IAttribution;
 

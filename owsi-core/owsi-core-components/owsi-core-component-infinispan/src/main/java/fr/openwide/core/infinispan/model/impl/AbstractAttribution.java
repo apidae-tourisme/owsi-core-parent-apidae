@@ -2,7 +2,7 @@ package fr.openwide.core.infinispan.model.impl;
 
 import java.util.Date;
 
-import org.jgroups.Address;
+import org.infinispan.remoting.transport.Address;
 
 import com.google.common.base.Objects;
 

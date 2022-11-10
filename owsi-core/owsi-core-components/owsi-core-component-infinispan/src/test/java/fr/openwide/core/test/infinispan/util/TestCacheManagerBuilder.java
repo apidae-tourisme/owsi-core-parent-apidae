@@ -4,13 +4,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 
-import org.infinispan.configuration.cache.Configuration;
-import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.slf4j.MDC;
 
-import fr.openwide.core.infinispan.utils.DefaultReplicatedTransientConfigurationBuilder;
+import fr.openwide.core.infinispan.service.CustomConfigurationBuilderHolder;
 import fr.openwide.core.infinispan.utils.GlobalDefaultReplicatedTransientConfigurationBuilder;
 
 public class TestCacheManagerBuilder {
@@ -34,11 +32,11 @@ public class TestCacheManagerBuilder {
 		Properties properties = new Properties();
 		properties.put("configurationFile", "test-jgroups-tcp.xml");
 		
-		GlobalConfiguration globalConfiguration =
-				new GlobalDefaultReplicatedTransientConfigurationBuilder(properties).nodeName(name).build();
-		Configuration configuration =
-				new DefaultReplicatedTransientConfigurationBuilder().build();
-		EmbeddedCacheManager cacheManager = new DefaultCacheManager(globalConfiguration, configuration, false);
+		CustomConfigurationBuilderHolder holder = new CustomConfigurationBuilderHolder(properties);
+		GlobalDefaultReplicatedTransientConfigurationBuilder globalConfiguration = holder.getGlobalConfigurationBuilder();
+		globalConfiguration.nodeName(name);
+		holder.newConfigurationBuilder("*");
+		EmbeddedCacheManager cacheManager = new DefaultCacheManager(holder, false);
 		cacheManager.getCache(TestConstants.CACHE_DEFAULT);
 		
 		if (taskName != null) {

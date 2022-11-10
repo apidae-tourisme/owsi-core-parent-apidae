@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +11,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import fr.openwide.core.infinispan.service.CustomConfigurationBuilderHolder;
 import fr.openwide.core.infinispan.service.IActionFactory;
 import fr.openwide.core.infinispan.service.IInfinispanClusterCheckerService;
 import fr.openwide.core.infinispan.service.IInfinispanClusterService;
 import fr.openwide.core.infinispan.service.IRolesProvider;
 import fr.openwide.core.infinispan.service.InfinispanClusterServiceImpl;
-import fr.openwide.core.infinispan.utils.DefaultReplicatedTransientConfigurationBuilder;
 import fr.openwide.core.infinispan.utils.GlobalDefaultReplicatedTransientConfigurationBuilder;
 import fr.openwide.core.infinispan.utils.role.RolesFromStringSetProvider;
 import fr.openwide.core.jpa.more.config.spring.util.SpringActionFactory;
@@ -68,11 +67,12 @@ public class JpaMoreInfinispanConfig {
 			for (String key : propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_TRANSPORT_PROPERTIES)) {
 				properties.put(key, propertyService.getAsString(JpaMoreInfinispanPropertyIds.transportProperty(key)));
 			}
-			GlobalConfiguration globalConfiguration =
-					new GlobalDefaultReplicatedTransientConfigurationBuilder(properties).nodeName(nodeName).build();
-			org.infinispan.configuration.cache.Configuration configuration =
-					new DefaultReplicatedTransientConfigurationBuilder().build();
-			EmbeddedCacheManager cacheManager = new DefaultCacheManager(globalConfiguration, configuration, false);
+			CustomConfigurationBuilderHolder holder = new CustomConfigurationBuilderHolder(properties);
+			GlobalDefaultReplicatedTransientConfigurationBuilder globalConfiguration =
+					holder.getGlobalConfigurationBuilder();
+			globalConfiguration.nodeName(nodeName);
+			holder.newConfigurationBuilder("*");
+			EmbeddedCacheManager cacheManager = new DefaultCacheManager(holder, false);
 			
 			InfinispanClusterServiceImpl cluster =
 					new InfinispanClusterServiceImpl(nodeName, cacheManager, rolesProvider, springActionFactory,

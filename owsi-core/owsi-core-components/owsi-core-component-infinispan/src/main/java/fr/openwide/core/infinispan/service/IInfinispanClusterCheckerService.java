@@ -3,7 +3,7 @@ package fr.openwide.core.infinispan.service;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.jgroups.Address;
+import org.infinispan.remoting.transport.Address;
 
 public interface IInfinispanClusterCheckerService {
 

@@ -7,7 +7,7 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.infinispan.notifications.cachelistener.event.CacheEntryModifiedEvent;
 
-@Listener(clustered = true, sync = false)
+@Listener(clustered = true, sync = false, includeCurrentState = true)
 public abstract class CacheEntryEventListener<V> {
 
 	@CacheEntryCreated

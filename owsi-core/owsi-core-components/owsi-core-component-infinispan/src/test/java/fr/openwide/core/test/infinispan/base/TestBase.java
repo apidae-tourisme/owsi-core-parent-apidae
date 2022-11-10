@@ -72,6 +72,9 @@ public abstract class TestBase {
 		);
 		List<String> arguments = Lists.newArrayList();
 		arguments.add(System.getProperty("java.home") + "/bin/java");
+		if ("true".equals(System.getProperty("java.net.preferIPv4Stack", "false"))) {
+			arguments.add("-Djava.net.preferIPv4Stack=true");
+		}
 		arguments.add("-classpath");
 		arguments.add(classpath);
 		arguments.add(getProcessClassName());

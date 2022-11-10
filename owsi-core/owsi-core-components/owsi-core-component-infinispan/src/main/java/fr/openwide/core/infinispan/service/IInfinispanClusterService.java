@@ -9,9 +9,9 @@ import java.util.concurrent.TimeoutException;
 
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
+import org.infinispan.remoting.transport.Address;
 import org.infinispan.remoting.transport.jgroups.JGroupsAddress;
 import org.javatuples.Pair;
-import org.jgroups.Address;
 
 import fr.openwide.core.infinispan.action.SwitchRoleResult;
 import fr.openwide.core.infinispan.listener.ViewChangedEventCoordinatorListener;
