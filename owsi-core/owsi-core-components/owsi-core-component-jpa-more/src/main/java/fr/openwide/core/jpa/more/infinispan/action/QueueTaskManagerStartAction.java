@@ -1,6 +1,6 @@
 package fr.openwide.core.jpa.more.infinispan.action;
 
-import org.jgroups.Address;
+import org.infinispan.remoting.transport.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.openwide.core.infinispan.model.impl.SimpleAction;
