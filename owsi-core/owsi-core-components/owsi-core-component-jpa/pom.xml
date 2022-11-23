@@ -169,6 +169,17 @@
 			<artifactId>HikariCP</artifactId>
 		</dependency>
 		
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+		
+		<!-- Necessary with java > 9 -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>
