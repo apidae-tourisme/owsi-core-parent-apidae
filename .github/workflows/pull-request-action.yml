@@ -1,6 +1,6 @@
 
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
 name: CI test pull request
 
@@ -32,18 +32,18 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 6432:5432
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 8
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'adopt'
           cache: maven
       - name: Build and test
         run: |
           docker ps -a
           docker exec owsicore-db psql -U owsicore_test -d owsicore_test -c "CREATE SCHEMA owsicore" &&
-          mvn clean install -Ddistribution=owsi-core-release
+          mvn -B clean install -Ddistribution=owsi-core-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
