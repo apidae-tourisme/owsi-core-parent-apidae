@@ -48,7 +48,7 @@ jobs:
         run: |
           docker ps -a
           docker exec owsicore-db psql -U owsicore_test -d owsicore_test -c "CREATE SCHEMA owsicore" &&
-          mvn clean install -Ddistribution=owsi-core-release
+          mvn clean install
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
@@ -90,7 +90,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: eu-west-3
       - name: Deploy release
-        run: mvn --batch-mode -Dmaven.test.skip=true -Ddistribution=owsi-core-release -DperformRelease deploy
+        run: mvn --batch-mode -Dmaven.test.skip=true -DperformRelease deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
