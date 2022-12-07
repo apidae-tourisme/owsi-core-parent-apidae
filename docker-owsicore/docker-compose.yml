@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  postgresql_test:
+    container_name: owsicore_postgresql_test
+    image: postgis/postgis:12-master
+    environment:
+      POSTGRES_DB : owsicore_test
+      POSTGRES_USER: owsicore_test
+      POSTGRES_PASSWORD: owsicore_test
+    ports:
+      - 6432:5432
+    volumes:
+      - ./postgresql_test/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
