@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>owsi-core-components</artifactId>
+		<groupId>fr.smile.core.components</groupId>
+		<version>0.28-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>soap-dependencies</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Apidae - Soap dependencies</name>
+	<description>
+		Include jakarta libs for SOAP so that dependency resolution is compatible with Java 8, Java 11 and Java 17.
+		
+		Needed so that when appplication is built with java 8, it can be run with java 9+.
+		
+		When we stop support java 8, this project can be removed (cxf-core dependency alone will be enough as it
+		includes needed dependency if build is done with java 9+).
+		
+		Dependencies extracted from https://repo1.maven.org/maven2/org/apache/cxf/cxf-parent/3.4.5/cxf-parent-3.4.5.pom
+		java9-plus profile.
+	</description>
+
+	<properties>
+		<cxf.jakarta.wsapi.version>2.3.3</cxf.jakarta.wsapi.version>
+		<cxf.jakarta.jwsapi.version>2.1.0</cxf.jakarta.jwsapi.version>
+		<cxf.jakarta.soapapi.version>1.4.2</cxf.jakarta.soapapi.version>
+		<cxf.jakarta.activation.version>1.2.2</cxf.jakarta.activation.version>
+		<cxf.saaj-impl.version>1.5.3</cxf.saaj-impl.version>
+		<cxf.javax.annotation-api.version>1.3.5</cxf.javax.annotation-api.version>
+		<cxf.geronimo.jta.version>1.1.1</cxf.geronimo.jta.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+			<version>${cxf.javax.annotation-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
+			<version>${cxf.jakarta.wsapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.jws</groupId>
+			<artifactId>jakarta.jws-api</artifactId>
+			<version>${cxf.jakarta.jwsapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.xml.soap</groupId>
+			<artifactId>jakarta.xml.soap-api</artifactId>
+			<version>${cxf.jakarta.soapapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>jakarta.activation</artifactId>
+			<version>${cxf.jakarta.activation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.messaging.saaj</groupId>
+			<artifactId>saaj-impl</artifactId>
+			<version>${cxf.saaj-impl.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jta_1.1_spec</artifactId>
+			<version>${cxf.geronimo.jta.version}</version>
+		</dependency>
+	</dependencies>
+</project>
