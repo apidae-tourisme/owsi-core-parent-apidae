@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.smile.core.components</groupId>
 		<artifactId>owsi-core-components</artifactId>
-		<version>0.28</version>
+		<version>0.29-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>owsi-core-component-export</artifactId>
