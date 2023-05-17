@@ -15,10 +15,10 @@ public final class JpaMoreInfinispanPropertyIds extends AbstractPropertyIds {
 	/*
 	 * Immutable Properties
 	 */
-	
 	public static final ImmutablePropertyId<Boolean> INFINISPAN_ENABLED = immutable("infinispan.enabled");
 	public static final ImmutablePropertyId<String> INFINISPAN_CLUSTER_NAME = immutable("infinispan.clusterName");
 	public static final ImmutablePropertyId<String> INFINISPAN_NODE_NAME = immutable("infinispan.nodeName");
+	public static final ImmutablePropertyId<Integer> INFINISPAN_LOCK_ACQUISITION_TIMEOUT = immutable("infinispan.lockAcquisitionTimeout");
 	/**
 	 * Complete list of roles
 	 */

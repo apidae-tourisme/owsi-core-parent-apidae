@@ -12,13 +12,12 @@ import org.infinispan.util.concurrent.IsolationLevel;
 import fr.openwide.core.infinispan.utils.GlobalDefaultReplicatedTransientConfigurationBuilder;
 
 public class CustomConfigurationBuilderHolder extends ConfigurationBuilderHolder {
+	
+	private final int lockAcquisitionTimeout;
 
-	public CustomConfigurationBuilderHolder() {
-		this(null);
-	}
-
-	public CustomConfigurationBuilderHolder(Properties transportProperties) {
+	public CustomConfigurationBuilderHolder(Properties transportProperties, int lockAcquisitionTimeout) {
 		super(Thread.currentThread().getContextClassLoader(), new GlobalDefaultReplicatedTransientConfigurationBuilder(transportProperties));
+		this.lockAcquisitionTimeout = lockAcquisitionTimeout;
 	}
 	
 	@Override
@@ -35,7 +34,7 @@ public class CustomConfigurationBuilderHolder extends ConfigurationBuilderHolder
 			.expiration().lifespan(-1)
 			// transactional (to allow block locking)
 			.transaction().lockingMode(LockingMode.PESSIMISTIC)
-			.locking().isolationLevel(IsolationLevel.REPEATABLE_READ).lockAcquisitionTimeout(20, TimeUnit.SECONDS)
+			.locking().isolationLevel(IsolationLevel.REPEATABLE_READ).lockAcquisitionTimeout(lockAcquisitionTimeout, TimeUnit.SECONDS)
 			// enable batch (to allow block locking)
 			.invocationBatching().enable()
 			.jmxStatistics();

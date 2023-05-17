@@ -32,7 +32,7 @@ public class TestCacheManagerBuilder {
 		Properties properties = new Properties();
 		properties.put("configurationFile", "test-jgroups-tcp.xml");
 		
-		CustomConfigurationBuilderHolder holder = new CustomConfigurationBuilderHolder(properties);
+		CustomConfigurationBuilderHolder holder = new CustomConfigurationBuilderHolder(properties, 20);
 		GlobalDefaultReplicatedTransientConfigurationBuilder globalConfiguration = holder.getGlobalConfigurationBuilder();
 		globalConfiguration.nodeName(name);
 		holder.newConfigurationBuilder("*");
