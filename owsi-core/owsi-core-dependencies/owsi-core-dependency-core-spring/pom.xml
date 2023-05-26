@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>owsi-core-dependencies</artifactId>
 		<groupId>fr.smile.core.dependencies</groupId>
-		<version>0.29</version>
+		<version>0.30-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>owsi-core-dependency-core-spring</artifactId>
