@@ -46,6 +46,7 @@ public class QueuedTaskHolderDataProvider extends AbstractSearchQueryDataProvide
 
 	public QueuedTaskHolderDataProvider() {
 		super();
+		creationDateModel.setObject(new Date());
 		Injector.get().inject(this);
 	}
 
