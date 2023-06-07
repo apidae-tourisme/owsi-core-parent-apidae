@@ -2,25 +2,22 @@ package fr.openwide.core.jpa.more.business.task.search;
 
 import java.util.List;
 
-import org.apache.lucene.search.SortField;
-
 import com.google.common.collect.ImmutableList;
+import com.querydsl.core.types.OrderSpecifier;
 
-import fr.openwide.core.jpa.business.generic.model.GenericEntity;
 import fr.openwide.core.jpa.more.business.sort.ISort;
 import fr.openwide.core.jpa.more.business.sort.SortUtils;
-import fr.openwide.core.jpa.more.business.task.model.QueuedTaskHolder;
-import fr.openwide.core.jpa.more.util.binding.CoreJpaMoreBindings;
+import fr.openwide.core.jpa.more.business.task.model.QQueuedTaskHolder;
 
-public enum QueuedTaskHolderSort implements ISort<SortField> {
+public enum QueuedTaskHolderSort implements ISort<OrderSpecifier<?>> {
 	
 	CREATION_DATE {
 		@Override
-		public List<SortField> getSortFields(SortOrder sortOrder) {
+		public List<OrderSpecifier<?>> getSortFields(SortOrder sortOrder) {
 			return ImmutableList.of(
-					SortUtils.luceneLongSortField(this, sortOrder, CoreJpaMoreBindings.queuedTaskHolder().endDate().getPath(), NullSortValue.GREATEST),
-					SortUtils.luceneLongSortField(this, sortOrder, CoreJpaMoreBindings.queuedTaskHolder().startDate().getPath(), NullSortValue.GREATEST),
-					SortUtils.luceneSortField(this, sortOrder, SortField.Type.LONG, CoreJpaMoreBindings.queuedTaskHolder().creationDate().getPath())
+					SortUtils.orderSpecifier(this, sortOrder, QQueuedTaskHolder.queuedTaskHolder.endDate),
+					SortUtils.orderSpecifier(this, sortOrder, QQueuedTaskHolder.queuedTaskHolder.startDate),
+					SortUtils.orderSpecifier(this, sortOrder, QQueuedTaskHolder.queuedTaskHolder.creationDate)
 			);
 		}
 		
@@ -31,9 +28,9 @@ public enum QueuedTaskHolderSort implements ISort<SortField> {
 	},
 	NAME {
 		@Override
-		public List<SortField> getSortFields(SortOrder sortOrder) {
+		public List<OrderSpecifier<?>> getSortFields(SortOrder sortOrder) {
 			return ImmutableList.of(
-					SortUtils.luceneSortField(this, sortOrder, SortField.Type.STRING, QueuedTaskHolder.NAME_SORT_FIELD_NAME)
+					SortUtils.orderSpecifier(this, sortOrder, QQueuedTaskHolder.queuedTaskHolder.name)
 			);
 		}
 		
@@ -44,9 +41,9 @@ public enum QueuedTaskHolderSort implements ISort<SortField> {
 	},
 	ID {
 		@Override
-		public List<SortField> getSortFields(SortOrder sortOrder) {
+		public List<OrderSpecifier<?>> getSortFields(SortOrder sortOrder) {
 			return ImmutableList.of(
-					SortUtils.luceneSortField(this, sortOrder, SortField.Type.LONG, GenericEntity.ID_SORT)
+					SortUtils.orderSpecifier(this, sortOrder, QQueuedTaskHolder.queuedTaskHolder.id)
 			);
 		}
 		
@@ -60,10 +57,5 @@ public enum QueuedTaskHolderSort implements ISort<SortField> {
 	public abstract SortOrder getDefaultOrder();
 	
 	@Override
-	public abstract List<SortField> getSortFields(SortOrder sortOrder);
-	
-	// TODO RJO Sort : pourquoi on n'a pas ça dans l'interface ?
-	public List<SortField> getSortFields() {
-		return getSortFields(getDefaultOrder());
-	}
+	public abstract List<OrderSpecifier<?>> getSortFields(SortOrder sortOrder);
 }
