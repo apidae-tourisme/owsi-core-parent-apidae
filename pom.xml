@@ -16,9 +16,7 @@
 		<owsi-core.maven-release-plugin.version>2.5.2</owsi-core.maven-release-plugin.version>
 		<maven-jgitflow-plugin.version>1.0-m5.1</maven-jgitflow-plugin.version>
 		
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-<!-- 		<maven.compiler.release>8</maven.compiler.release> -->
+ 		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
 
 	<modules>
