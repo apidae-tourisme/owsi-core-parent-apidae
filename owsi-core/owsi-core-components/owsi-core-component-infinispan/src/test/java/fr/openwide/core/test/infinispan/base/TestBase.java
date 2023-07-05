@@ -1,11 +1,9 @@
 package fr.openwide.core.test.infinispan.base;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -57,24 +55,16 @@ public abstract class TestBase {
 	}
 
 	protected final Process runInfinispan(String nodeName, String... customArguments) throws IOException {
-		Function<URL, String> urlToFile = new Function<URL, String>() {
-			@Override
-			public String apply(URL input) {
-				return input.getFile();
-			}
-		};
-		String classpath = Joiner.on(File.pathSeparator)
-				.join(Lists.transform(
-						// url collection
-						Lists.newArrayList(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs()),
-						// to files
-						urlToFile) // to string with pathSeparator
-		);
+		String classpath = System.getProperty("java.class.path");
 		List<String> arguments = Lists.newArrayList();
 		arguments.add(System.getProperty("java.home") + "/bin/java");
 		if ("true".equals(System.getProperty("java.net.preferIPv4Stack", "false"))) {
 			arguments.add("-Djava.net.preferIPv4Stack=true");
 		}
+		arguments.add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+		arguments.add("--add-opens=java.base/java.io=ALL-UNNAMED");
+		arguments.add("--add-opens=java.base/java.util=ALL-UNNAMED");
+		arguments.add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
 		arguments.add("-classpath");
 		arguments.add(classpath);
 		arguments.add(getProcessClassName());
