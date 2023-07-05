@@ -18,7 +18,7 @@
 	<properties>
 		<owsi-core.version>${project.version}</owsi-core.version>
 
-		<owsi-core.spring.version>5.2.20.RELEASE</owsi-core.spring.version>
+		<owsi-core.spring.version>5.3.28</owsi-core.spring.version>
 		<owsi-core.aspectj.version>1.8.10</owsi-core.aspectj.version>
 
 		<owsi-core.hibernate-core.version>5.2.10.Final</owsi-core.hibernate-core.version>
@@ -42,7 +42,7 @@
 		<owsi-core.mysql.version>5.1.14</owsi-core.mysql.version>
 
 		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
-		<owsi-core.javassist.version>3.20.0-GA</owsi-core.javassist.version>
+		<owsi-core.javassist.version>3.29.2-GA</owsi-core.javassist.version>
 
 		<owsi-core.bindgen.version>5.0.0-SNAPSHOT</owsi-core.bindgen.version>
 		<owsi-core.bindgen-java.version>5.0.0-SNAPSHOT</owsi-core.bindgen-java.version>
