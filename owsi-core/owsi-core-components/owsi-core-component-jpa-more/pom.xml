@@ -89,17 +89,10 @@
 		</dependency>
 		
 		<!-- Test dependencies -->
-		
-		<!--
-		Scope provided is necessary because test helpers are
-		included in artifact (TestHistoryDifferenceCollectionMatcher for instance)
-		so we need to compile them, but we don't want to pollute dependencies of dependent
-		projects.
-		-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
@@ -107,11 +100,9 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${owsi-core.mockito.version}</version>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 
