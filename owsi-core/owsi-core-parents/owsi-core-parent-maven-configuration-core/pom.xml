@@ -45,8 +45,8 @@
 		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
 		<owsi-core.javassist.version>3.29.2-GA</owsi-core.javassist.version>
 
-		<owsi-core.bindgen.version>5.0.0-SNAPSHOT</owsi-core.bindgen.version>
-		<owsi-core.bindgen-java.version>5.0.0-SNAPSHOT</owsi-core.bindgen-java.version>
+		<owsi-core.bindgen.version>5.0.0</owsi-core.bindgen.version>
+		<owsi-core.bindgen-java.version>5.0.0</owsi-core.bindgen-java.version>
 
 		<owsi-core.spring-security.version>5.2.15.RELEASE</owsi-core.spring-security.version>
 
