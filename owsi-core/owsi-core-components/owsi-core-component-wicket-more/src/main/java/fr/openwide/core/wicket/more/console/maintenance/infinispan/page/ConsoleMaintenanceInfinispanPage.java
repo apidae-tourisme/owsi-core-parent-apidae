@@ -36,7 +36,8 @@ public class ConsoleMaintenanceInfinispanPage extends ConsoleMaintenanceTemplate
 																JpaMoreInfinispanPropertyIds.INFINISPAN_NODE_NAME,
 																JpaMoreInfinispanPropertyIds.INFINISPAN_ROLES,
 																JpaMoreInfinispanPropertyIds.INFINISPAN_ROLES_REBALANCE,
-																JpaMoreInfinispanPropertyIds.INFINISPAN_LOCK_ACQUISITION_TIMEOUT
+																JpaMoreInfinispanPropertyIds.INFINISPAN_LOCK_ACQUISITION_TIMEOUT,
+																JpaMoreInfinispanPropertyIds.INFINISPAN_REMOTE_TIMEOUT
 													)
 													.build()
 				)

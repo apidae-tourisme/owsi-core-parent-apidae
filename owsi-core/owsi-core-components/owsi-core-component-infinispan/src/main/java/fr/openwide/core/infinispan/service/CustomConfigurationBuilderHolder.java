@@ -13,11 +13,21 @@ import fr.openwide.core.infinispan.utils.GlobalDefaultReplicatedTransientConfigu
 
 public class CustomConfigurationBuilderHolder extends ConfigurationBuilderHolder {
 	
+	/**
+	 * Maximum time to attempt a particular lock acquisition
+	 */
 	private final int lockAcquisitionTimeout;
+	
+    /**
+     * This is the timeout used to wait for an acknowledgment when making a remote call, after which
+     * the call is aborted and an exception is thrown.
+     */
+	private final int remoteTimeout;
 
-	public CustomConfigurationBuilderHolder(Properties transportProperties, int lockAcquisitionTimeout) {
+	public CustomConfigurationBuilderHolder(Properties transportProperties, int lockAcquisitionTimeout, int remoteTimeout) {
 		super(Thread.currentThread().getContextClassLoader(), new GlobalDefaultReplicatedTransientConfigurationBuilder(transportProperties));
 		this.lockAcquisitionTimeout = lockAcquisitionTimeout;
+		this.remoteTimeout = remoteTimeout;
 	}
 	
 	@Override
@@ -31,6 +41,7 @@ public class CustomConfigurationBuilderHolder extends ConfigurationBuilderHolder
 		builder.clustering()
 			// synchronous with l1 cache
 			.cacheMode(CacheMode.REPL_SYNC)
+			.remoteTimeout(remoteTimeout, TimeUnit.SECONDS)
 			.expiration().lifespan(-1)
 			// transactional (to allow block locking)
 			.transaction().lockingMode(LockingMode.PESSIMISTIC)
