@@ -68,7 +68,8 @@ public class JpaMoreInfinispanConfig {
 				properties.put(key, propertyService.getAsString(JpaMoreInfinispanPropertyIds.transportProperty(key)));
 			}
 			CustomConfigurationBuilderHolder holder = new CustomConfigurationBuilderHolder(properties, 
-					propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_LOCK_ACQUISITION_TIMEOUT));
+					propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_LOCK_ACQUISITION_TIMEOUT),
+					propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_REMOTE_TIMEOUT));
 			GlobalDefaultReplicatedTransientConfigurationBuilder globalConfiguration =
 					holder.getGlobalConfigurationBuilder();
 			globalConfiguration.nodeName(nodeName);
