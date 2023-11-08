@@ -44,11 +44,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+          cache: maven
       - name: Build and test
         run: |
           docker ps -a
           docker exec owsicore-db psql -U owsicore_test -d owsicore_test -c "CREATE SCHEMA owsicore" &&
-          mvn clean install
+          mvn -B clean install
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}

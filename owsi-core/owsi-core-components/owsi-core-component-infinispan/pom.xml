@@ -87,6 +87,7 @@
 				<configuration>
 					<!-- jboss marshalling (serialize/deserialize) needs unnamed access to modules -->
 					<argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED</argLine>
+					<forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>
 				</configuration>
 			</plugin>
 		</plugins>
