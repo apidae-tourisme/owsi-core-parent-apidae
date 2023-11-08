@@ -1,11 +1,14 @@
 package fr.openwide.core.test.infinispan.util.process;
 
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
+import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.openwide.core.infinispan.service.InfinispanClusterServiceImpl;
 import fr.openwide.core.test.infinispan.util.TestCacheManagerBuilder;
+import fr.openwide.core.test.infinispan.util.listener.MonitorNotifyListener;
 import fr.openwide.core.test.infinispan.util.roles.SimpleRolesProvider;
 
 public class InfinispanClusterProcess implements Runnable {
@@ -25,6 +28,12 @@ public class InfinispanClusterProcess implements Runnable {
 	@Override
 	public void run() {
 		final EmbeddedCacheManager cacheManager = new TestCacheManagerBuilder(nodeName, taskName).build();
+		cacheManager.addListener(new MonitorNotifyListener() {
+			@ViewChanged
+			public void onViewChanged(ViewChangedEvent viewChangedEvent) {
+				LOGGER.debug("{}: view change -  {}", nodeName, viewChangedEvent.getNewMembers().size());
+			}
+		});
 		InfinispanClusterServiceImpl cluster =
 				new InfinispanClusterServiceImpl(nodeName, cacheManager, new SimpleRolesProvider(), null, null);
 		cluster.init();

@@ -1,9 +1,8 @@
 package fr.openwide.core.test.infinispan.base;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.lang.management.ManagementFactory;
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -19,7 +18,6 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -71,8 +69,7 @@ public abstract class TestBase {
 		arguments.add(nodeName);
 		arguments.addAll(Lists.newArrayList(customArguments));
 
-		Process process = new ProcessBuilder(arguments).start();
-		new Thread(new ConsoleConsumer(process)).start();
+		Process process = new ProcessBuilder(arguments).inheritIO().start();
 		LOGGER.debug("command launched {}", Joiner.on(" ").join(arguments));
 		return process;
 	}
@@ -97,7 +94,7 @@ public abstract class TestBase {
 			@ViewChanged
 			public void onViewChanged(ViewChangedEvent viewChangedEvent) {
 				synchronized (monitor) {
-					LOGGER.debug("notify monitor on view change");
+					LOGGER.debug("master: notify monitor on view change - {}", viewChangedEvent.getNewMembers().size());
 					monitor.notify();
 				}
 			}
@@ -219,34 +216,6 @@ public abstract class TestBase {
 			throw new ExecutionException(e);
 		}
 		return false;
-	}
-
-	// taken from
-	// org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
-	private class ConsoleConsumer implements Runnable {
-		
-		private final Process process;
-		
-		public ConsoleConsumer(Process process) {
-			super();
-			this.process = process;
-		}
-		
-		@Override
-		public void run() {
-			final InputStream stream = process.getInputStream();
-
-			try {
-				byte[] buf = new byte[32];
-				int num;
-				// Do not try reading a line cos it considers '\r' end of line
-				while ((num = stream.read(buf)) != -1) {
-					System.out.write(buf, 0, num);
-				}
-			} catch (IOException e) {
-			}
-		}
-
 	}
 
 }
