@@ -103,6 +103,9 @@
 										<exclude>xml-apis:xml-apis</exclude>
 										<exclude>apache-xerces:xml-apis</exclude>
 										<exclude>javax.servlet:servlet-api</exclude>
+										<exclude>org.slf4j:reload4j</exclude>
+										<exclude>ch.qos.reload4j:reload4j</exclude>
+										<exclude>log4j:log4j</exclude>
 									</excludes>
 								</bannedDependencies>
 								<requireMavenVersion>
