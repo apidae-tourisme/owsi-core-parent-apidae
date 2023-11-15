@@ -84,9 +84,8 @@
 		<!-- Warning: versions 2.x.y seem to be an abandoned branch of development (they are older than 1.x.y) -->
 		<owsi-core.xml-apis.version>1.4.01</owsi-core.xml-apis.version>
 
-		<owsi-core.slf4j.version>1.7.36</owsi-core.slf4j.version>
-		<owsi-core.reload4j.version>1.2.19</owsi-core.reload4j.version>
-
+		<owsi-core.slf4j.version>2.0.6</owsi-core.slf4j.version>
+		<owsi-core.log4j2.version>2.19.0</owsi-core.log4j2.version>
 
 		<owsi-core.opencsv.version>3.7</owsi-core.opencsv.version>
 		<owsi-core.freemarker.version>2.3.23</owsi-core.freemarker.version>
@@ -197,15 +196,15 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-reload4j</artifactId>
-				<version>${owsi-core.slf4j.version}</version>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j2-impl</artifactId>
+				<version>${owsi-core.log4j2.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>ch.qos.reload4j</groupId>
-				<artifactId>reload4j</artifactId>
-				<version>${owsi-core.reload4j.version}</version>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${owsi-core.log4j2.version}</version>
 			</dependency>
 
 			<dependency>
