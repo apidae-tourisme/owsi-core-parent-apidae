@@ -19,7 +19,7 @@
 		<owsi-core.version>${project.version}</owsi-core.version>
 
 		<owsi-core.spring.version>5.3.28</owsi-core.spring.version>
-		<owsi-core.aspectj.version>1.8.10</owsi-core.aspectj.version>
+		<owsi-core.aspectj.version>1.9.9</owsi-core.aspectj.version>
 
 		<owsi-core.hibernate-core.version>5.2.10.Final</owsi-core.hibernate-core.version>
 		<owsi-core.byte-buddy.version>1.14.5</owsi-core.byte-buddy.version>
