@@ -42,7 +42,6 @@
 		<owsi-core.oracle10g.version>10.2.0.5</owsi-core.oracle10g.version>
 		<owsi-core.mysql.version>5.1.14</owsi-core.mysql.version>
 
-		<owsi-core.cglib.version>3.2.5</owsi-core.cglib.version>
 		<owsi-core.javassist.version>3.29.2-GA</owsi-core.javassist.version>
 
 		<owsi-core.bindgen.version>5.0.0</owsi-core.bindgen.version>
@@ -137,6 +136,10 @@
 		<owsi-core.javax-annotation.version>1.3.2</owsi-core.javax-annotation.version>
 
 		<owsi-core.wicket.version>7.6.0</owsi-core.wicket.version>
+		<!-- dependency hack to ensure java 17 compatibility with bytebuddy; implies wicket.ioc.useByteBuddy=true -->
+		<!-- see https://issues.apache.org/jira/browse/WICKET-6913?jql=text%20~%20%22wicket.ioc.useByteBuddy%22 -->
+		<!-- see https://apidae-tourisme.zendesk.com/agent/tickets/27397 -->
+		<owsi-core.wicket-ioc.version>9.15.0</owsi-core.wicket-ioc.version>
 		<owsi-core.wiquery.version>7.0</owsi-core.wiquery.version>
 		<owsi-core.wicket-select2.version>1.2.2</owsi-core.wicket-select2.version>
 		<owsi-core.wqplot.version>7.2.0.owsi2</owsi-core.wqplot.version>
@@ -161,10 +164,6 @@
 
 		<owsi-core.localization-properties-consistency-maven-plugin.version>1.0.1</owsi-core.localization-properties-consistency-maven-plugin.version>
 	</properties>
-
-	<prerequisites>
-		<maven>${minimal.maven.version}</maven>
-	</prerequisites>
 
 	<dependencyManagement>
 		<dependencies>
@@ -408,12 +407,6 @@
 			<!-- Reflection, proxying, instrumentation... -->
 
 			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib-nodep</artifactId>
-				<version>${owsi-core.cglib.version}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjrt</artifactId>
 				<version>${owsi-core.aspectj.version}</version>
@@ -601,11 +594,6 @@
 				<artifactId>querydsl-jpa</artifactId>
 				<version>${owsi-core.querydsl.version}</version>
 				<exclusions>
-					<exclusion>
-						<groupId>cglib</groupId>
-						<artifactId>cglib</artifactId>
-					</exclusion>
-
 					<exclusion>
 						<groupId>org.hibernate.javax.persistence</groupId>
 						<artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -1006,11 +994,11 @@
 			<dependency>
 				<groupId>org.apache.wicket</groupId>
 				<artifactId>wicket-ioc</artifactId>
-				<version>${owsi-core.wicket.version}</version>
+				<version>${owsi-core.wicket-ioc.version}</version>
 				<exclusions>
 					<exclusion>
-						<artifactId>cglib</artifactId>
 						<groupId>cglib</groupId>
+						<artifactId>cglib</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -1314,7 +1302,9 @@
 										<exclude>org.springframework:spring</exclude>
 										<exclude>org.springframework:spring-ldap</exclude>
 										<exclude>commons-logging:commons-logging</exclude>
+										<!-- cglib not compatible with java 17 -->
 										<exclude>cglib:cglib</exclude>
+										<exclude>cglib:cglib-nodep</exclude>
 										<exclude>rhino:rhino</exclude>
 										<exclude>rhino:js</exclude>
 										<exclude>javassist:javassist</exclude>

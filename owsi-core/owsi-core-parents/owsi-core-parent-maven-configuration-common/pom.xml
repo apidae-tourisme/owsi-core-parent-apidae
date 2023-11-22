@@ -46,10 +46,6 @@
 		<owsi-core.aspectj-maven-plugin.version>1.8</owsi-core.aspectj-maven-plugin.version>
 	</properties>
 
-	<prerequisites>
-		<maven>${minimal.maven.version}</maven>
-	</prerequisites>
-
 	<build>
 		<extensions>
 			<!-- this is to enable the scp protocol in site deploy -->
