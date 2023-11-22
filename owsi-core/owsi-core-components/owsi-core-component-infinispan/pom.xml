@@ -22,11 +22,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
-		</dependency>
-		
-		<dependency>
 			<groupId>fr.smile.core.components</groupId>
 			<artifactId>owsi-core-component-commons</artifactId>
 			<version>${project.version}</version>

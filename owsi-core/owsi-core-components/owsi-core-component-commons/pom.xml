@@ -14,12 +14,6 @@
 	<description>Capitalisation pour les outils communs sur la plateforme OWSI</description>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
-		</dependency>
-
 		<!-- OWSI Core -->
 
 		<dependency>
