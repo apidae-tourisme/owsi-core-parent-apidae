@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>owsi-core-components</artifactId>
 		<groupId>fr.smile.core.components</groupId>
-		<version>0.32</version>
+		<version>0.33-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>soap-dependencies</artifactId>
