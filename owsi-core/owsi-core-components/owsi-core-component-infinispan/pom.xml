@@ -16,6 +16,10 @@
 			<version>${owsi-core.infinispan.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-jboss-marshalling</artifactId>
 			<version>${owsi-core.infinispan.version}</version>
