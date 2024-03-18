@@ -1,5 +1,6 @@
 package fr.openwide.core.jpa.more.business.task.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,17 +11,20 @@ import fr.openwide.core.jpa.exception.SecurityServiceException;
 import fr.openwide.core.jpa.exception.ServiceException;
 import fr.openwide.core.jpa.more.business.task.dao.IQueuedTaskHolderDao;
 import fr.openwide.core.jpa.more.business.task.model.QueuedTaskHolder;
+import fr.openwide.core.jpa.more.business.task.model.TaskTypesRegistry;
 import fr.openwide.core.jpa.more.business.task.util.TaskStatus;
 
 public class QueuedTaskHolderServiceImpl extends GenericEntityServiceImpl<Long, QueuedTaskHolder> implements
 		IQueuedTaskHolderService {
 	
 	private IQueuedTaskHolderDao queuedTaskHolderDao;
+	private final TaskTypesRegistry typesRegistry;
 
 	@Autowired
-	public QueuedTaskHolderServiceImpl(IQueuedTaskHolderDao queuedTaskHolderDao) {
+	public QueuedTaskHolderServiceImpl(IQueuedTaskHolderDao queuedTaskHolderDao, TaskTypesRegistry typesRegistry) {
 		super(queuedTaskHolderDao);
 		this.queuedTaskHolderDao = queuedTaskHolderDao;
+		this.typesRegistry = typesRegistry;
 	}
 
 	@Override
@@ -54,9 +58,12 @@ public class QueuedTaskHolderServiceImpl extends GenericEntityServiceImpl<Long, 
 		return queuedTaskHolderDao.listConsumable(queueId);
 	}
 
+	/**
+	 * Task types extracted from {@link TaskTypesRegistry}, sorted in alphabetical order.
+	 */
 	@Override
 	public List<String> listTypes() {
-		return queuedTaskHolderDao.listTypes();
+		return new ArrayList<>(typesRegistry.getTypes());
 	}
 	
 	@Override
