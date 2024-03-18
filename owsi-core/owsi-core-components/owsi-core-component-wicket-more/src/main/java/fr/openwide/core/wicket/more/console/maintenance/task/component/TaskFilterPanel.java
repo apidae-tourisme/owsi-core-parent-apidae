@@ -1,11 +1,7 @@
 package fr.openwide.core.wicket.more.console.maintenance.task.component;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -15,11 +11,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.convert.ConversionException;
 
 import fr.openwide.core.jpa.more.business.task.util.TaskResult;
 import fr.openwide.core.jpa.more.business.task.util.TaskStatus;
-import fr.openwide.core.spring.util.StringUtils;
 import fr.openwide.core.wicket.markup.html.basic.CountLabel;
 import fr.openwide.core.wicket.more.console.maintenance.task.model.QueuedTaskHolderDataProvider;
 import fr.openwide.core.wicket.more.markup.html.form.DatePicker;
@@ -72,7 +66,7 @@ public class TaskFilterPanel extends Panel {
 		name.add(new LabelPlaceholderBehavior());
 		filterForm.add(name);
 
-		FormComponent<Collection<String>> taskTypes = new TypeChoice("taskTypes",
+		FormComponent<Collection<String>> taskTypes = new TaskTypeListMultipleChoice("taskTypes",
 				queuedTaskHolderDataProvider.getTaskTypesModel());
 		filterForm.add(taskTypes);
 
@@ -91,28 +85,5 @@ public class TaskFilterPanel extends Panel {
 		FormComponent<Date> date = new DatePicker("date", queuedTaskHolderDataProvider.getCreationDateModel(), DatePattern.SHORT_DATE);
 		date.setRequired(true);
 		filterForm.add(date);
-	}
-
-	public static class TypeChoice extends TextField<Collection<String>> {
-		
-		private static final long serialVersionUID = 417472287897054950L;
-		
-		public TypeChoice(String id, IModel<Collection<String>> model) {
-			super(id, model);
-			setConvertEmptyInputStringToNull(false);
-		}
-		
-		@Override
-		protected List<String> convertValue(String[] value) throws ConversionException {
-			if (value == null || value.length == 0 || value[0] == null) {
-				return new ArrayList<>();
-			}
-			return StringUtils.splitAsList(value[0].trim(), "|");
-		}
-		
-		@Override
-		protected String getModelValue() {
-			return Optional.ofNullable(getModelObject()).map(list -> list.stream().collect(Collectors.joining("|"))).orElse("");
-		}
 	}
 }

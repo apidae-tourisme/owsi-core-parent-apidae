@@ -1,6 +1,7 @@
 package fr.openwide.core.jpa.more.config.spring;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,8 +13,10 @@ import fr.openwide.core.jpa.more.business.CoreJpaMoreBusinessPackage;
 import fr.openwide.core.jpa.more.business.task.dao.IQueuedTaskHolderDao;
 import fr.openwide.core.jpa.more.business.task.dao.QueuedTaskHolderDaoImpl;
 import fr.openwide.core.jpa.more.business.task.model.IQueueId;
+import fr.openwide.core.jpa.more.business.task.model.TaskTypesRegistry;
 import fr.openwide.core.jpa.more.business.task.service.IQueuedTaskHolderManager;
 import fr.openwide.core.jpa.more.business.task.service.IQueuedTaskHolderService;
+import fr.openwide.core.jpa.more.business.task.service.ITaskTypeConfigurer;
 import fr.openwide.core.jpa.more.business.task.service.QueuedTaskHolderManagerImpl;
 import fr.openwide.core.jpa.more.business.task.service.QueuedTaskHolderServiceImpl;
 
@@ -33,8 +36,17 @@ public abstract class AbstractTaskManagementConfig {
 	}
 
 	@Bean
-	public IQueuedTaskHolderService queuedTaskHolderService(IQueuedTaskHolderDao queuedTaskHolderDao) {
-		return new QueuedTaskHolderServiceImpl(queuedTaskHolderDao);
+	public TaskTypesRegistry taskTypesRegistry(List<ITaskTypeConfigurer> configurers) {
+		TaskTypesRegistry registry = new TaskTypesRegistry();
+		for (ITaskTypeConfigurer configurer : configurers) {
+			configurer.configureTaskType(registry);
+		}
+		return registry;
+	}
+
+	@Bean
+	public IQueuedTaskHolderService queuedTaskHolderService(IQueuedTaskHolderDao queuedTaskHolderDao, TaskTypesRegistry registry) {
+		return new QueuedTaskHolderServiceImpl(queuedTaskHolderDao, registry);
 	}
 	
 	@Bean
