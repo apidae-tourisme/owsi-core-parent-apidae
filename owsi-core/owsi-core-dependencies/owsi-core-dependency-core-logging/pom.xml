@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>owsi-core-dependencies</artifactId>
 		<groupId>fr.smile.core.dependencies</groupId>
-		<version>0.34</version>
+		<version>0.35-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>owsi-core-dependency-core-logging</artifactId>
