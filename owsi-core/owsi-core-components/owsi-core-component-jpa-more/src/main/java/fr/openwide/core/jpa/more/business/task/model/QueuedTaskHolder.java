@@ -13,6 +13,12 @@ import javax.persistence.Version;
 
 import org.bindgen.Bindable;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
 import org.springframework.core.style.ToStringCreator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,9 +29,11 @@ import fr.openwide.core.commons.util.CloneUtils;
 import fr.openwide.core.jpa.business.generic.model.GenericEntity;
 import fr.openwide.core.jpa.more.business.task.util.TaskResult;
 import fr.openwide.core.jpa.more.business.task.util.TaskStatus;
+import fr.openwide.core.jpa.search.util.HibernateSearchAnalyzer;
 
 @Entity
 @Bindable
+@Indexed
 public class QueuedTaskHolder extends GenericEntity<Long, QueuedTaskHolder> {
 	private static final long serialVersionUID = 3926959721176678607L;
 
@@ -33,25 +41,37 @@ public class QueuedTaskHolder extends GenericEntity<Long, QueuedTaskHolder> {
 
 	@Id
 	@GeneratedValue
+	@DocumentId
 	private Long id;
 
 	@Column(nullable = false)
+	@Fields({ 
+		@Field(analyzer = @Analyzer(definition = HibernateSearchAnalyzer.TEXT)),
+		@Field(name = NAME_SORT_FIELD_NAME, analyzer = @Analyzer(definition = HibernateSearchAnalyzer.TEXT_SORT))
+	})
+	@SortableField(forField = NAME_SORT_FIELD_NAME)
 	@Type(type = "fr.openwide.core.jpa.hibernate.usertype.StringClobType")
 	private String name;
 
 	@Column(nullable = true)
+	@Field(analyzer = @Analyzer(definition = HibernateSearchAnalyzer.KEYWORD), indexNullAs = Field.DEFAULT_NULL_TOKEN)
 	private String queueId;
 
 	@Column(nullable = false)
+	@Field(analyzer = @Analyzer(definition = HibernateSearchAnalyzer.KEYWORD))
 	private String taskType;
 
 	@Column(nullable = false)
+	@Field
 	private Date creationDate;
 
+	@Field
 	private Date triggeringDate = null;
 
+	@Field
 	private Date startDate = null;
 
+	@Field
 	private Date endDate = null;
 
 	@Version
@@ -64,10 +84,12 @@ public class QueuedTaskHolder extends GenericEntity<Long, QueuedTaskHolder> {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Field(analyzer = @Analyzer(definition = HibernateSearchAnalyzer.KEYWORD))
 	private TaskStatus status;
 	
 	@Column
 	@Enumerated(EnumType.STRING)
+	@Field(analyzer = @Analyzer(definition = HibernateSearchAnalyzer.KEYWORD))
 	private TaskResult result;
 
 	@Column
