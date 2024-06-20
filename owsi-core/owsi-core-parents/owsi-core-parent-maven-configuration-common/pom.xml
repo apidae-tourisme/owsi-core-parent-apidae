@@ -37,7 +37,7 @@
 		<owsi-core.maven-deploy-plugin.version>3.1.1</owsi-core.maven-deploy-plugin.version>
 		<owsi-core.maven-source-plugin.version>3.3.0</owsi-core.maven-source-plugin.version>
 		<owsi-core.maven-javadoc-plugin.version>3.6.2</owsi-core.maven-javadoc-plugin.version>
-		<owsi-core.maven-enforcer-plugin.version>1.4.1</owsi-core.maven-enforcer-plugin.version>
+		<owsi-core.maven-enforcer-plugin.version>3.4.1</owsi-core.maven-enforcer-plugin.version>
 		<owsi-core.maven-dependency-plugin.version>3.6.1</owsi-core.maven-dependency-plugin.version>
 		<owsi-core.exec-maven-plugin.version>3.1.0</owsi-core.exec-maven-plugin.version>
 
@@ -89,7 +89,12 @@
 						</goals>
 						<configuration>
 							<rules>
-								<DependencyConvergence />
+								<requireUpperBoundDeps>
+									<excludes>
+										<!-- see commons-io.version comment -->
+										<exclude>commons-io:commons-io</exclude>
+									</excludes>
+								</requireUpperBoundDeps>
 								<bannedDependencies>
 									<excludes>
 										<exclude>org.springframework:spring</exclude>
