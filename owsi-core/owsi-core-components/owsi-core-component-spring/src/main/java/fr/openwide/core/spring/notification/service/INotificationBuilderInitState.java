@@ -4,5 +4,5 @@ import org.springframework.context.ApplicationContext;
 
 public interface INotificationBuilderInitState {
 	
-	INotificationBuilderBaseState init(ApplicationContext applicationContext);
+	INotificationBuilderBaseState init(ApplicationContext applicationContext, String prefix);
 }
