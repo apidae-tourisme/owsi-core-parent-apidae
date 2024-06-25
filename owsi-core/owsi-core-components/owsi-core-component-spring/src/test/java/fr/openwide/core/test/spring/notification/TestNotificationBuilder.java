@@ -26,7 +26,7 @@ public class TestNotificationBuilder {
 	@Test
 	@Ignore("Can only be tested manually. Comment the @Ignore annotation when you want to test this.")
 	public void testToCcBccExcept() throws ServiceException {
-		INotificationBuilderBaseState builder = NotificationBuilder.create().init(applicationContext);
+		INotificationBuilderBaseState builder = NotificationBuilder.create().init(applicationContext, null);
 		
 		builder.toAddress("test-to-1@example.com", "test-to-2@example.com", "pas un mail valide", "mail@îdn.fr", "test-to-ignore@example.com")
 				.ccAddress("test-to-2@example.com", "test-cc-1@example.com", "test-cc-2@example.com", "test-cc-ignore@example.com")

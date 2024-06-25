@@ -10,6 +10,11 @@ public class AbstractNotificationServiceImpl {
 
 	protected INotificationBuilderBaseState builder() {
 		INotificationBuilderInitState notificationBuilder = NotificationBuilder.create();
-		return notificationBuilder.init(applicationContext);
+		return notificationBuilder.init(applicationContext, null);
+	}
+	
+	protected INotificationBuilderBaseState builder(String prefix) {
+		INotificationBuilderInitState notificationBuilder = NotificationBuilder.create();
+		return notificationBuilder.init(applicationContext, prefix);
 	}
 }

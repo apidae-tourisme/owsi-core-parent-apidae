@@ -157,11 +157,15 @@ public class NotificationBuilder implements INotificationBuilderInitState, INoti
 	}
 	
 	@Override
-	public INotificationBuilderBaseState init(ApplicationContext applicationContext) {
+	public INotificationBuilderBaseState init(ApplicationContext applicationContext, String prefix) {
 		SpringBeanUtils.autowireBean(applicationContext, this);
 		this.applicationContext = applicationContext;
+		if(StringUtils.hasText(prefix)) {
+			this.subjectPrefix = prefix;
+		}else {
+			this.subjectPrefix = propertyService.get(NOTIFICATION_MAIL_SUBJECT_PREFIX);
+		}
 		
-		this.subjectPrefix = propertyService.get(NOTIFICATION_MAIL_SUBJECT_PREFIX);
 		this.explicitelyDefinedContentDescriptor =
 				new ExplicitelyDefinedNotificationContentDescriptorImpl(getDefaultLocale());
 		SpringBeanUtils.autowireBean(applicationContext, explicitelyDefinedContentDescriptor);
