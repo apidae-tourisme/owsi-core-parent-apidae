@@ -24,6 +24,7 @@ public abstract class AbstractAjaxModalPopupPanel<O> extends AbstractModalPopupP
 	 */
 	public AbstractAjaxModalPopupPanel(String id, IModel<? extends O> model) {
 		this(id, model, true);
+		setStatic();
 	}
 
 	/**
