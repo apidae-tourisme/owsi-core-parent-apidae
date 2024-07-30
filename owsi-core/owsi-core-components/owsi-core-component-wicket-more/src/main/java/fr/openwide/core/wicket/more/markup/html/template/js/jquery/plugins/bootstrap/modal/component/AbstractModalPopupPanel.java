@@ -37,12 +37,14 @@ public abstract class AbstractModalPopupPanel<O> extends GenericPanel<O> impleme
 	public AbstractModalPopupPanel(String id, IModel<? extends O> model) {
 		super(id, model);
 		setOutputMarkupId(true);
-		
-		// doit être présent dès le début pour le bon fonctionnement de prepareLink
+
+		// doit être présent dès le début pour le bon fonctionnement de
+		// prepareLink
 		container = new WebMarkupContainer("container");
 		container.setOutputMarkupId(true);
 		container.add(new AttributeAppender("class", getCssClassNamesModel(), " "));
 		add(container);
+		setStatic();
 	}
 
 	/**
