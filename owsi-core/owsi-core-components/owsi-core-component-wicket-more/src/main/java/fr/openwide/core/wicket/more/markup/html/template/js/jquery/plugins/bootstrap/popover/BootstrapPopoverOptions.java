@@ -134,7 +134,7 @@ public class BootstrapPopoverOptions extends SimpleOptions {
 											// Note : c'est moche, mais au moins ça marche. On renvoie bien du *html* ici,
 											// ajouter des bindings jquery n'aura aucun effet.
 											+ " onclick=\"new function() {"
-											+ new JsStatement().$(popoverComponent).chain("popover", "'toggle'").render() + " return false;"
+											+ new JsStatement().$(popoverComponent).chain("popover", "'hide'").render() + " return false;"
 											+ "}\""
 											+ ">&times;</a>",
 											true
