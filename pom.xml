@@ -4,7 +4,7 @@
 
 	<groupId>fr.smile.core</groupId>
 	<artifactId>owsi-core-parent</artifactId>
-	<version>0.38</version>
+	<version>0.39-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OWSI Core - Parent</name>
