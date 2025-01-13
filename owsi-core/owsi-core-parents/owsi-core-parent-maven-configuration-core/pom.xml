@@ -37,7 +37,7 @@
 
 		<owsi-core.joda-time.version>2.9.2</owsi-core.joda-time.version>
 
-		<owsi-core.postgresql.version>9.4.1208.jre7</owsi-core.postgresql.version>
+		<owsi-core.postgresql.version>42.7.4</owsi-core.postgresql.version>
 		<owsi-core.pgjdbc-ng.version>0.7.1</owsi-core.pgjdbc-ng.version>
 		<owsi-core.oracle10g.version>10.2.0.5</owsi-core.oracle10g.version>
 		<owsi-core.mysql.version>5.1.14</owsi-core.mysql.version>
@@ -147,7 +147,7 @@
 		<owsi-core.less4j.version>1.17.2</owsi-core.less4j.version>
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
 
-		<owsi-core.flywaydb.version>6.0.8</owsi-core.flywaydb.version>
+		<owsi-core.flywaydb.version>9.22.3</owsi-core.flywaydb.version>
 		<!-- infinispan >= 8.0 requires java 8 -->
 		<owsi-core.infinispan.version>13.0.12.Final</owsi-core.infinispan.version>
 

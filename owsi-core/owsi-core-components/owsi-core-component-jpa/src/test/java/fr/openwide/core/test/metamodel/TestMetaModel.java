@@ -18,11 +18,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.impossibl.postgres.utils.guava.Joiner;
 
 import fr.openwide.core.jpa.config.spring.provider.IJpaConfigurationProvider;
 import fr.openwide.core.jpa.hibernate.dialect.PerTableSequenceStyleGenerator;
@@ -80,7 +80,7 @@ public class TestMetaModel extends AbstractJpaCoreTestCase {
 			Iterator<DynaBean> tablesResultSet =
 					new ResultSetDynaClass(
 						connection.getMetaData().getTables(null, schemaPattern, relationPattern, types),
-						false,
+						true,
 						true
 					).iterator();
 			Iterator<JdbcRelation> tables =

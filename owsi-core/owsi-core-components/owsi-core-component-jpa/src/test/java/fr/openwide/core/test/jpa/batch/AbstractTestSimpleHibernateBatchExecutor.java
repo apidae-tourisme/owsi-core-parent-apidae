@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -179,7 +180,7 @@ public abstract class AbstractTestSimpleHibernateBatchExecutor extends AbstractT
 	private static class SequentialFailingRunnable<T> extends PartitionCountingRunnable<T> {
 		@Override
 		public void preExecutePartition(List<T> partition) {
-			LOGGER.warn("Executing partition: " + Joiners.onComma().join(partition));
+			LOGGER.warn("Executing partition: " + Joiner.on(",").join(partition));
 		}
 		
 		@Override
