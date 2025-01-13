@@ -66,7 +66,7 @@ public abstract class AbstractJpaConfig {
 	public Flyway flyway(DataSource dataSource, FlywayConfiguration flywayConfiguration) {
 		ClassicConfiguration configuration = new ClassicConfiguration();
 		configuration.setDataSource(dataSource);
-		configuration.setSchemas(flywayConfiguration.getSchemas()); 
+		configuration.setSchemas(StringUtils.split(flywayConfiguration.getSchemas(), ',')); 
 		configuration.setTable(flywayConfiguration.getTable());
 		configuration.setLocationsAsStrings(StringUtils.split(flywayConfiguration.getLocations(), ","));
 		configuration.setBaselineOnMigrate(true);

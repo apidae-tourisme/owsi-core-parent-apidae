@@ -15,10 +15,10 @@ import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.querydsl.jpa.impl.JPAQuery;
 
-import fr.openwide.core.commons.util.functional.Joiners;
 import fr.openwide.core.jpa.batch.executor.BatchExecutorCreator;
 import fr.openwide.core.jpa.batch.runnable.ReadWriteBatchRunnable;
 import fr.openwide.core.jpa.exception.SecurityServiceException;
@@ -98,7 +98,7 @@ public abstract class AbstractTestHibernateBatchExecutor extends AbstractJpaCore
 		
 		@Override
 		public void preExecutePartition(List<T> partition) {
-			LOGGER.warn("Executing partition: " + Joiners.onComma().join(partition));
+			LOGGER.warn("Executing partition: " + Joiner.on(",").join(partition));
 		}
 		
 		@Override

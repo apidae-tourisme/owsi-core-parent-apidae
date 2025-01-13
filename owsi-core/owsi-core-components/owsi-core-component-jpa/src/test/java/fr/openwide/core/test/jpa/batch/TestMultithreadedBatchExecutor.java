@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import fr.openwide.core.commons.util.functional.Joiners;
@@ -51,7 +52,7 @@ public class TestMultithreadedBatchExecutor extends AbstractTestHibernateBatchEx
 		executor.run(Person.class.getSimpleName(), personIds, new ReadWriteBatchRunnable<Long>() {
 			@Override
 			public void preExecutePartition(List<Long> partition) {
-				LOGGER.warn("Executing partition: " + Joiners.onComma().join(partition));
+				LOGGER.warn("Executing partition: " + Joiner.on(",").join(partition));
 			}
 			
 			@Override
