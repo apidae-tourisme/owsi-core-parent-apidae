@@ -147,7 +147,7 @@
 		<owsi-core.less4j.version>1.17.2</owsi-core.less4j.version>
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
 
-		<owsi-core.flywaydb.version>4.0.3</owsi-core.flywaydb.version>
+		<owsi-core.flywaydb.version>6.0.8</owsi-core.flywaydb.version>
 		<!-- infinispan >= 8.0 requires java 8 -->
 		<owsi-core.infinispan.version>13.0.12.Final</owsi-core.infinispan.version>
 

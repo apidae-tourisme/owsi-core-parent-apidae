@@ -9,19 +9,20 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.BooleanQuery;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.springframework.aop.Advisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.core.io.Resource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -63,15 +64,16 @@ public abstract class AbstractJpaConfig {
 	@Bean(initMethod = "migrate", value = { "flyway", "databaseInitialization" })
 	@Profile("flyway")
 	public Flyway flyway(DataSource dataSource, FlywayConfiguration flywayConfiguration) {
-		Flyway flyway = new Flyway();
-		flyway.setDataSource(dataSource);
-		flyway.setSchemas(flywayConfiguration.getSchemas()); 
-		flyway.setTable(flywayConfiguration.getTable());
-		flyway.setLocations(StringUtils.split(flywayConfiguration.getLocations(), ","));
-		flyway.setBaselineOnMigrate(true);
+		ClassicConfiguration configuration = new ClassicConfiguration();
+		configuration.setDataSource(dataSource);
+		configuration.setSchemas(flywayConfiguration.getSchemas()); 
+		configuration.setTable(flywayConfiguration.getTable());
+		configuration.setLocationsAsStrings(StringUtils.split(flywayConfiguration.getLocations(), ","));
+		configuration.setBaselineOnMigrate(true);
 		// difficult to handle this case for the moment; we ignore mismatching checksums
 		// TODO allow developers to handle mismatches during their tests.
-		flyway.setValidateOnMigrate(false);
+		configuration.setValidateOnMigrate(false);
+		Flyway flyway = new Flyway(configuration);
 		return flyway;
 	}
 
