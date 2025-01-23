@@ -10,6 +10,7 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.hibernate.id.PersistentIdentifierGenerator;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import org.hibernate.internal.util.config.ConfigurationHelper;
+import org.hibernate.service.ServiceRegistry;
 
 /**
  * Customized sequence generator with one sequence by entity. Generated sequence name includes table and primary key's
@@ -30,7 +31,12 @@ public class PerTableSequenceStyleGenerator extends SequenceStyleGenerator {
 	public static final String SEQUENCE_NAME_SUFFIX = "seq";
 	
 	@Override
-	protected QualifiedName determineSequenceName(Properties params, Dialect dialect, JdbcEnvironment jdbcEnv) {
+	protected QualifiedName determineSequenceName(Properties params, Dialect dialect, JdbcEnvironment jdbcEnv,
+			ServiceRegistry serviceRegistry) {
+		return determineSequenceName(params, dialect, jdbcEnv);
+	}
+
+	private QualifiedName determineSequenceName(Properties params, Dialect dialect, JdbcEnvironment jdbcEnv) {
 		String tableName = params.getProperty(PersistentIdentifierGenerator.TABLE);
 		String columnName = params.getProperty(PersistentIdentifierGenerator.PK);
 
