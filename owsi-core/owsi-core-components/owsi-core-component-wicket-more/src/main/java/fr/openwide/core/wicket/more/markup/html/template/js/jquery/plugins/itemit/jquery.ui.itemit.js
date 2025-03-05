@@ -37,6 +37,7 @@
 			removeConfirmation	: false,
 			placeholderText		: null,
 			allowCreate			: false,
+			useCurrentElement   : false,
 			/* permet la création quand on quitte le champ en ayant saisi un texte */
 			allowCreateOnBlur	: false,
 			allowRemove			: true,
@@ -79,9 +80,14 @@
 			// for handling static scoping inside callbacks
 			var that = this;
 
-			// A new list is created after current element
-			this.itemList = $('<ul></ul>').insertAfter(this.element);
-			this.element.css('display', 'none');
+			if(this.options.useCurrentElement){
+				// Current <ul> element is reused
+				this.itemList = this.element;
+			} else {
+				// A new list is created after current element
+				this.itemList = $('<ul></ul>').insertAfter(this.element);
+				this.element.css('display', 'none');
+			}
 
 			this._itemInput = $('<input type="text" />').addClass('ui-widget-content');
 			if (this.options.tabIndex) {

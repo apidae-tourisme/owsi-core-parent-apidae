@@ -135,6 +135,8 @@ public class ItemIt implements ChainableStatement, Serializable {
 	private Integer minLength;
 
 	private Component owner;
+	
+	private boolean useCurrentElement;
 
 	@Override
 	public String chainLabel() {
@@ -219,6 +221,9 @@ public class ItemIt implements ChainableStatement, Serializable {
 		if (minLength != null) {
 			options.put("minLength", minLength);
 		}
+		
+		options.put("useCurrentElement", useCurrentElement);
+		
 		return new CharSequence[] { options.getJavaScriptOptions() };
 	}
 
@@ -408,6 +413,14 @@ public class ItemIt implements ChainableStatement, Serializable {
 
 	public void setOwner(Component owner) {
 		this.owner = owner;
+	}
+
+	public boolean isUseCurrentElement() {
+		return useCurrentElement;
+	}
+
+	public void setUseCurrentElement(boolean useCurrentElement) {
+		this.useCurrentElement = useCurrentElement;
 	}
 
 }
