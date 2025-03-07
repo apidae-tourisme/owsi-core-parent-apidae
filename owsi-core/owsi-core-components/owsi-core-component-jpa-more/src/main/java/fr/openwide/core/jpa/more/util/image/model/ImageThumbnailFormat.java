@@ -18,7 +18,8 @@ public class ImageThumbnailFormat implements Serializable {
 	private static final List<String> AUTHORIZED_THUMBNAIL_EXTENSIONS = Lists.newArrayList(
 			MediaType.IMAGE_JPEG.extension(),
 			MediaType.IMAGE_GIF.extension(),
-			MediaType.IMAGE_PNG.extension()
+			MediaType.IMAGE_PNG.extension(),
+			MediaType.IMAGE_WEBP.extension()
 	);
 	
 	private static final String DEFAULT_THUMBNAIL_EXTENSION = MediaType.IMAGE_JPEG.extension();
