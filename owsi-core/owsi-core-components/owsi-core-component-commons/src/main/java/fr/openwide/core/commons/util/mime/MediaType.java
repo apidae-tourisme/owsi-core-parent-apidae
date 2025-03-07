@@ -63,6 +63,7 @@ public enum MediaType {
 	IMAGE_BMP("image/x-ms-bmp", "bmp"),
 	IMAGE_JPEG2000("image/jp2", "jp2"),
 	IMAGE_PSD("image/x-photoshop", "psd"),
+	IMAGE_WEBP("image/webp", "webp"),
 	
 	// Video
 	VIDEO_ANY("video/*"),
