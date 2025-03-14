@@ -7,7 +7,7 @@ import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.parsing.ConfigurationBuilderHolder;
 import org.infinispan.transaction.LockingMode;
-import org.infinispan.util.concurrent.IsolationLevel;
+import org.infinispan.configuration.cache.IsolationLevel;
 
 import fr.openwide.core.infinispan.utils.GlobalDefaultReplicatedTransientConfigurationBuilder;
 
@@ -48,7 +48,9 @@ public class CustomConfigurationBuilderHolder extends ConfigurationBuilderHolder
 			.locking().isolationLevel(IsolationLevel.REPEATABLE_READ).lockAcquisitionTimeout(lockAcquisitionTimeout, TimeUnit.SECONDS)
 			// enable batch (to allow block locking)
 			.invocationBatching().enable()
-			.jmxStatistics();
+			//Computes and collects statistics for the Cache Manager.
+		    .statistics().enable()
+		    .build();
 		return builder;
 	}
 }

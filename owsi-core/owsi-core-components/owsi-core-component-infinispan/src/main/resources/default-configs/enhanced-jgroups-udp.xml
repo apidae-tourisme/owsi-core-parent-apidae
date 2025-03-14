@@ -10,22 +10,21 @@
         mcast_recv_buf_size="25m"
         ip_ttl="${jgroups.ip_ttl:2}"
         thread_naming_pattern="pl"
-        enable_diagnostics="false"
 
         thread_pool.min_threads="${jgroups.thread_pool.min_threads:2}"
         thread_pool.max_threads="${jgroups.thread_pool.max_threads:30}"
         thread_pool.keep_alive_time="60000"
    />
    <PING />
-   <MERGE3 min_interval="10000" 
-           max_interval="30000" 
+   <MERGE3 min_interval="10000"
+           max_interval="30000"
    />
    <FD_SOCK />
-   <FD_ALL timeout="60000" 
-           interval="15000" 
-           timeout_check_interval="5000" 
+   <FD_ALL timeout="60000"
+           interval="15000"
+           timeout_check_interval="5000"
    />
-   <VERIFY_SUSPECT timeout="5000" 
+   <VERIFY_SUSPECT timeout="5000"
    />
    <pbcast.NAKACK2 xmit_interval="1000"
                    xmit_table_num_rows="50"
@@ -45,10 +44,10 @@
    <pbcast.GMS print_local_addr="false"
                join_timeout="2500"
    />
-   <UFC max_credits="2m" 
+   <UFC max_credits="2m"
         min_threshold="0.40"
    />
-   <MFC max_credits="2m" 
+   <MFC max_credits="2m"
         min_threshold="0.40"
    />
    <FRAG2 />

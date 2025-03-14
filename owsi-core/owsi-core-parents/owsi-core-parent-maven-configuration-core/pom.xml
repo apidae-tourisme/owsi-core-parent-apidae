@@ -148,8 +148,7 @@
 		<owsi-core.jsass.version>3.3.0</owsi-core.jsass.version>
 
 		<owsi-core.flywaydb.version>9.22.3</owsi-core.flywaydb.version>
-		<!-- infinispan >= 8.0 requires java 8 -->
-		<owsi-core.infinispan.version>13.0.12.Final</owsi-core.infinispan.version>
+		<owsi-core.infinispan.version>15.1.7.Final</owsi-core.infinispan.version>
 
 		<owsi-core.junit.version>4.12</owsi-core.junit.version>
 		<owsi-core.mockito.version>5.4.0</owsi-core.mockito.version>
