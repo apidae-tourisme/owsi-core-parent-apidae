@@ -1,9 +1,9 @@
 package fr.openwide.core.test.infinispan.util.tasks;
 
 import org.infinispan.AdvancedCache;
+import org.infinispan.commons.TimeoutException;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.remoting.transport.Address;
-import org.infinispan.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

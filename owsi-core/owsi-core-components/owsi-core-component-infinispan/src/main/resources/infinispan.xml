@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <infinispan>
+  <!--By default, element identifiers, such as the name of the cache manager and the cache, 
+    are embedded into the name of the metric. Enabling names-as-tags places these identifiers 
+    into tags, making the metric name independent.-->
+  <cache-container statistics="true">
+    <metrics names_as_tags="true" />
+  </cache-container>
 </infinispan>

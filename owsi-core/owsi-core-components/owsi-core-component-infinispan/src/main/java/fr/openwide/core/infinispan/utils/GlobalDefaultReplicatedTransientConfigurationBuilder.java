@@ -6,15 +6,14 @@ import java.io.ObjectOutput;
 import java.util.Properties;
 import java.util.Set;
 
+import org.infinispan.commons.jmx.PlatformMBeanServerLookup;
 import org.infinispan.commons.marshall.AdvancedExternalizer;
 import org.infinispan.commons.marshall.InstanceReusingAdvancedExternalizer;
 import org.infinispan.commons.util.Util;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationChildBuilder;
-import org.infinispan.configuration.global.GlobalJmxStatisticsConfigurationBuilder;
 import org.infinispan.configuration.global.TransportConfigurationBuilder;
 import org.infinispan.jboss.marshalling.core.JBossUserMarshaller;
-import org.infinispan.jmx.PlatformMBeanServerLookup;
 import org.infinispan.remoting.transport.jgroups.JGroupsAddress;
 import org.infinispan.remoting.transport.jgroups.JGroupsAddressCache;
 
@@ -27,7 +26,7 @@ public class GlobalDefaultReplicatedTransientConfigurationBuilder extends Global
 	public GlobalDefaultReplicatedTransientConfigurationBuilder(Properties transportProperties) {
 		super();
 		// not planned to use JBoss, so we use directly PlatformMBeanServerLookup
-		globalJmxStatistics().mBeanServerLookup(new PlatformMBeanServerLookup());
+		jmx().mBeanServerLookup(new PlatformMBeanServerLookup());
 		Properties properties = new Properties();
 		if (transportProperties != null) {
 			properties.putAll(transportProperties);
@@ -41,6 +40,9 @@ public class GlobalDefaultReplicatedTransientConfigurationBuilder extends Global
 		serialization().marshaller(new JBossUserMarshaller());
 		serialization().addAdvancedExternalizer((AdvancedExternalizer<?>) new Externalizer());
 		transport().defaultTransport().addProperty("configurationFile", jgroupsConfigurationFile);
+		
+		metrics().gauges(true).histograms(true);
+		
 		// Jgroups needs to lookup placeholder values in system properties
 		System.getProperties().putAll(properties);
 	}
@@ -49,7 +51,7 @@ public class GlobalDefaultReplicatedTransientConfigurationBuilder extends Global
 	 * @see GlobalJmxStatisticsConfigurationBuilder#cacheManagerName(String)
 	 */
 	public GlobalConfigurationBuilder cacheManagerName(String cacheManagerName) {
-		globalJmxStatistics().enable().jmxDomain(cacheManagerName);
+		jmx().enable().domain(cacheManagerName);
 		return this.cacheManagerName(cacheManagerName);
 	}
 
