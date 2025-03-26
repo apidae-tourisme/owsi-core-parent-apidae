@@ -28,9 +28,10 @@ public interface IQueuedTaskHolderService extends IGenericEntityService<Long, Qu
 	/**
 	 * Gets the tasks that may be run
 	 * @param queueId
+	 * @param limit
 	 * @return
 	 * @throws ServiceException
 	 * @throws SecurityServiceException
 	 */
-	List<QueuedTaskHolder> getListConsumable(String queueId) throws ServiceException, SecurityServiceException;
+	List<QueuedTaskHolder> getListConsumable(String queueId,Integer limit) throws ServiceException, SecurityServiceException;
 }

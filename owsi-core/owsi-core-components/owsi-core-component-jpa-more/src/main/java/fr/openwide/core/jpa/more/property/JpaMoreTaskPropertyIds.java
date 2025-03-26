@@ -33,5 +33,8 @@ public final class JpaMoreTaskPropertyIds extends AbstractPropertyIds {
 		Objects.requireNonNull(queueId);
 		return QUEUE_START_EXECUTION_CONTEXT_WAIT_READY_TEMPLATE.create(queueId);
 	}
+	
+	public static final ImmutablePropertyId<Integer> INIT_TASKS_FROM_DATABASE_LIMIT = immutable("init.tasks.from.database.limit");
+	public static final ImmutablePropertyId<Integer> INIT_TASKS_FROM_DATABASE_DELAY_MINUTES = immutable("init.tasks.from.database.delay");
 
 }

@@ -36,7 +36,7 @@ public interface IQueuedTaskHolderDao extends IGenericEntityDao<Long, QueuedTask
 	
 	List<QueuedTaskHolder> listConsumable();
 	
-	List<QueuedTaskHolder> listConsumable(String queueId);
+	List<QueuedTaskHolder> listConsumable(String queueId, Integer limit);
 
 	List<String> listTypes();
 }
