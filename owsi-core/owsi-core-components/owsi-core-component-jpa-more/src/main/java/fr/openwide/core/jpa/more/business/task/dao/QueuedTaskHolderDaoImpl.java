@@ -89,12 +89,16 @@ public class QueuedTaskHolderDaoImpl extends GenericEntityDaoImpl<Long, QueuedTa
 	}
 	
 	@Override
-	public List<QueuedTaskHolder> listConsumable(String queueId) {
+	public List<QueuedTaskHolder> listConsumable(String queueId, Integer limit) {
 		JPQLQuery<QueuedTaskHolder> query = getConsumableBaseQuery();
 		if (queueId != null) {
 			query.where(qQueuedTaskHolder.queueId.eq(queueId));
 		} else {
 			query.where(qQueuedTaskHolder.queueId.isNull());
+		}
+		
+		if(limit != null) {
+			query.limit(limit.longValue());
 		}
 		
 		return query.fetch();

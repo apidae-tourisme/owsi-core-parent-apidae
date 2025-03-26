@@ -54,8 +54,8 @@ public class QueuedTaskHolderServiceImpl extends GenericEntityServiceImpl<Long, 
 	}
 	
 	@Override
-	public List<QueuedTaskHolder> getListConsumable(String queueId)  throws ServiceException, SecurityServiceException {
-		return queuedTaskHolderDao.listConsumable(queueId);
+	public List<QueuedTaskHolder> getListConsumable(String queueId, Integer limit)  throws ServiceException, SecurityServiceException {
+		return queuedTaskHolderDao.listConsumable(queueId, limit);
 	}
 
 	/**
