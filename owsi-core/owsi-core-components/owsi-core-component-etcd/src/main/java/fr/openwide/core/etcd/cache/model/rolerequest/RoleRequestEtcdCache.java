@@ -1,0 +1,25 @@
+package fr.openwide.core.etcd.cache.model.rolerequest;
+
+import java.util.Map;
+
+import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheNode;
+import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
+
+public class RoleRequestEtcdCache extends AbstractEtcdCacheNode<RoleRequestEtcdValue> {
+
+	public RoleRequestEtcdCache(String cacheName, EtcdClientClusterConfiguration config) {
+		super(cacheName, config);
+	}
+
+	@Override
+	public RoleRequestEtcdValue getValueFromCache(String key) throws EtcdServiceException {
+		return getValueFromCache(key, RoleRequestEtcdValue.class);
+	}
+
+	@Override
+	public Map<String, RoleRequestEtcdValue> getAllValues() throws EtcdServiceException {
+		return getAllValues(RoleRequestEtcdValue.class);
+	}
+
+}
