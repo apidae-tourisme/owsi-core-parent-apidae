@@ -965,19 +965,6 @@ public class InfinispanClusterServiceImpl implements IInfinispanClusterService {
 		}
 	}
 
-	/**
-	 * TODO: drop; needed when we use both jgroups address and infinispan address.
-	 */
-	private static final class ToInfinispanAddress
-			implements SerializableFunction<Address, Address> {
-		private static final long serialVersionUID = -6249484113042442830L;
-
-		@Override
-		public Address apply(Address input) {
-			return input;
-		}
-	}
-
 	private void updateCoordinator() {
 		try {
 			if (infinispanClusterCheckerService != null && cacheManager.isCoordinator()) {
@@ -1125,9 +1112,5 @@ public class InfinispanClusterServiceImpl implements IInfinispanClusterService {
 	 * TODO: drop; needed when we use both jgroups address and infinispan address.
 	 */
 	private static final ToJgroupsAddress INFINISPAN_ADDRESS_TO_JGROUPS_ADDRESS = new ToJgroupsAddress();
-	/**
-	 * TODO: drop; needed when we use both jgroups address and infinispan address.
-	 */
-	private static final ToInfinispanAddress JGROUPS_ADDRESS_TO_INFINISPAN_ADDRESS = new ToInfinispanAddress();
 
 }
