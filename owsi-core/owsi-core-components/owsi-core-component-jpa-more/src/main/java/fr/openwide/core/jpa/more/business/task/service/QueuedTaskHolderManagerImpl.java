@@ -1,9 +1,9 @@
 package fr.openwide.core.jpa.more.business.task.service;
 
+import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.INIT_TASKS_FROM_DATABASE_DELAY_MINUTES;
+import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.INIT_TASKS_FROM_DATABASE_LIMIT;
 import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.START_MODE;
 import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.STOP_TIMEOUT;
-import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.INIT_TASKS_FROM_DATABASE_LIMIT;
-import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.INIT_TASKS_FROM_DATABASE_DELAY_MINUTES;
 import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.queueNumberOfThreads;
 import static fr.openwide.core.jpa.more.property.JpaMoreTaskPropertyIds.queueStartDelay;
 
@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -42,6 +41,7 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -49,6 +49,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import fr.openwide.core.etcd.cache.model.queuedtask.QueuedTaskEtcdCache;
+import fr.openwide.core.etcd.cache.model.queuedtask.QueuedTaskEtcdValue;
+import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.service.IEtcdClusterService;
 import fr.openwide.core.infinispan.model.IAttribution;
 import fr.openwide.core.infinispan.model.SimpleLock;
 import fr.openwide.core.infinispan.model.SimpleRole;
@@ -98,6 +102,9 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 
 	@Autowired(required = false)
 	private IInfinispanClusterService infinispanClusterService;
+
+	@Autowired(required = false)
+	private IEtcdClusterService etcdClusterService;
 
 	@Resource
 	private Collection<? extends IQueueId> queueIds;
@@ -173,11 +180,12 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 		TaskQueue queue = new TaskQueue(queueId.getUniqueStringId());
 		for (int i = 0 ; i < numberOfThreads ; ++i) {
 			TaskConsumer consumer;
-			if (infinispanClusterService != null
+			if (isClusterModeEnable()
 					&& queueId instanceof IInfinispanQueue infinispanQueue
 					&& infinispanQueue.handleInfinispan()) {
 				if (numberOfThreads != 1) {
-					throw new IllegalStateException("If you want to manage infinispan in queue, you must use only one thread");
+					throw new IllegalStateException(
+							"If you want to manage infinispan or etcd in queue, you must use only one thread");
 				}
 				consumer = new TaskConsumer(queue, i, infinispanQueue.getLock(), infinispanQueue.getPriorityQueue());
 			} else {
@@ -289,10 +297,12 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 		if (!active.get()) {
 			availableForAction.set(false);
 			
-			// load infinispan backend if needed
-			getCache();
-			
 			if (infinispanClusterService  != null) {
+				// load infinispan backend if needed
+				getInfinispanCache();
+			}
+
+			if (isClusterModeEnable()) {
 				// Init the recurrent executor for initQueues.
 				// Must be used only in a cluster context
 				initializeDatabaseExecutor();
@@ -342,13 +352,12 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 						}
 						
 						if (!tasks.isEmpty()) {
-							// Get all tasks id in cache
-							CacheSet<Long> keySet = Optional.ofNullable(getCache()).map(Cache::keySet).orElse(null);
-							// Remove already loaded keys, no need to offer them again in queue.
-							if (keySet != null) {
-								tasks.removeIf(t -> keySet.contains(t.getId()));
+							// Remove already loaded keys.
+							if (isEtcdEnable()) {
+								cleanTasksFromEtcd(tasks);
+							} else {
+								cleanTasksFromInfinispan(tasks);
 							}
-							
 							// Gets tasks  Id
 							if(!tasks.isEmpty()) {
 								List<Long> taskIds = tasks.stream().map(QueuedTaskHolder::getId).toList();
@@ -364,7 +373,16 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 				}
 			}
 		};
-		if (infinispanClusterService != null) {
+		if (isEtcdEnable()) {
+			LockRequest lockRequest = LockRequest.with(
+					SimpleRole.from(INIT_QUEUES_EXECUTOR_NAME),
+					SimpleLock.from(INIT_QUEUES_EXECUTOR_NAME, "QueueTaskHolder"));
+			try {
+				etcdClusterService.doIfRoleWithLock(lockRequest, runnable);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		} else if (isInfinispanEnable()) {
 			LockRequest lockRequest = LockRequest.with(
 					SimpleRole.from(INIT_QUEUES_EXECUTOR_NAME),
 					SimpleLock.from(INIT_QUEUES_EXECUTOR_NAME, "QueueTaskHolder")
@@ -376,6 +394,31 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 			}
 		} else {
 			runnable.run();
+		}
+	}
+
+	private void cleanTasksFromInfinispan(Set<QueuedTaskHolder> tasks) {
+		// Get all tasks id in cache
+		CacheSet<Long> keySet = Optional.ofNullable(getInfinispanCache()).map(Cache::keySet).orElse(null);
+		// Remove already loaded keys, no need to offer them again in queue.
+		if (keySet != null) {
+			tasks.removeIf(t -> keySet.contains(t.getId()));
+		}
+	}
+
+	private void cleanTasksFromEtcd(Set<QueuedTaskHolder> tasks) {
+		final QueuedTaskEtcdCache etcdCache = getEtcdCache();
+		if (etcdCache == null) {
+			return;
+		}
+		try {
+			// Get all tasks id in cache
+			final Set<String> keySet = etcdCache.getAllKeys();
+			if (keySet != null) {
+				tasks.removeIf(t -> keySet.contains(String.valueOf(t.getId())));
+			}
+		} catch (EtcdServiceException e) {
+			LOGGER.error("Unable to get all keys from etcd cache", e);
 		}
 	}
 
@@ -543,15 +586,12 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 	 * @return true if task is added to the queue
 	 */
 	private boolean queueOffer(TaskQueue queue, Long taskId) {
-		// check if task is already in a queue
-		IAttribution previous = Optional.ofNullable(getCache())
-				.map(c -> c.putIfAbsent(taskId, Attribution.from(infinispanClusterService.getLocalAddress(), new Date())))
-				.orElse(null);
-		if (previous != null) {
+		boolean taskAddedInCache = isEtcdEnable() ? queueOfferEtcd(taskId) : queueOfferInfinispan(taskId);
+		if (!taskAddedInCache) {
 			// if already loaded, stop processing
-			LOGGER.warn("Task {} already loaded in cluster and ignored", taskId);
 			return false;
 		}
+
 		// else offer in queue
 		boolean status = queue.offer(taskId);
 		if (!status) {
@@ -560,6 +600,46 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 		return status;
 	}
 	
+	private boolean queueOfferInfinispan(Long taskId) {
+		// check if task is already in a queue
+		IAttribution previous = Optional.ofNullable(getInfinispanCache()).map(
+				c -> c.putIfAbsent(taskId, Attribution.from(infinispanClusterService.getLocalAddress(), new Date())))
+				.orElse(null);
+		if (previous != null) {
+			// if already loaded, stop processing
+			LOGGER.warn("Task {} already loaded in cluster and ignored", taskId);
+			return false;
+		}
+		return true;
+	}
+
+	private boolean queueOfferEtcd(Long taskId) {
+		final QueuedTaskEtcdCache etcdCache = getEtcdCache();
+		if (etcdCache != null) {
+			try {
+				// check if task is already in a queue
+				final String taskIdKey = String.valueOf(taskId);
+				final QueuedTaskEtcdValue previous = etcdCache.putIfAbsent(taskIdKey,
+						QueuedTaskEtcdValue.from(new Date(), etcdClusterService.getNodeName(), taskIdKey));
+				if (previous != null) {
+					// if already loaded, stop processing
+					LOGGER.warn("Task {} already loaded in cluster and ignored", taskId);
+					return false;
+				}
+				return true;
+			} catch (EtcdServiceException e) {
+				LOGGER.error("Unable to put task %s in cache".formatted(taskId), e);
+				return false;
+			}
+		} else {
+			LOGGER.error("Unable to put task {} in cache, etcd may not be enabled", taskId);
+			return false;
+		}
+
+
+
+	}
+
 	/**
 	 * Cluster-safe offer a task in a queue ; if task is already loaded on the cluster, we don't load it.
 	 * Reinit the task information before doing it
@@ -576,8 +656,8 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 	/**
 	 * Check if cache exists and returns it ; null if infinispan is disabled
 	 */
-	private Cache<Long, IAttribution> getCache() {
-		if (infinispanClusterService != null) {
+	private Cache<Long, IAttribution> getInfinispanCache() {
+		if (isInfinispanEnable()) {
 			if (!infinispanClusterService.getCacheManager().cacheExists(CACHE_KEY_TASK_ID)) {
 				infinispanClusterService.getCacheManager().getCache(CACHE_KEY_TASK_ID);
 			}
@@ -586,14 +666,18 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 		return null;
 	}
 
+	private QueuedTaskEtcdCache getEtcdCache() {
+		return etcdClusterService == null ? null : etcdClusterService.getCacheManager().getQueuedTaskCache();
+	}
+
 	/**
 	 * Initialize the executor that will submit the tasks from DB every 1 minute
 	 * 
 	 * This method MUST NOT be called if cache is disabled
 	 */
 	private synchronized void initializeDatabaseExecutor() {
-		if (infinispanClusterService == null) {
-			throw new IllegalStateException("This code must not be called as infinispan is not enabled");
+		if (!isClusterModeEnable()) {
+			throw new IllegalStateException("This code must not be called as infinispan or etcd is not enabled");
 		}
 		initQueuesFromDatabaseExecutor = new ScheduledThreadPoolExecutor(1,
 					new ThreadFactoryBuilder()
@@ -613,24 +697,77 @@ public class QueuedTaskHolderManagerImpl implements IQueuedTaskHolderManager, Ap
 
 	@Override
 	public void onTaskFinish(Long taskId) {
-		
-		Cache<Long, IAttribution> cache = getCache(); 
+		if (isEtcdEnable()) {
+			onTaskFinishEtcd(taskId);
+		} else {
+			onTaskFinishInfinispan(taskId);
+		}
+		eventPublisher.publishEvent(new QueuedTaskFinishedEvent(taskId));
+	}
+
+	private void onTaskFinishInfinispan(Long taskId) {
+		Cache<Long, IAttribution> cache = getInfinispanCache();
 		if (cache != null) {
 			IAttribution previous = cache.remove(taskId);
 			if (previous == null) {
 				// if already loaded, stop processing
 				LOGGER.warn("Task {} finished but not in cache map", taskId);
 			}
-			if (previous != null && ! previous.match(infinispanClusterService.getLocalAddress())) {
+			if (previous != null && !previous.match(infinispanClusterService.getLocalAddress())) {
 				LOGGER.warn("Task {} finished but attribution does not match", taskId);
 			}
 		}
-		eventPublisher.publishEvent(new QueuedTaskFinishedEvent(taskId));
+	}
+
+	private void onTaskFinishEtcd(Long taskId) {
+		final QueuedTaskEtcdCache etcdCache = getEtcdCache();
+		if (etcdCache != null) {
+			final QueuedTaskEtcdValue previous = etcdCache.remove(String.valueOf(taskId));
+			if (previous == null) {
+				// if already loaded, stop processing
+				LOGGER.warn("Task {} finished but not in cache map", taskId);
+			}
+			if (previous != null && !Objects.equal(previous.getNodeName(), etcdClusterService.getNodeName())) {
+				LOGGER.warn("Task {} finished but attribution does not match", taskId);
+			}
+		}
+	}
+
+	private boolean isClusterModeEnable() {
+		return isEtcdEnable() || isInfinispanEnable();
+	}
+
+	private boolean isEtcdEnable() {
+		return etcdClusterService != null;
+	}
+
+	private boolean isInfinispanEnable() {
+		return infinispanClusterService != null;
 	}
 
 	@Override
 	public Integer clearCache() {
-		Cache<Long, IAttribution> cache = getCache();
+		if (isEtcdEnable()) {
+			return clearEtcdCache();
+		} else {
+			return clearInfinispanCache();
+		}
+	}
+
+	private Integer clearEtcdCache() {
+		final QueuedTaskEtcdCache etcdCache = getEtcdCache();
+		if (etcdCache != null) {
+			try {
+				return (int) etcdCache.deleteAllCacheKeys();
+			} catch (EtcdServiceException e) {
+				LOGGER.error("Error clearing the task manager cache", e);
+			}
+		}
+		return 0;
+	}
+
+	private Integer clearInfinispanCache() {
+		Cache<Long, IAttribution> cache = getInfinispanCache();
 		if (cache!=null) {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Beginning of cache cleaning");

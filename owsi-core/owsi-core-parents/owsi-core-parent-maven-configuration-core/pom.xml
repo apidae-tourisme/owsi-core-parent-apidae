@@ -161,6 +161,9 @@
 		<owsi-core.java-object-diff.version>0.92</owsi-core.java-object-diff.version>
 		<owsi-core.elasticsearch.version>2.4.5</owsi-core.elasticsearch.version>
 		<owsi-core.gson.version>2.6.2</owsi-core.gson.version>
+		<owsi-core.grpc.version>1.70.0</owsi-core.grpc.version>
+		<owsi-core.protobuf.version>3.25.5</owsi-core.protobuf.version>
+		<owsi-core.proto-google-common-protos.version>2.48.0</owsi-core.proto-google-common-protos.version>
 
 		<owsi-core.localization-properties-consistency-maven-plugin.version>1.0.1</owsi-core.localization-properties-consistency-maven-plugin.version>
 	</properties>
@@ -1275,6 +1278,65 @@
 				<groupId>com.google.code.findbugs</groupId>
 				<artifactId>jsr305</artifactId>
 				<version>${owsi-core.findbugs-annotations.version}</version>
+			</dependency>
+
+			<!-- gRPC Dependencies -->
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-api</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-protobuf</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-netty</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-stub</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-core</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-context</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-util</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-grpclb</artifactId>
+				<version>${owsi-core.grpc.version}</version>
+			</dependency>
+
+			<!-- Protobuf Dependencies -->
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>${owsi-core.protobuf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java-util</artifactId>
+				<version>${owsi-core.protobuf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.api.grpc</groupId>
+				<artifactId>proto-google-common-protos</artifactId>
+				<version>${owsi-core.proto-google-common-protos.version}</version>
 			</dependency>
 
 		</dependencies>
