@@ -35,6 +35,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>fr.smile.core.components</groupId>
+			<artifactId>owsi-core-component-etcd</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<!-- Jackson est utilisé pour sérialiser les tâches avant persistence -->
 		
 		<dependency>

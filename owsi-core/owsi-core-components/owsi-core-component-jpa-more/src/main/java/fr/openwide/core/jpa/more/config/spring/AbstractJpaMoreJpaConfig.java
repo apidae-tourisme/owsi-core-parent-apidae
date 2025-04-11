@@ -24,7 +24,8 @@ import fr.openwide.core.jpa.more.util.CoreJpaMoreUtilPackage;
 
 @Import({
 	JpaMoreApplicationPropertyRegistryConfig.class,
-	JpaMoreInfinispanConfig.class
+	JpaMoreInfinispanConfig.class,
+	JpaMoreEtcdConfig.class
 })
 @ComponentScan(basePackageClasses = { CoreJpaMoreBusinessPackage.class, CoreJpaMoreUtilPackage.class })
 public abstract class AbstractJpaMoreJpaConfig extends AbstractJpaConfig {

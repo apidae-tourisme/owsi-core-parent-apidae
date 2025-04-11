@@ -1,4 +1,4 @@
-package fr.openwide.core.wicket.more.console.maintenance.queuemanager.component;
+package fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.infinispan;
 
 import java.util.Collection;
 import java.util.List;
