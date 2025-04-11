@@ -2,8 +2,13 @@ package fr.openwide.core.wicket.more.console.maintenance.queuemanager.page;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.ConsoleMaintenanceQueueManagerCacheInfinispanPanel;
-import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.ConsoleMaintenanceQueueManagerNodePanel;
+import fr.openwide.core.jpa.more.property.JpaMoreEtcdPropertyIds;
+import fr.openwide.core.wicket.markup.html.panel.InvisiblePanel;
+import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.etcd.ConsoleMaintenanceQueueManagerCacheEtcdPanel;
+import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.etcd.ConsoleMaintenanceQueueManagerNodeEtcdPanel;
+import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.etcd.cache.ConsoleMaintenanceEtcdCachePanel;
+import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.infinispan.ConsoleMaintenanceQueueManagerCacheInfinispanPanel;
+import fr.openwide.core.wicket.more.console.maintenance.queuemanager.component.infinispan.ConsoleMaintenanceQueueManagerNodePanel;
 import fr.openwide.core.wicket.more.console.maintenance.template.ConsoleMaintenanceTemplate;
 import fr.openwide.core.wicket.more.console.template.ConsoleTemplate;
 
@@ -13,11 +18,15 @@ public class ConsoleMaintenanceQueueManagerPage extends ConsoleMaintenanceTempla
 
 	public ConsoleMaintenanceQueueManagerPage(PageParameters parameters) {
 		super(parameters);
-
-		add(
-				new ConsoleMaintenanceQueueManagerCacheInfinispanPanel("cacheInfinispan"),
-				new ConsoleMaintenanceQueueManagerNodePanel("nodes")
-		);
+		if (Boolean.TRUE.equals(propertyService.get(JpaMoreEtcdPropertyIds.ETCD_ENABLED))) {
+			add(new ConsoleMaintenanceQueueManagerCacheEtcdPanel("queueManagerCachePanel"),
+					new ConsoleMaintenanceQueueManagerNodeEtcdPanel("nodes"),
+					new ConsoleMaintenanceEtcdCachePanel("etcdCachePanel"));
+		} else {
+			add(new ConsoleMaintenanceQueueManagerCacheInfinispanPanel("queueManagerCachePanel"),
+					new ConsoleMaintenanceQueueManagerNodePanel("nodes"), 
+					new InvisiblePanel("etcdCachePanel"));
+		}
 	}
 
 	@Override

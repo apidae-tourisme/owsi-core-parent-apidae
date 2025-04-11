@@ -12,3 +12,12 @@ services:
       - 6432:5432
     volumes:
       - ./postgresql_test/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  etcd:
+    image: bitnami/etcd:3.5.11
+    container_name: owsicore_etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2390
+    ports:
+      - "2389:2379"
+      - "2390:2380"

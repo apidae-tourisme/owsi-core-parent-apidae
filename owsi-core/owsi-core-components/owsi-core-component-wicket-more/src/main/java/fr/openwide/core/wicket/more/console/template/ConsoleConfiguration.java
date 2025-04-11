@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import fr.openwide.core.jpa.more.property.JpaMoreEtcdPropertyIds;
 import fr.openwide.core.jpa.more.property.JpaMoreInfinispanPropertyIds;
 import fr.openwide.core.spring.property.service.IPropertyService;
 import fr.openwide.core.wicket.more.console.common.model.ConsoleMenuItem;
@@ -20,6 +21,7 @@ import fr.openwide.core.wicket.more.console.common.model.ConsoleMenuItemRelatedP
 import fr.openwide.core.wicket.more.console.common.model.ConsoleMenuSection;
 import fr.openwide.core.wicket.more.console.maintenance.authentication.page.ConsoleMaintenanceAuthenticationPage;
 import fr.openwide.core.wicket.more.console.maintenance.ehcache.page.ConsoleMaintenanceEhCachePage;
+import fr.openwide.core.wicket.more.console.maintenance.etcd.page.ConsoleMaintenanceEtcdPage;
 import fr.openwide.core.wicket.more.console.maintenance.file.page.ConsoleMaintenanceFilePage;
 import fr.openwide.core.wicket.more.console.maintenance.gestion.page.ConsoleMaintenanceGestionPage;
 import fr.openwide.core.wicket.more.console.maintenance.infinispan.page.ConsoleMaintenanceInfinispanPage;
@@ -96,11 +98,22 @@ public final class ConsoleConfiguration {
 				ConsoleMenuItem infinispanMenuItem = new ConsoleMenuItem("infinispanMenuItem",
 						"console.maintenance.infinispan", "infinispan", ConsoleMaintenanceInfinispanPage.class);
 				maintenanceMenuSection.addMenuItem(infinispanMenuItem);
+			}
+
+			if (Boolean.TRUE.equals(propertyService.get(JpaMoreEtcdPropertyIds.ETCD_ENABLED))) {
+				ConsoleMenuItem etcdMenuItem = new ConsoleMenuItem("etcdMenuItem",
+						"console.maintenance.etcd", "etcd", ConsoleMaintenanceEtcdPage.class);
+				maintenanceMenuSection.addMenuItem(etcdMenuItem);
+			}
+			
+			if (Boolean.TRUE.equals(propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_ENABLED))
+					|| Boolean.TRUE.equals(propertyService.get(JpaMoreEtcdPropertyIds.ETCD_ENABLED))) {
 				ConsoleMenuItem queueManagerMenuItem = new ConsoleMenuItem("queuemanagerMenuItem", 
 						"console.maintenance.queuemanager", "queuemanager", ConsoleMaintenanceQueueManagerPage.class);
 				maintenanceMenuSection.addMenuItem(queueManagerMenuItem);
 			}
 			
+
 			INSTANCE.addMenuSection(maintenanceMenuSection);
 			INSTANCE.addCssResourceReference(ConsoleLessCssResourceReference.get());
 		}
