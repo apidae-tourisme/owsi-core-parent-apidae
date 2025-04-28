@@ -2,6 +2,7 @@ package fr.openwide.core.jpa.junit;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -283,6 +284,7 @@ public abstract class AbstractTestCase {
 		listeAutorisee.add(Date.class);
 		listeAutorisee.add(BigDecimal.class);
 		listeAutorisee.add(Boolean.class);
+		listeAutorisee.add(LocalTime.class);
 		listeAutorisee.add(int.class);
 		listeAutorisee.add(long.class);
 		listeAutorisee.add(double.class);
