@@ -17,4 +17,25 @@ public class QueuedTaskEtcdValue extends AbstractEtcdCacheValue {
 		return new QueuedTaskEtcdValue(attributionDate.toInstant());
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof QueuedTaskEtcdValue)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		return result;
+	}
+
 }

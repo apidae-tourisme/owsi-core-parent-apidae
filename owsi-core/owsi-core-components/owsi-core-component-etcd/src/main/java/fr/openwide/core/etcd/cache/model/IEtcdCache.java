@@ -16,26 +16,27 @@ public interface IEtcdCache<T extends Serializable> {
 	 * @return The value associated with the key, or null if not found
 	 * @throws Exception If an error occurs during the operation
 	 */
-	T getValueFromCache(String key) throws EtcdServiceException;
+	T get(String key) throws EtcdServiceException;
 	
 	/**
 	 * Puts a value into a specific cache for the given key.
 	 * 
-	 * @param cacheName The name of the cache
 	 * @param key The key to store
 	 * @param value The value to store (must be Serializable)
 	 * @throws Exception If an error occurs during the operation
 	 */
-	void putValueInCache(String key, T value) throws EtcdServiceException;
+	void put(String key, T value) throws EtcdServiceException;
 	
+	T putIfAbsent(String key, T value) throws EtcdServiceException;
+
 	/**
 	 * Deletes a key from a specific cache.
 	 * 
-	 * @param cacheName The name of the cache
 	 * @param key The key to delete
-	 * @throws Exception If an error occurs during the operation
+	 * @return true if the key was found and deleted, false if the key didn't exist
+	 * @throws EtcdServiceException If an error occurs during the operation
 	 */
-	void deleteFromCache(String key) throws EtcdServiceException;
+	boolean delete(String key) throws EtcdServiceException;
 	
 	/**
 	 * Gets all cache names.
@@ -77,6 +78,6 @@ public interface IEtcdCache<T extends Serializable> {
 	/**
 	 * Gets a map of all values from cache.
 	 */
-	Map<String, T> getAllValues() throws EtcdServiceException;
+	Map<String, T> getAll() throws EtcdServiceException;
 
 } 

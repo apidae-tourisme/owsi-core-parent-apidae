@@ -18,11 +18,20 @@ public abstract class AbstractEtcdCacheNode<T extends IEtcdCacheNodeValue> exten
 		if (Strings.isNullOrEmpty(nodeName)) {
 			return;
 		}
-		for (Entry<String, T> roleEntry : getAllValues().entrySet()) {
+		for (Entry<String, T> roleEntry : getAll().entrySet()) {
 			if (roleEntry.getValue() != null && Objects.equal(nodeName, roleEntry.getValue().getNodeName())) {
-				deleteFromCache(roleEntry.getKey());
+				delete(roleEntry.getKey());
 			}
 		}
+	}
+
+	public boolean deleteIfNodeMatches(String key, String nodeName) throws EtcdServiceException {
+		final T valueFromCache = get(key);
+		if (valueFromCache != null && Objects.equal(nodeName, valueFromCache.getNodeName())) {
+			return delete(key);
+		}
+		return false;
+
 	}
 
 }

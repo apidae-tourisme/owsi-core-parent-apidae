@@ -114,15 +114,14 @@ public class EtcdClusterServiceTest extends AbstractEtcdTest {
 
 		LockRequest lockRequest = LockRequest.with(ROLE_1, LOCK_1);
 
-		CompletableFuture<DoIfRoleWithLock> mainTaskFuture = CompletableFuture
-				.supplyAsync(() -> {
-					try {
-						DoIfRoleWithLock lock = etcdClusterService1.doIfRoleWithLock(lockRequest, task1);
-						return lock;
-					} catch (Exception e) {
-						throw new IllegalStateException(e);
-					}
-				});
+		CompletableFuture<DoIfRoleWithLock> mainTaskFuture = CompletableFuture.supplyAsync(() -> {
+			try {
+				DoIfRoleWithLock lock = etcdClusterService1.doIfRoleWithLock(lockRequest, task1);
+				return lock;
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		});
 
 		CompletableFuture<DoIfRoleWithLock> secondTaskFuture = CompletableFuture.supplyAsync(() -> {
 			try {
@@ -158,17 +157,15 @@ public class EtcdClusterServiceTest extends AbstractEtcdTest {
 		long leaseTTl = 2;
 
 		final EtcdCommonClusterConfiguration etcdConfigNode1 = etcdConfigurationBuilderDefaultTestBuilder()
-				.withLeaseTtl(leaseTTl).withLockTimeout(1)
-				.withNodeName(currentNodeName).build();
+				.withLeaseTtl(leaseTTl).withLockTimeout(1).withNodeName(currentNodeName).build();
 		try (EtcdClusterService clusterService = new EtcdClusterService(etcdConfigNode1)) {
 			clusterService.init();
-			assertThat(newNodeEtcdCache().getValueFromCache(currentNodeName))
-					.as("Node is inserted in node cache after service init")
+			assertThat(newNodeEtcdCache().get(currentNodeName)).as("Node is inserted in node cache after service init")
 					.isNotNull();
 
 			CompletableFuture<NodeEtcdValue> nodeValueFromCacheFuture = CompletableFuture.supplyAsync(() -> {
 				try {
-					return newNodeEtcdCache().getValueFromCache(currentNodeName);
+					return newNodeEtcdCache().get(currentNodeName);
 				} catch (EtcdServiceException e) {
 					throw new IllegalStateException(e);
 				}
@@ -178,17 +175,16 @@ public class EtcdClusterServiceTest extends AbstractEtcdTest {
 					.as("Node is still present from cache because service is still alive").isNotNull();
 		}
 
-		CompletableFuture<NodeEtcdValue> nodeValueFromCacheAfterExpirationFuture = CompletableFuture
-				.supplyAsync(() -> {
+		CompletableFuture<NodeEtcdValue> nodeValueFromCacheAfterExpirationFuture = CompletableFuture.supplyAsync(() -> {
 			try {
-				return newNodeEtcdCache().getValueFromCache(currentNodeName);
+				return newNodeEtcdCache().get(currentNodeName);
 			} catch (EtcdServiceException e) {
 				throw new IllegalStateException(e);
 			}
 		}, // Ajout d'un délai pour attendre l'expiration du lease.
 				CompletableFuture.delayedExecutor(leaseTTl + 1, TimeUnit.SECONDS));
-		assertThat(nodeValueFromCacheAfterExpirationFuture.join())
-				.as("Node is deleted from cache after service stop").isNull();
+		assertThat(nodeValueFromCacheAfterExpirationFuture.join()).as("Node is deleted from cache after service stop")
+				.isNull();
 	}
 
 }

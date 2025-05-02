@@ -32,7 +32,7 @@ public class EtcdActionService implements IEtcdActionService {
 	@Override
 	public String resultLessAction(AbstractEtcdActionValue action) throws EtcdServiceException {
 		String uniqueID = generateUniqueActionId();
-		clusterService.getCacheManager().getActionCache().putValueInCache(uniqueID, action);
+		clusterService.getCacheManager().getActionCache().put(uniqueID, action);
 		LOGGER.debug("Create action {} of type {}", uniqueID, action.getClass().getSimpleName());
 		return uniqueID;
 	}
@@ -41,12 +41,12 @@ public class EtcdActionService implements IEtcdActionService {
 	public <T> T executeAsync(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
             throws EtcdServiceException, ExecutionException, TimeoutException {
 		String actionId = UUID.randomUUID().toString();
-		clusterService.getCacheManager().getActionCache().putValueInCache(actionId, action);
+		clusterService.getCacheManager().getActionCache().put(actionId, action);
         Stopwatch stopwatch = Stopwatch.createStarted();
         
         while (timeout == -1 || stopwatch.elapsed(TimeUnit.MILLISECONDS) < unit.toMillis(timeout)) {
 			AbstractEtcdActionValue result = clusterService.getCacheManager().getActionResultCache()
-					.getValueFromCache(actionId);
+					.get(actionId);
             if (result != null && result.isDone()) {
                 try {
                     @SuppressWarnings("unchecked")
@@ -73,17 +73,17 @@ public class EtcdActionService implements IEtcdActionService {
     public void processAction(String actionId) throws EtcdServiceException {
 		LOGGER.debug("Try to process action {}", actionId);
 		AbstractEtcdActionValue action = clusterService.getCacheManager().getActionCache()
-				.getValueFromCache(actionId);
+				.get(actionId);
 		if (action != null && (action.broadcast() || Objects.equal(clusterService.getAddress(), action.getTargetNode()))) {
 			try {
 				action.execute(clusterService);
 				if (action.needsResult()) {
-					clusterService.getCacheManager().getActionResultCache().putValueInCache(actionId, action);
+					clusterService.getCacheManager().getActionResultCache().put(actionId, action);
 				}
 			} catch (Exception e) {
 				throw new EtcdServiceException("Error executing action %s".formatted(actionId), e);
 			} finally {
-				clusterService.getCacheManager().getActionCache().deleteFromCache(actionId);
+				clusterService.getCacheManager().getActionCache().delete(actionId);
 			}
 
         }

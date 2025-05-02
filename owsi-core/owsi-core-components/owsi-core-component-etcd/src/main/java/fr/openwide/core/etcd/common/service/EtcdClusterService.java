@@ -15,6 +15,7 @@ import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -24,6 +25,7 @@ import fr.openwide.core.etcd.action.service.EtcdActionService;
 import fr.openwide.core.etcd.action.service.EtcdActionWatcherService;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdValue;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
+import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdValue;
 import fr.openwide.core.etcd.cache.service.EtcdCacheManager;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.model.DoIfRoleWithLock;
@@ -83,7 +85,9 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	@Override
 	public synchronized void init() {
-		LOGGER.debug("Starting {} ...", toStringClusterNode());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Starting {} ...", toStringClusterNode());
+		}
 		clientConfiguration.getIsShutdown().set(false);
 		try {
 			etcdCacheManager.init();
@@ -100,7 +104,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 		try {
 			LOGGER.debug("Register node informations {}", getNodeName());
 			NodeEtcdValue node = NodeEtcdValue.from(new Date(), getNodeName());
-			etcdCacheManager.getNodeCache().putValueInCache(getNodeName(), node);
+			etcdCacheManager.getNodeCache().put(getNodeName(), node);
 		} catch (EtcdServiceException e) {
 			throw new IllegalStateException("Error adding node %s in cache".formatted(getNodeName()), e);
 		}
@@ -137,9 +141,8 @@ public class EtcdClusterService implements IEtcdClusterService {
 	}
 
 	@Override
-	public DoIfRoleWithLock doIfRoleWithLock(ILockRequest lockRequest,
-			Runnable runnable) throws EtcdServiceException {
-		RoleEtcdValue roleValue = etcdCacheManager.getRoleCache().getValueFromCache(lockRequest.getRole().getKey());
+	public DoIfRoleWithLock doIfRoleWithLock(ILockRequest lockRequest, Runnable runnable) throws EtcdServiceException {
+		RoleEtcdValue roleValue = etcdCacheManager.getRoleCache().get(lockRequest.getRole().getKey());
 		if (roleValue == null || !Objects.equal(roleValue.getNodeName(), getNodeName())) {
 			return DoIfRoleWithLock.NOT_RUN_ROLE_NOT_OWNED;
 		}
@@ -171,21 +174,20 @@ public class EtcdClusterService implements IEtcdClusterService {
 	@Override
 	public void assignRole(IRole role) throws EtcdServiceException {
 		if (role != null && role.getKey() != null) {
-			etcdCacheManager.getRoleCache().putValueInCache(role.getKey(),
-					RoleEtcdValue.from(new Date(), getNodeName()));
+			etcdCacheManager.getRoleCache().put(role.getKey(), RoleEtcdValue.from(new Date(), getNodeName()));
 		}
 	}
 
 	@Override
 	public void unassignRole(IRole role) throws EtcdServiceException {
 		if (role != null && role.getKey() != null) {
-			etcdCacheManager.getRoleCache().deleteFromCache(role.getKey());
+			etcdCacheManager.getRoleCache().delete(role.getKey());
 		}
 	}
 
 	@Override
 	public Map<String, RoleEtcdValue> getRoles() throws EtcdServiceException {
-		return etcdCacheManager.getRoleCache().getAllValues().entrySet().stream()
+		return etcdCacheManager.getRoleCache().getAll().entrySet().stream()
 				.filter(map -> map.getValue() != null && Objects.equal(map.getValue().getNodeName(), getNodeName()))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
@@ -207,7 +209,11 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	@Override
 	public void doRebalanceRoles() {
-		doRebalanceRoles(1000);
+		try {
+			doRebalanceRoles(1000);
+		} catch (EtcdServiceException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
@@ -215,93 +221,95 @@ public class EtcdClusterService implements IEtcdClusterService {
 		return true; // TODO
 	}
 
-	private void doRebalanceRoles(int waitWeight) {
+	private void doRebalanceRoles(int waitWeight) throws EtcdServiceException {
 		LOGGER.debug("Starting role rebalance {}", toStringClusterNode());
 		if (!isClusterActive()) {
 			LOGGER.error("Cluster is marked as inactive (split detected); ignore rebalance");
 			return;
 		}
 
-//		List<IRole> roles = Lists.newArrayList(config.getRoleProvider().getRebalanceRoles());
-//		List<IRole> acquiredRoles = Lists.newArrayList();
-//		List<IRole> newRoles = Lists.newArrayList();
-//		while (!roles.isEmpty() && !Thread.currentThread().isInterrupted()) {
-//			try {
-//				// (aquiredRoles number * waitWeight * rand(1->2)) ms
-//				// the most roles we acquire, the more we wait (to let other
-//				// nodes a chance to acquire new roles)
-//				TimeUnit.MILLISECONDS.sleep((waitWeight * acquiredRoles.size() * (1 + Math.round(Math.random()))));
-//			} catch (InterruptedException e) {
-//				Thread.currentThread().interrupt();
-//				LOGGER.warn("Interrupted while rebalancing {}", toStringClusterNode());
-//				return;
-//			}
-//			IRole role = roles.remove(0);
-//			LOGGER.debug("Starting role rebalance - trying {} {}", role, toStringClusterNode());
-//			RoleRequestEtcdValue request = getRoleRequestCache().getValueFromCache(role.getKey());
-//			if (request != null) {
-//				// check already existing request
-//				if (Objects.equal(request.getNodeName(), getNodeName())) {
-//					
-//					IAttribution previousAttribution = getRoleCache().putIfAbsent(role,
-//							RoleAttribution.from(getAddress(), new Date()));
-//					if (previousAttribution != null) {
-//						if (!previousAttribution.match(getAddress())) {
-//							LOGGER.warn("Role rebalance - request on {} fails; already attributed to {} {}", role,
-//									previousAttribution, toStringClusterNode());
-//						} else {
-//							LOGGER.warn("Role rebalance - request on {} uselessly; already attributed {}", role,
-//									toStringClusterNode());
-//							acquiredRoles.add(role);
-//						}
-//					} else {
-//						LOGGER.info("Role rebalance - request on {} succeeded {}", role, toStringClusterNode());
-//						acquiredRoles.add(role);
-//						newRoles.add(role);
-//					}
-//				} else {
-//					// TODO timeout request (?)
-//					LOGGER.warn("Role rebalance - {} skipped because it exists a running request on it {}", role,
-//							toStringClusterNode());
-//				}
-//			} else {
-//				// no request, acquire it if not attributed
-//				IAttribution previousAttribution = getRolesCache().putIfAbsent(role,
-//						RoleAttribution.from(getAddress(), new Date()));
-//				if (previousAttribution != null) {
-//					if (!previousAttribution.match(getAddress())) {
-//						LOGGER.debug("Role rebalance - try {} uselessly; already attributed to {} {}", role,
-//								previousAttribution, toStringClusterNode());
-//					} else {
-//						LOGGER.debug("Role rebalance - try {} uselessly; already attributed {}", role,
-//								toStringClusterNode());
-//						acquiredRoles.add(role);
-//					}
-//				} else {
-//					LOGGER.info("Role rebalance - try on {} succeeded {}", role, toStringClusterNode());
-//					acquiredRoles.add(role);
-//					newRoles.add(role);
-//				}
-//			}
-//
-//			// get rid of request if is acquired
-//			if (acquiredRoles.contains(role) && request != null && request.match(getAddress())) {
-//				if (getRoleRequestCache().remove(role, request)) {
-//					LOGGER.info("Role rebalance - honored request {} removed {}", request, toStringClusterNode());
-//				}
-//			}
-//		}
-//
-//		LOGGER.debug("Ending role rebalance {}", toStringClusterNode());
-//
-//		if (!newRoles.isEmpty()) {
-//			if (LOGGER.isInfoEnabled()) {
-//				LOGGER.info("Role rebalance - new roles acquired: {} {}", Joiner.on(",").join(newRoles),
-//						toStringClusterNode());
-//				LOGGER.debug("Role rebalance - roles: {} {}", Joiner.on(",").join(acquiredRoles),
-//						toStringClusterNode());
-//			}
-//		}
+		List<IRole> roles = Lists.newArrayList(config.getRoleProvider().getRebalanceRoles());
+		List<IRole> acquiredRoles = Lists.newArrayList();
+		List<IRole> newRoles = Lists.newArrayList();
+		while (!roles.isEmpty() && !Thread.currentThread().isInterrupted()) {
+			try {
+				// (aquiredRoles number * waitWeight * rand(1->2)) ms
+				// the most roles we acquire, the more we wait (to let other
+				// nodes a chance to acquire new roles)
+				TimeUnit.MILLISECONDS.sleep((waitWeight * acquiredRoles.size() * (1 + Math.round(Math.random()))));
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				LOGGER.warn("Interrupted while rebalancing {}", toStringClusterNode());
+				return;
+			}
+			IRole role = roles.remove(0);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Starting role rebalance - trying {} {}", role, toStringClusterNode());
+			}
+			RoleRequestEtcdValue request = getCacheManager().getRoleRequestCache().get(role.getKey());
+			if (request != null) {
+				// check already existing request
+				if (Objects.equal(request.getNodeName(), getNodeName())) {
+
+					RoleEtcdValue previousRoleEtcdValue = getCacheManager().getRoleCache().putIfAbsent(role.getKey(),
+							RoleEtcdValue.from(new Date(), getAddress()));
+
+					if (previousRoleEtcdValue != null) {
+						if (!Objects.equal(previousRoleEtcdValue.getNodeName(), getAddress())) {
+							LOGGER.warn("Role rebalance - request on {} fails; already attributed to {} {}", role,
+									previousRoleEtcdValue, toStringClusterNode());
+						} else {
+							LOGGER.warn("Role rebalance - request on {} uselessly; already attributed {}", role,
+									toStringClusterNode());
+							acquiredRoles.add(role);
+						}
+					} else {
+						LOGGER.info("Role rebalance - request on {} succeeded {}", role, toStringClusterNode());
+						acquiredRoles.add(role);
+						newRoles.add(role);
+					}
+
+				} else {
+					LOGGER.warn("Role rebalance - {} skipped because it exists a running request on it {}", role,
+							toStringClusterNode());
+				}
+			} else {
+				// no request, acquire it if not attributed
+				RoleEtcdValue previousRoleEtcdValue = getCacheManager().getRoleCache().putIfAbsent(role.getKey(),
+						RoleEtcdValue.from(new Date(), getAddress()));
+				if (previousRoleEtcdValue != null) {
+					if (!Objects.equal(previousRoleEtcdValue.getNodeName(), getAddress())) {
+						LOGGER.debug("Role rebalance - try {} uselessly; already attributed to {} {}", role,
+								previousRoleEtcdValue.getNodeName(), toStringClusterNode());
+					} else {
+						LOGGER.debug("Role rebalance - try {} uselessly; already attributed {}", role,
+								toStringClusterNode());
+						acquiredRoles.add(role);
+					}
+				} else {
+					LOGGER.info("Role rebalance - try on {} succeeded {}", role, toStringClusterNode());
+					acquiredRoles.add(role);
+					newRoles.add(role);
+				}
+			}
+
+			// get rid of request if is acquired
+			if (acquiredRoles.contains(role) && request != null && Objects.equal(request.getNodeName(), getAddress())
+					&& getCacheManager().getRoleRequestCache().deleteIfNodeMatches(role.getKey(),
+							request.getNodeName())) {
+				LOGGER.info("Role rebalance - honored request {} removed {}", request, toStringClusterNode());
+			}
+		}
+		LOGGER.debug("Ending role rebalance {}", toStringClusterNode());
+
+		if (!newRoles.isEmpty()) {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Role rebalance - new roles acquired: {} {}", Joiner.on(",").join(newRoles),
+						toStringClusterNode());
+				LOGGER.debug("Role rebalance - roles: {} {}", Joiner.on(",").join(acquiredRoles),
+						toStringClusterNode());
+			}
+		}
 	}
 
 	private void updateCoordinator() {
@@ -354,7 +362,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 	public Pair<Boolean, List<String>> checkRoles(boolean checkFairness) {
 		boolean fair = true;
 		List<String> comments = Lists.newArrayList();
-		//TODO
+		// TODO
 		return Pair.with(fair, comments);
 	}
 

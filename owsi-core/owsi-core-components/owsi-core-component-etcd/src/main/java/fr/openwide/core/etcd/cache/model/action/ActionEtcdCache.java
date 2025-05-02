@@ -14,13 +14,18 @@ public class ActionEtcdCache extends AbstractEtcdCache<AbstractEtcdActionValue> 
     }
 
     @Override
-	public AbstractEtcdActionValue getValueFromCache(String key) throws EtcdServiceException {
-		return getValueFromCache(key, AbstractEtcdActionValue.class);
+	public AbstractEtcdActionValue get(String key) throws EtcdServiceException {
+		return get(key, AbstractEtcdActionValue.class);
     }
 
     @Override
-	public Map<String, AbstractEtcdActionValue> getAllValues() throws EtcdServiceException {
+	public Map<String, AbstractEtcdActionValue> getAll() throws EtcdServiceException {
 		return getAllValues(AbstractEtcdActionValue.class);
     }
+
+	@Override
+	public AbstractEtcdActionValue putIfAbsent(String key, AbstractEtcdActionValue value) throws EtcdServiceException {
+		return putIfAbsent(key, value, AbstractEtcdActionValue.class);
+	}
 
 } 

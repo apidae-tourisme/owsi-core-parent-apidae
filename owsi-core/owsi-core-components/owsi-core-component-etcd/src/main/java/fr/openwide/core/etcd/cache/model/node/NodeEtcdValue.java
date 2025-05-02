@@ -4,10 +4,9 @@ import java.time.Instant;
 import java.util.Date;
 
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheValue;
-import fr.openwide.core.etcd.cache.model.IEtcdCacheNodeValue;
 import fr.openwide.core.etcd.cache.model.IEtcdCacheWithLeaseValue;
 
-public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheNodeValue, IEtcdCacheWithLeaseValue {
+public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheWithLeaseValue {
 
 	private static final long serialVersionUID = -939846120050982502L;
 
@@ -45,12 +44,59 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheN
 		this.leaseId = leaseId;
 	}
 
+	@Override
 	public String getNodeName() {
 		return nodeName;
 	}
 
 	public void setNodeName(String nodeName) {
 		this.nodeName = nodeName;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof NodeEtcdValue)) {
+			return false;
+		}
+		NodeEtcdValue other = (NodeEtcdValue) obj;
+		if (leaveDate == null) {
+			if (other.leaveDate != null) {
+				return false;
+			}
+		} else if (!leaveDate.equals(other.leaveDate)) {
+			return false;
+		}
+		if (leaseId == null) {
+			if (other.leaseId != null) {
+				return false;
+			}
+		} else if (!leaseId.equals(other.leaseId)) {
+			return false;
+		}
+		if (nodeName == null) {
+			if (other.nodeName != null) {
+				return false;
+			}
+		} else if (!nodeName.equals(other.nodeName)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((leaveDate == null) ? 0 : leaveDate.hashCode());
+		result = prime * result + ((leaseId == null) ? 0 : leaseId.hashCode());
+		result = prime * result + ((nodeName == null) ? 0 : nodeName.hashCode());
+		return result;
 	}
 
 }

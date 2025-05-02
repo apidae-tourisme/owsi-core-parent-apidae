@@ -13,13 +13,18 @@ public class QueuedTaskEtcdCache extends AbstractEtcdCache<QueuedTaskEtcdValue> 
 	}
 
 	@Override
-	public QueuedTaskEtcdValue getValueFromCache(String key) throws EtcdServiceException {
-		return getValueFromCache(key, QueuedTaskEtcdValue.class);
+	public QueuedTaskEtcdValue get(String key) throws EtcdServiceException {
+		return get(key, QueuedTaskEtcdValue.class);
 	}
 
 	@Override
-	public Map<String, QueuedTaskEtcdValue> getAllValues() throws EtcdServiceException {
+	public Map<String, QueuedTaskEtcdValue> getAll() throws EtcdServiceException {
 		return getAllValues(QueuedTaskEtcdValue.class);
+	}
+
+	@Override
+	public QueuedTaskEtcdValue putIfAbsent(String key, QueuedTaskEtcdValue value) throws EtcdServiceException {
+		return putIfAbsent(key, value, QueuedTaskEtcdValue.class);
 	}
 
 }

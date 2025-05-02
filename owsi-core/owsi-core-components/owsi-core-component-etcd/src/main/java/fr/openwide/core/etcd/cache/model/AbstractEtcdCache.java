@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.service.AbstractEtcdClientService;
@@ -38,7 +38,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 		this.cacheName = cacheName;
 	}
 
-	protected T getValueFromCache(String key, Class<T> type) throws EtcdServiceException {
+	protected T get(String key, Class<T> type) throws EtcdServiceException {
 		try {
 			String prefixedKey = getCacheKey(key);
 			CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(prefixedKey.getBytes()));
@@ -61,7 +61,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 	}
 
 	@Override
-	public void putValueInCache(String key, T value) throws EtcdServiceException {
+	public void put(String key, T value) throws EtcdServiceException {
 		try {
 			String prefixedKey = getCacheKey(key);
 			byte[] serializedData = serializeObject(value);
@@ -77,13 +77,27 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 		}
 	}
 
+	protected T putIfAbsent(String key, T value, Class<T> type) throws EtcdServiceException {
+		// First check if the key exists
+		T existingValue = get(key, type);
+		if (existingValue != null) {
+			// Key exists, return the existing value
+			return existingValue;
+		}
+		
+		// Key doesn't exist, put the new value
+		put(key, value);
+		return null;
+	}
+
 	@Override
-	public void deleteFromCache(String key) throws EtcdServiceException {
+	public boolean delete(String key) throws EtcdServiceException {
 		try {
 			String prefixedKey = getCacheKey(key);
 			CompletableFuture<DeleteResponse> deleteFuture = getKvClient()
 					.delete(ByteSequence.from(prefixedKey.getBytes()));
-			deleteFuture.get();
+			DeleteResponse response = deleteFuture.get();
+			return response.getDeleted() > 0;
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new EtcdServiceException("Failed to delete key from cache '" + cacheName + "': " + key, e);

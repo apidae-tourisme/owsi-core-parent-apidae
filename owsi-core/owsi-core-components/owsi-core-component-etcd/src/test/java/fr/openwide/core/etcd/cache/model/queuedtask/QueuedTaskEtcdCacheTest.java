@@ -43,29 +43,29 @@ public class QueuedTaskEtcdCacheTest extends AbstractEtcdTest {
 			assertThat(cache1.getCacheNames()).containsExactlyInAnyOrder(cacheName1, cacheName2);
 
 			// Put Values
-			cache1.putValueInCache(key1, value1);
-			cache1.putValueInCache(key2, value2);
-			cache2.putValueInCache(key2, value2);
-			cache2.putValueInCache(key3, value3);
+			cache1.put(key1, value1);
+			cache1.put(key2, value2);
+			cache2.put(key2, value2);
+			cache2.put(key3, value3);
 
 			// Get values
-			assertThat(cache1.getValueFromCache(key1)).isEqualTo(value1);
-			assertThat(cache1.getValueFromCache(key2)).isEqualTo(value2);
-			assertThat(cache2.getValueFromCache(key2)).isEqualTo(value2);
-			assertThat(cache2.getValueFromCache(key3)).isEqualTo(value3);
+			assertThat(cache1.get(key1)).isEqualTo(value1);
+			assertThat(cache1.get(key2)).isEqualTo(value2);
+			assertThat(cache2.get(key2)).isEqualTo(value2);
+			assertThat(cache2.get(key3)).isEqualTo(value3);
 			assertThat(cache1.getAllKeys()).containsExactlyInAnyOrder(key1, key2);
 			assertThat(cache2.getAllKeys()).containsExactlyInAnyOrder(key2, key3);
 
 			// Delete
-			cache1.deleteFromCache(key2);
-			assertThat(cache1.getValueFromCache(key1)).isEqualTo(value1);
-			assertThat(cache1.getValueFromCache(key2)).isNull();
+			cache1.delete(key2);
+			assertThat(cache1.get(key1)).isEqualTo(value1);
+			assertThat(cache1.get(key2)).isNull();
 			assertThat(cache1.getAllKeys()).containsExactlyInAnyOrder(key1);
 			assertThat(cache2.getAllKeys()).containsExactlyInAnyOrder(key2, key3);
 
 			// Delete all key from cache1
 			cache1.deleteAllCacheKeys();
-			assertThat(cache1.getValueFromCache(key1)).isNull();
+			assertThat(cache1.get(key1)).isNull();
 			assertThat(cache1.getAllKeys()).isEmpty();
 			assertThat(cache2.getAllKeys()).containsExactlyInAnyOrder(key2, key3);
 

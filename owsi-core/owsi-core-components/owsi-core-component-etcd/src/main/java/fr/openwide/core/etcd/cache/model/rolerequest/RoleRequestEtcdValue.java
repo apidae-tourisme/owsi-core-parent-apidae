@@ -30,4 +30,34 @@ public class RoleRequestEtcdValue extends AbstractEtcdCacheValue implements IEtc
 		this.nodeName = nodeName;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof RoleRequestEtcdValue)) {
+			return false;
+		}
+		RoleRequestEtcdValue other = (RoleRequestEtcdValue) obj;
+		if (nodeName == null) {
+			if (other.nodeName != null) {
+				return false;
+			}
+		} else if (!nodeName.equals(other.nodeName)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((nodeName == null) ? 0 : nodeName.hashCode());
+		return result;
+	}
+
 }

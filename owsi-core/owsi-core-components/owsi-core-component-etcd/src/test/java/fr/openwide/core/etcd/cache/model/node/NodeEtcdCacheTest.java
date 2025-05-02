@@ -31,8 +31,8 @@ public class NodeEtcdCacheTest extends AbstractEtcdTest {
 		try (Client client = Client.builder().endpoints(etcdConfig.getEndpoints()).build()) {
 			EtcdClientClusterConfiguration clientConfiguration = new EtcdClientClusterConfiguration(etcdConfig, client);
 			NodeEtcdCache nodeCache = new NodeEtcdCache(cacheName, clientConfiguration);
-			nodeCache.putValueInCache(key, NodeEtcdValue.from(new Date(), cacheName));
-			final NodeEtcdValue valueFromCache = nodeCache.getValueFromCache(key);
+			nodeCache.put(key, NodeEtcdValue.from(new Date(), cacheName));
+			final NodeEtcdValue valueFromCache = nodeCache.get(key);
 			assertThat(valueFromCache).isNotNull();
 			assertThat(valueFromCache.getLeaseId()).isNotNull();
 			clientConfiguration.getIsShutdown().set(true);
@@ -43,7 +43,7 @@ public class NodeEtcdCacheTest extends AbstractEtcdTest {
 				EtcdClientClusterConfiguration clientConfiguration = new EtcdClientClusterConfiguration(etcdConfig,
 						buildEctdClient(etcdConfig));
 				NodeEtcdCache anotherNodeCache = new NodeEtcdCache(cacheName, clientConfiguration);
-				return anotherNodeCache.getValueFromCache(key);
+				return anotherNodeCache.get(key);
 			} catch (EtcdServiceException e) {
 				throw new IllegalStateException(e);
 			}

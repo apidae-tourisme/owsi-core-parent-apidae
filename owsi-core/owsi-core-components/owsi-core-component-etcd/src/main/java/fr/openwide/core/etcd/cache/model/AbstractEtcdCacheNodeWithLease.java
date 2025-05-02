@@ -8,14 +8,24 @@ import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.kv.PutResponse;
 import io.etcd.jetcd.options.PutOption;
 
-public abstract class AbstractEtcdCacheWithLease<T extends IEtcdCacheWithLeaseValue> extends AbstractEtcdCache<T> {
+public abstract class AbstractEtcdCacheNodeWithLease<T extends IEtcdCacheWithLeaseValue>
+		extends AbstractEtcdCacheNode<T> {
 
-	protected AbstractEtcdCacheWithLease(String cacheName, EtcdClientClusterConfiguration config) {
+	protected AbstractEtcdCacheNodeWithLease(String cacheName, EtcdClientClusterConfiguration config) {
 		super(cacheName, config);
 	}
 
+	/**
+	 * Stores a value in the etcd cache with a lease.
+	 * The value is associated with the given key and will be automatically removed when the lease expires.
+	 * 
+	 * @param key The key under which to store the value
+	 * @param value The value to store in the cache, which must implement {@link IEtcdCacheWithLeaseValue}
+	 * @throws EtcdServiceException if there is an error storing the value in etcd
+	 * @throws InterruptedException if the operation is interrupted
+	 */
 	@Override
-	public void putValueInCache(String key, T value) throws EtcdServiceException {
+	public void put(String key, T value) throws EtcdServiceException {
 		try {
 			String prefixedKey = getCacheKey(key);
 			Long leaseId = getGlobalClientLeaseIdWithKeepAlive();

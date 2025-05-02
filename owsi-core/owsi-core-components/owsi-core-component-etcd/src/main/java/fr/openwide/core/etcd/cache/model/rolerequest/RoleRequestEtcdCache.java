@@ -13,13 +13,18 @@ public class RoleRequestEtcdCache extends AbstractEtcdCacheNode<RoleRequestEtcdV
 	}
 
 	@Override
-	public RoleRequestEtcdValue getValueFromCache(String key) throws EtcdServiceException {
-		return getValueFromCache(key, RoleRequestEtcdValue.class);
+	public RoleRequestEtcdValue get(String key) throws EtcdServiceException {
+		return get(key, RoleRequestEtcdValue.class);
 	}
 
 	@Override
-	public Map<String, RoleRequestEtcdValue> getAllValues() throws EtcdServiceException {
+	public Map<String, RoleRequestEtcdValue> getAll() throws EtcdServiceException {
 		return getAllValues(RoleRequestEtcdValue.class);
+	}
+
+	@Override
+	public RoleRequestEtcdValue putIfAbsent(String key, RoleRequestEtcdValue value) throws EtcdServiceException {
+		return putIfAbsent(key, value, RoleRequestEtcdValue.class);
 	}
 
 }
