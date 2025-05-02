@@ -8,7 +8,10 @@ import fr.openwide.core.etcd.action.model.AbstractEtcdActionValue;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 
 public interface IEtcdActionService {
+
+	void start();
     
+	void stop();
 
 	String resultLessAction(AbstractEtcdActionValue action) throws EtcdServiceException;
     

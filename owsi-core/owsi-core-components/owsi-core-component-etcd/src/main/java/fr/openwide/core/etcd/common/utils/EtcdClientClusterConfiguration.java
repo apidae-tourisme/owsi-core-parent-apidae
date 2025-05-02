@@ -8,6 +8,8 @@ import io.etcd.jetcd.Client;
 
 public class EtcdClientClusterConfiguration {
 
+	private static final String MASTER_KEY = "master";
+
 	private final EtcdCommonClusterConfiguration clusterConfiguration;
 
 	private final Client client;
@@ -41,6 +43,10 @@ public class EtcdClientClusterConfiguration {
 
 	public AtomicBoolean getIsShutdown() {
 		return isShutdown;
+	}
+
+	public String getMasterKey() {
+		return MASTER_KEY;
 	}
 
 }

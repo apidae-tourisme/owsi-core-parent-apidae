@@ -1,5 +1,6 @@
 package fr.openwide.core.etcd.common.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.openwide.core.etcd.action.model.RoleRebalanceAction;
 import fr.openwide.core.etcd.action.service.EtcdActionService;
-import fr.openwide.core.etcd.action.service.EtcdActionWatcherService;
+import fr.openwide.core.etcd.action.service.IEtcdActionService;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdValue;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdValue;
@@ -32,6 +33,8 @@ import fr.openwide.core.etcd.common.model.DoIfRoleWithLock;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
 import fr.openwide.core.etcd.lock.service.EtcdLockService;
+import fr.openwide.core.etcd.master.service.EtcdMasterService;
+import fr.openwide.core.etcd.master.service.IEtcdMasterService;
 import fr.openwide.core.infinispan.model.ILockRequest;
 import fr.openwide.core.infinispan.model.IRole;
 import fr.openwide.core.infinispan.service.IRolesProvider;
@@ -56,8 +59,8 @@ public class EtcdClusterService implements IEtcdClusterService {
 	private final ScheduledThreadPoolExecutor checkerExecutor = new ScheduledThreadPoolExecutor(1,
 			new ThreadFactoryBuilder().setNameFormat("etcd-checker-%d").build());
 
-	private final EtcdActionService actionService;
-	private final EtcdActionWatcherService actionWatcher;
+	private final IEtcdActionService actionService;
+	private final IEtcdMasterService masterService;
 
 	public EtcdClusterService(EtcdCommonClusterConfiguration config) {
 		this.config = config;
@@ -66,8 +69,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 		this.etcdCacheManager = new EtcdCacheManager(clientConfiguration);
 		this.lockService = new EtcdLockService(clientConfiguration);
 		this.actionService = new EtcdActionService(this, clientConfiguration);
-		this.actionWatcher = new EtcdActionWatcherService(actionService, etcdCacheManager.getActionCache(),
-				clientConfiguration);
+		this.masterService = new EtcdMasterService(clientConfiguration);
 
 		// don't wait for delayed tasks after shutdown (even if already planned)
 		initExecutor(this.rebalanceExecutor);
@@ -94,9 +96,9 @@ public class EtcdClusterService implements IEtcdClusterService {
 		} catch (EtcdServiceException e) {
 			throw new IllegalStateException("Error starting cache manager", e);
 		}
+		masterService.start();
 
-		actionWatcher.start();
-
+		actionService.start();
 		if (isCoordinator() && etcdClusterCheckerService != null) {
 			etcdClusterCheckerService.updateCoordinator(getLocalAddress(), Collections.emptyList());
 		}
@@ -119,7 +121,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 		if (!clientConfiguration.getIsShutdown().compareAndSet(false, true)) {
 			LOGGER.warn("Stop seems be called twice on {}", getNodeName());
 		}
-		actionWatcher.stop();
+		actionService.stop();
 
 		try {
 			LOGGER.debug("Clean role owned by current node {}", getNodeName());
@@ -173,9 +175,28 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	@Override
 	public void assignRole(IRole role) throws EtcdServiceException {
+		tryAssignRole(role, new ArrayList<>(), new ArrayList<>());
+	}
+
+	private void tryAssignRole(IRole role, List<IRole> acquiredRoles, List<IRole> newRoles) throws EtcdServiceException {
 		if (role != null && role.getKey() != null) {
-			etcdCacheManager.getRoleCache().put(role.getKey(), RoleEtcdValue.from(new Date(), getNodeName()));
+			RoleEtcdValue previousRoleEtcdValue = getCacheManager().getRoleCache().putIfAbsent(role.getKey(),
+					RoleEtcdValue.from(new Date(), getAddress()));
+			if (previousRoleEtcdValue != null) {
+				if (!Objects.equal(previousRoleEtcdValue.getNodeName(), getAddress())) {
+					LOGGER.warn("Role rebalance on {} fails; already attributed to {} {}", role, previousRoleEtcdValue,
+							toStringClusterNode());
+				} else {
+					LOGGER.warn("Role rebalance on {} uselessly; already attributed {}", role, toStringClusterNode());
+					acquiredRoles.add(role);
+				}
+			} else {
+				LOGGER.info("Role rebalance - request on {} succeeded {}", role, toStringClusterNode());
+				acquiredRoles.add(role);
+				newRoles.add(role);
+			}
 		}
+
 	}
 
 	@Override
@@ -218,7 +239,20 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	@Override
 	public boolean isClusterActive() {
-		return true; // TODO
+		if (etcdClusterCheckerService == null) {
+			// no consistency check
+			return true;
+		} else {
+			return etcdClusterCheckerService.isClusterActive(getAllNodes());
+		}
+	}
+
+	private List<String> getAllNodes() {
+		try {
+			return getCacheManager().getNodeCache().getAllKeys();
+		} catch (EtcdServiceException e) {
+			throw new IllegalStateException("Error getting all Nodes");
+		}
 	}
 
 	private void doRebalanceRoles(int waitWeight) throws EtcdServiceException {
@@ -250,47 +284,14 @@ public class EtcdClusterService implements IEtcdClusterService {
 			if (request != null) {
 				// check already existing request
 				if (Objects.equal(request.getNodeName(), getNodeName())) {
-
-					RoleEtcdValue previousRoleEtcdValue = getCacheManager().getRoleCache().putIfAbsent(role.getKey(),
-							RoleEtcdValue.from(new Date(), getAddress()));
-
-					if (previousRoleEtcdValue != null) {
-						if (!Objects.equal(previousRoleEtcdValue.getNodeName(), getAddress())) {
-							LOGGER.warn("Role rebalance - request on {} fails; already attributed to {} {}", role,
-									previousRoleEtcdValue, toStringClusterNode());
-						} else {
-							LOGGER.warn("Role rebalance - request on {} uselessly; already attributed {}", role,
-									toStringClusterNode());
-							acquiredRoles.add(role);
-						}
-					} else {
-						LOGGER.info("Role rebalance - request on {} succeeded {}", role, toStringClusterNode());
-						acquiredRoles.add(role);
-						newRoles.add(role);
-					}
-
+					tryAssignRole(role, acquiredRoles, newRoles);
 				} else {
 					LOGGER.warn("Role rebalance - {} skipped because it exists a running request on it {}", role,
 							toStringClusterNode());
 				}
 			} else {
 				// no request, acquire it if not attributed
-				RoleEtcdValue previousRoleEtcdValue = getCacheManager().getRoleCache().putIfAbsent(role.getKey(),
-						RoleEtcdValue.from(new Date(), getAddress()));
-				if (previousRoleEtcdValue != null) {
-					if (!Objects.equal(previousRoleEtcdValue.getNodeName(), getAddress())) {
-						LOGGER.debug("Role rebalance - try {} uselessly; already attributed to {} {}", role,
-								previousRoleEtcdValue.getNodeName(), toStringClusterNode());
-					} else {
-						LOGGER.debug("Role rebalance - try {} uselessly; already attributed {}", role,
-								toStringClusterNode());
-						acquiredRoles.add(role);
-					}
-				} else {
-					LOGGER.info("Role rebalance - try on {} succeeded {}", role, toStringClusterNode());
-					acquiredRoles.add(role);
-					newRoles.add(role);
-				}
+				tryAssignRole(role, acquiredRoles, newRoles);
 			}
 
 			// get rid of request if is acquired
@@ -301,15 +302,12 @@ public class EtcdClusterService implements IEtcdClusterService {
 			}
 		}
 		LOGGER.debug("Ending role rebalance {}", toStringClusterNode());
-
-		if (!newRoles.isEmpty()) {
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("Role rebalance - new roles acquired: {} {}", Joiner.on(",").join(newRoles),
-						toStringClusterNode());
-				LOGGER.debug("Role rebalance - roles: {} {}", Joiner.on(",").join(acquiredRoles),
-						toStringClusterNode());
-			}
+		if (!newRoles.isEmpty() && LOGGER.isInfoEnabled()) {
+			LOGGER.info("Role rebalance - new roles acquired: {} {}", Joiner.on(",").join(newRoles),
+					toStringClusterNode());
+			LOGGER.debug("Role rebalance - roles: {} {}", Joiner.on(",").join(acquiredRoles), toStringClusterNode());
 		}
+
 	}
 
 	private void updateCoordinator() {

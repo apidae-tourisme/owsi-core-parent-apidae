@@ -2,6 +2,8 @@ package fr.openwide.core.etcd.action.service;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -15,14 +17,21 @@ import fr.openwide.core.etcd.action.model.AbstractEtcdActionValue;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.service.IEtcdClusterService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
+import fr.openwide.core.etcd.common.utils.EtcdUtil;
+import io.etcd.jetcd.ByteSequence;
+import io.etcd.jetcd.Watch;
+import io.etcd.jetcd.options.WatchOption;
+import io.etcd.jetcd.watch.WatchEvent;
 
 public class EtcdActionService implements IEtcdActionService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdActionService.class);
     
 	private final IEtcdClusterService clusterService;
-
 	private final EtcdClientClusterConfiguration config;
+	private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+	private Watch.Watcher watcher;
     
 	public EtcdActionService(IEtcdClusterService clusterService, EtcdClientClusterConfiguration config) {
 		this.clusterService = clusterService;
@@ -91,5 +100,69 @@ public class EtcdActionService implements IEtcdActionService {
 
 	private String generateUniqueActionId() {
 		return config.getNodeName() + "-" + UUID.randomUUID().toString();
+	}
+
+	@Override
+	public void start() {
+		try {
+			ByteSequence prefix = ByteSequence
+					.from(clusterService.getCacheManager().getActionCache().getCachePrefix().getBytes());
+			WatchOption watchOption = WatchOption.builder().withPrevKV(true)
+					.withRange(EtcdUtil.prefixEndOf(clusterService.getCacheManager().getActionCache().getCachePrefix()))
+					.build();
+
+			LOGGER.info("Starting watch on prefix: {}",
+					clusterService.getCacheManager().getActionCache().getCachePrefix());
+
+			watcher = config.getClient().getWatchClient().watch(prefix, watchOption, watchResponse -> {
+				for (WatchEvent event : watchResponse.getEvents()) {
+					if (event.getEventType() == WatchEvent.EventType.PUT) {
+						String key = event.getKeyValue().getKey().toString();
+						String actionId = key
+								.substring(clusterService.getCacheManager().getActionCache().getCachePrefix().length());
+						executorService.submit(() -> {
+							try {
+								LOGGER.debug("Processing action with ID: {}", actionId);
+								this.processAction(actionId);
+							} catch (EtcdServiceException e) {
+								LOGGER.error("Error processing action {}", actionId, e);
+							}
+						});
+					}
+				}
+			});
+
+			LOGGER.info("Watch successfully started on prefix: {}",
+					clusterService.getCacheManager().getActionCache().getCachePrefix());
+		} catch (Exception e) {
+			throw new IllegalStateException(
+					"Failed to start watch on prefix: %s"
+							.formatted(clusterService.getCacheManager().getActionCache().getCachePrefix()),
+					e);
+		}
+	}
+
+	@Override
+	public void stop() {
+		if (watcher != null) {
+			try {
+				watcher.close();
+				LOGGER.info("Watch successfully stopped");
+			} catch (Exception e) {
+				LOGGER.error("Error while stopping watch", e);
+			}
+		}
+
+		executorService.shutdown();
+		try {
+			if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+				executorService.shutdownNow();
+				LOGGER.warn("Executor service did not terminate gracefully, forcing shutdown");
+			}
+		} catch (InterruptedException e) {
+			executorService.shutdownNow();
+			Thread.currentThread().interrupt();
+			LOGGER.error("Interrupted while waiting for executor service to terminate", e);
+		}
 	}
 } 

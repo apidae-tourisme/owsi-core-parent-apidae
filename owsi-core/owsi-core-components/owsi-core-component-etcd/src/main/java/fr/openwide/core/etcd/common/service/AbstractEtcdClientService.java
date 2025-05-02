@@ -17,6 +17,7 @@ import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Lease;
 import io.etcd.jetcd.Lock;
+import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.kv.DeleteResponse;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.lease.LeaseRevokeResponse;
@@ -42,6 +43,10 @@ public class AbstractEtcdClientService {
 
 	protected Lease getLeaseClient() {
 		return config.getClient().getLeaseClient();
+	}
+
+	protected Watch getWatchClient() {
+		return config.getClient().getWatchClient();
 	}
 
 	protected List<KeyValue> getAllFromPrefix(String prefix) throws InterruptedException, ExecutionException {
@@ -88,6 +93,10 @@ public class AbstractEtcdClientService {
 
 	protected String getNodeName() {
 		return config.getNodeName();
+	}
+
+	protected String getMasterKey() {
+		return config.getMasterKey();
 	}
 
 }
