@@ -23,8 +23,7 @@ public class JpaMoreEtcdConfig {
 	public static final String ETCD_ROLE_PROVIDER = "etcdRolesProvider";
 
 	@Bean(name = ETCD_ROLE_PROVIDER)
-	public IRolesProvider infinispanRolesProvider(IPropertyService propertyService) {
-
+	public IRolesProvider etcdRolesProvider(IPropertyService propertyService) {
 		if (Boolean.FALSE.equals(propertyService.get(JpaMoreEtcdPropertyIds.ETCD_ENABLED))) {
 			return null;
 		}
@@ -43,14 +42,12 @@ public class JpaMoreEtcdConfig {
 		String clusterName = propertyService.get(JpaMoreEtcdPropertyIds.ETCD_CLUSTER_NAME);
 		long leaseTtl = propertyService.get(JpaMoreEtcdPropertyIds.ETCD_DEFAULT_LEASE_TTL);
 		
-		
 		EtcdCommonClusterConfiguration conf = EtcdCommonClusterConfiguration.builder()
 				.withEndpoints(endpoints)
 				.withNodeName(nodeName)
 				.withClusterName(clusterName)
 				.withLeaseTtl(leaseTtl)
 				.withRoleProvider(rolesProvider)
-				.withCheckerService(null)// FIXME
 				.build();
 
 		IEtcdClusterService clusterService = new EtcdClusterService(conf);

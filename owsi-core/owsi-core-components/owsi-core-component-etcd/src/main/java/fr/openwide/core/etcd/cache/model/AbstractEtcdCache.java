@@ -11,17 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.service.AbstractEtcdClientService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KeyValue;
+import io.etcd.jetcd.Txn;
 import io.etcd.jetcd.kv.DeleteResponse;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.kv.PutResponse;
+import io.etcd.jetcd.kv.TxnResponse;
+import io.etcd.jetcd.op.Cmp;
+import io.etcd.jetcd.op.CmpTarget;
+import io.etcd.jetcd.op.Op;
+import io.etcd.jetcd.options.GetOption;
+import io.etcd.jetcd.options.PutOption;
 
 public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends AbstractEtcdClientService implements IEtcdCache<T> {
 
@@ -41,20 +46,15 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 	protected T get(String key, Class<T> type) throws EtcdServiceException {
 		try {
 			String prefixedKey = getCacheKey(key);
-			CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(prefixedKey.getBytes()));
-			GetResponse response = getFuture.get(10, TimeUnit.SECONDS);
-
+			GetResponse response = getValue(prefixedKey);
 			List<KeyValue> keyValues = response.getKvs();
 			if (keyValues.isEmpty()) {
 				return null;
 			}
 			byte[] serializedData = keyValues.get(0).getValue().getBytes();
 			return deserializeObject(serializedData, type);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to get value from cache '" + cacheName + "' for key: " + key, e);
-		} catch (TimeoutException e) {
-			throw new EtcdServiceException("Timeout while getting value from cache '" + cacheName + "' for key: " + key, e);
+		} catch (EtcdServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new EtcdServiceException("Failed to get value from cache '" + cacheName + "' for key: " + key, e);
 		}
@@ -67,7 +67,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 			byte[] serializedData = serializeObject(value);
 
 			CompletableFuture<PutResponse> putFuture = getKvClient().put(ByteSequence.from(prefixedKey.getBytes()),
-					ByteSequence.from(serializedData));
+					ByteSequence.from(serializedData), getPutOption());
 			putFuture.get();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -77,17 +77,39 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 		}
 	}
 
+	protected PutOption getPutOption() {
+		return PutOption.DEFAULT;
+	}
+
 	protected T putIfAbsent(String key, T value, Class<T> type) throws EtcdServiceException {
-		// First check if the key exists
-		T existingValue = get(key, type);
-		if (existingValue != null) {
-			// Key exists, return the existing value
-			return existingValue;
+		try {
+			String prefixedKey = getCacheKey(key);
+			ByteSequence keyBytes = ByteSequence.from(prefixedKey.getBytes());
+			byte[] serializedData = serializeObject(value);
+			ByteSequence valueBytes = ByteSequence.from(serializedData);
+
+			// Use a transaction to atomically check if the key exists and put if it doesn't
+			Txn txn = getKvClient().txn()
+					.If(new Cmp(keyBytes, Cmp.Op.EQUAL, CmpTarget.createRevision(0))) // Key doesn't exist
+					.Then(Op.put(keyBytes, valueBytes, getPutOption()))
+					.Else(Op.get(keyBytes, GetOption.DEFAULT));
+
+			TxnResponse txnResponse = txn.commit().get();
+			
+			if (txnResponse.isSucceeded()) {
+				// Transaction succeeded, meaning the key didn't exist and we put the new value
+				return null;
+			} else {
+				// Key exists, get the existing value
+				GetResponse getResponse = txnResponse.getGetResponses().get(0);
+				if (getResponse.getKvs().isEmpty()) {
+					return null;
+				}
+				return deserializeObject(getResponse.getKvs().get(0).getValue().getBytes(), type);
+			}
+		} catch (Exception e) {
+			throw new EtcdServiceException("Failed to put value in cache '" + cacheName + "' for key: " + key, e);
 		}
-		
-		// Key doesn't exist, put the new value
-		put(key, value);
-		return null;
 	}
 
 	@Override
@@ -108,30 +130,21 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 
 	@Override
 	public List<String> getCacheNames() throws EtcdServiceException {
-		try {
-			CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(CACHE_LIST_KEY.getBytes()));
-			GetResponse response = getFuture.get();
+		GetResponse response = getValue(CACHE_LIST_KEY);
 
-			List<KeyValue> keyValues = response.getKvs();
-			if (keyValues.isEmpty()) {
-				return List.of();
-			}
-
-			String cacheList = new String(keyValues.get(0).getValue().getBytes(), StandardCharsets.UTF_8);
-			return List.of(cacheList.split(","));
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to get cache names", e);
-		} catch (ExecutionException e) {
-			throw new EtcdServiceException("Failed to get cache names", e);
+		List<KeyValue> keyValues = response.getKvs();
+		if (keyValues.isEmpty()) {
+			return List.of();
 		}
+
+		String cacheList = new String(keyValues.get(0).getValue().getBytes(), StandardCharsets.UTF_8);
+		return List.of(cacheList.split(","));
 	}
 
 	@Override
 	public void ensureCacheExists() throws EtcdServiceException {
 		try {
-			CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(CACHE_LIST_KEY.getBytes()));
-			GetResponse response = getFuture.get();
+			GetResponse response = getValue(CACHE_LIST_KEY);
 
 			List<KeyValue> keyValues = response.getKvs();
 			if (keyValues.isEmpty()) {
@@ -206,15 +219,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 
 	@Override
 	public List<String> getAllKeys() throws EtcdServiceException {
-		try {
-			String prefix = getCachePrefix();
-			return getAllKeysFromPrefix(prefix);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to get all keys from cache '" + cacheName + "'", e);
-		} catch (Exception e) {
-			throw new EtcdServiceException("Failed to get all keys from cache '" + cacheName + "'", e);
-		}
+		return getAllKeysFromPrefix(getCachePrefix());
 	}
 
 	protected Map<String, T> getAllValues(Class<T> type) throws EtcdServiceException {
@@ -232,9 +237,8 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 						deserializeObject(kv.getValue().getBytes(), type));
 			}
 			return kvMap;
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to get all values from cache '" + cacheName + "'", e);
+		} catch (EtcdServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new EtcdServiceException("Failed to get all values from cache '" + cacheName + "'", e);
 		}

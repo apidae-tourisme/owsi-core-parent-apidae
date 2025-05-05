@@ -4,15 +4,13 @@ import java.time.Instant;
 import java.util.Date;
 
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheValue;
-import fr.openwide.core.etcd.cache.model.IEtcdCacheWithLeaseValue;
+import fr.openwide.core.etcd.cache.model.IEtcdCacheNodeValue;
 
-public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheWithLeaseValue {
+public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheNodeValue {
 
 	private static final long serialVersionUID = -939846120050982502L;
 
 	private Instant leaveDate;
-
-	private Long leaseId;
 
 	private String nodeName;
 
@@ -32,16 +30,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheW
 
 	public void setLeaveDate(Instant leaveDate) {
 		this.leaveDate = leaveDate;
-	}
-
-	@Override
-	public Long getLeaseId() {
-		return leaseId;
-	}
-
-	@Override
-	public void setLeaseId(Long leaseId) {
-		this.leaseId = leaseId;
 	}
 
 	@Override
@@ -72,13 +60,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheW
 		} else if (!leaveDate.equals(other.leaveDate)) {
 			return false;
 		}
-		if (leaseId == null) {
-			if (other.leaseId != null) {
-				return false;
-			}
-		} else if (!leaseId.equals(other.leaseId)) {
-			return false;
-		}
 		if (nodeName == null) {
 			if (other.nodeName != null) {
 				return false;
@@ -94,7 +75,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheW
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((leaveDate == null) ? 0 : leaveDate.hashCode());
-		result = prime * result + ((leaseId == null) ? 0 : leaseId.hashCode());
 		result = prime * result + ((nodeName == null) ? 0 : nodeName.hashCode());
 		return result;
 	}

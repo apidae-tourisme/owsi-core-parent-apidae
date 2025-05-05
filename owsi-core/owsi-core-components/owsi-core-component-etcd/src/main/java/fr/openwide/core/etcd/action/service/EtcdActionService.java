@@ -83,7 +83,8 @@ public class EtcdActionService implements IEtcdActionService {
 		LOGGER.debug("Try to process action {}", actionId);
 		AbstractEtcdActionValue action = clusterService.getCacheManager().getActionCache()
 				.get(actionId);
-		if (action != null && (action.broadcast() || Objects.equal(clusterService.getAddress(), action.getTargetNode()))) {
+		if (action != null
+				&& (action.broadcast() || Objects.equal(clusterService.getNodeName(), action.getTargetNode()))) {
 			try {
 				action.execute(clusterService);
 				if (action.needsResult()) {

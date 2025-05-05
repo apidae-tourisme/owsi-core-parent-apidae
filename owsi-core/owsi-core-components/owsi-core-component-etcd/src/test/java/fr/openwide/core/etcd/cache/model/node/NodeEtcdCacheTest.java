@@ -34,7 +34,6 @@ public class NodeEtcdCacheTest extends AbstractEtcdTest {
 			nodeCache.put(key, NodeEtcdValue.from(new Date(), cacheName));
 			final NodeEtcdValue valueFromCache = nodeCache.get(key);
 			assertThat(valueFromCache).isNotNull();
-			assertThat(valueFromCache.getLeaseId()).isNotNull();
 			clientConfiguration.getIsShutdown().set(true);
 		}
 

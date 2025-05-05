@@ -1,4 +1,4 @@
-package fr.openwide.core.etcd.master.service;
+package fr.openwide.core.etcd.coordinator.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,10 +11,11 @@ import fr.openwide.core.etcd.AbstractEtcdTest;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
+import fr.openwide.core.etcd.coordinator.service.EtcdCoordinatorService;
+import fr.openwide.core.etcd.coordinator.service.IEtcdCoordinatorService;
 import io.etcd.jetcd.Client;
 
-public class EtcdMasterServiceTest extends AbstractEtcdTest {
-
+public class EtcdCoordinatorServiceTest extends AbstractEtcdTest {
     
 	@Test
 	public void masterAssociationTest() throws EtcdServiceException {
@@ -30,31 +31,31 @@ public class EtcdMasterServiceTest extends AbstractEtcdTest {
 		final EtcdCommonClusterConfiguration etcdConfig3 = etcdConfigurationBuilderDefaultTestBuilder()
 				.withLeaseTtl(leaseTtl).withLockTimeout(1).withNodeName(node3).build();
 
-		IEtcdMasterService masterService1 = null;
-		IEtcdMasterService masterService2 = null;
+		IEtcdCoordinatorService masterService1 = null;
+		IEtcdCoordinatorService masterService2 = null;
 
 		Client client2 = buildEctdClient(etcdConfig2);
 
 		try (Client client1 = buildEctdClient(etcdConfig1)) {
 			EtcdClientClusterConfiguration clientConfiguration1 = new EtcdClientClusterConfiguration(etcdConfig1,
 					client1);
-			masterService1 = new EtcdMasterService(clientConfiguration1);
+			masterService1 = new EtcdCoordinatorService(clientConfiguration1);
 			masterService1.start();
-			assertThat(masterService1.isMaster()).as("master node is node_1").isTrue();
+			assertThat(masterService1.isCoordinator()).as("master node is node_1").isTrue();
 
 			EtcdClientClusterConfiguration clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig2,
 					client2);
-			masterService2 = new EtcdMasterService(clientConfiguration2);
+			masterService2 = new EtcdCoordinatorService(clientConfiguration2);
 			masterService2.start();
-			assertThat(masterService1.isMaster()).as("master node is still node_1").isTrue();
-			assertThat(masterService2.isMaster()).as("master node is still node_1").isFalse();
+			assertThat(masterService1.isCoordinator()).as("master node is still node_1").isTrue();
+			assertThat(masterService2.isCoordinator()).as("master node is still node_1").isFalse();
 		}
 
 		CompletableFuture<String> secondTaskFuture = CompletableFuture.supplyAsync(() -> {
 			EtcdClientClusterConfiguration clientConfig = new EtcdClientClusterConfiguration(etcdConfig3,
 					buildEctdClient(etcdConfig3));
 			try {
-				return new EtcdMasterService(clientConfig).getCurrentMaster();
+				return new EtcdCoordinatorService(clientConfig).getCurrentCoordinator();
 			} catch (EtcdServiceException e) {
 				throw new IllegalStateException(e);
 			}

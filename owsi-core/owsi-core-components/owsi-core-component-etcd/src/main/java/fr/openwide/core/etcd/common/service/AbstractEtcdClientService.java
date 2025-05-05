@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +50,37 @@ public class AbstractEtcdClientService {
 		return config.getClient().getWatchClient();
 	}
 
-	protected List<KeyValue> getAllFromPrefix(String prefix) throws InterruptedException, ExecutionException {
-		CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(prefix, StandardCharsets.UTF_8),
-				GetOption.builder().withRange(EtcdUtil.prefixEndOf(prefix)).build());
-		GetResponse response = getFuture.get();
-
-		return response.getKvs();
+	protected Watch get() {
+		return config.getClient().getWatchClient();
 	}
 
-	protected List<String> getAllKeysFromPrefix(String prefix) throws InterruptedException, ExecutionException {
+	protected GetResponse getValue(String key) throws EtcdServiceException {
+		CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(key.getBytes()));
+		try {
+			return getFuture.get(config.getClusterConfiguration().getTimeout(), TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new EtcdServiceException("Failed to get value for key: " + key, e);
+		} catch (Exception e) {
+			throw new EtcdServiceException("Exception while getting value for key: " + key, e);
+		}
+	}
+
+	protected List<KeyValue> getAllFromPrefix(String prefix) throws EtcdServiceException {
+		CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(prefix, StandardCharsets.UTF_8),
+				GetOption.builder().withRange(EtcdUtil.prefixEndOf(prefix)).build());
+		try {
+			return getFuture.get(config.getClusterConfiguration().getTimeout(), TimeUnit.SECONDS).getKvs();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new EtcdServiceException("Failed to get value from prefix: " + prefix, e);
+		} catch (Exception e) {
+			throw new EtcdServiceException("Exception while getting value from prefix: " + prefix, e);
+		}
+
+	}
+
+	protected List<String> getAllKeysFromPrefix(String prefix) throws EtcdServiceException {
 		List<KeyValue> keyValues = getAllFromPrefix(prefix);
 		if (keyValues.isEmpty()) {
 			return List.of();
@@ -95,8 +118,9 @@ public class AbstractEtcdClientService {
 		return config.getNodeName();
 	}
 
-	protected String getMasterKey() {
+	protected String getCoordinatorKey() {
 		return config.getMasterKey();
 	}
+
 
 }

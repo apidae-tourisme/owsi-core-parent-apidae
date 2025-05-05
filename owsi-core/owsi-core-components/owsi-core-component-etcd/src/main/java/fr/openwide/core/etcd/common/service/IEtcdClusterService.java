@@ -1,10 +1,7 @@
 package fr.openwide.core.etcd.common.service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.javatuples.Pair;
 
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.service.EtcdCacheManager;
@@ -32,8 +29,6 @@ public interface IEtcdClusterService extends AutoCloseable {
 
 	Map<String, RoleEtcdValue> getRoles() throws EtcdServiceException;
 
-	Pair<Boolean, List<String>> checkRoles(boolean checkFairness);
-
 	Set<IRole> getAllRolesForAssignation();
 
 	Set<IRole> getAllRolesForRolesRequests();
@@ -42,6 +37,6 @@ public interface IEtcdClusterService extends AutoCloseable {
 
 	boolean isClusterActive();
 
-	String getAddress();
+	String getNodeName();
 
 }

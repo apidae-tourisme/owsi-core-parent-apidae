@@ -15,10 +15,6 @@ public final class JpaMoreEtcdPropertyIds extends AbstractPropertyIds {
 	public static final ImmutablePropertyId<String> ETCD_NODE_NAME = immutable("etcd.nodeName");
 	public static final ImmutablePropertyId<String> ETCD_ENDPOINTS = immutable("etcd.endpoints");
 	public static final ImmutablePropertyId<Long> ETCD_DEFAULT_LEASE_TTL = immutable("etcd.defaultLeaseTtl");
-
-	/**
-	 * Complete list of roles
-	 */
 	public static final ImmutablePropertyId<Set<String>> ETCD_ROLES = immutable("etcd.roles");
 
 }

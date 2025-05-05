@@ -1,6 +1,5 @@
 package fr.openwide.core.etcd.common.utils;
 
-import fr.openwide.core.etcd.common.service.IEtcdClusterCheckerService;
 import fr.openwide.core.infinispan.service.IRolesProvider;
 
 public class EtcdCommonClusterConfiguration {
@@ -15,7 +14,7 @@ public class EtcdCommonClusterConfiguration {
 
 	private final long lockTimeout;
 
-	private final IEtcdClusterCheckerService etcdClusterCheckerService;
+	private final long timeout;
 
 	private final IRolesProvider roleProvider;
 
@@ -29,7 +28,7 @@ public class EtcdCommonClusterConfiguration {
 		this.clusterName = builder.clusterName;
 		this.leaseTtl = builder.leaseTtl;
 		this.lockTimeout = builder.lockTimeout;
-		this.etcdClusterCheckerService = builder.etcdClusterCheckerService;
+		this.timeout = builder.timeout;
 		this.roleProvider = builder.roleProvider;
 		this.roleRebalanceEnable = builder.roleRebalanceEnable;
 		this.updateCoordinatorEnable = builder.updateCoordinatorEnable;
@@ -59,8 +58,8 @@ public class EtcdCommonClusterConfiguration {
 		return lockTimeout;
 	}
 
-	public IEtcdClusterCheckerService getEtcdClusterCheckerService() {
-		return etcdClusterCheckerService;
+	public long getTimeout() {
+		return timeout;
 	}
 
 	public IRolesProvider getRoleProvider() {
@@ -86,7 +85,7 @@ public class EtcdCommonClusterConfiguration {
 
 		private long lockTimeout = 10;
 
-		private IEtcdClusterCheckerService etcdClusterCheckerService;
+		private long timeout = 10;
 
 		private IRolesProvider roleProvider;
 
@@ -127,8 +126,8 @@ public class EtcdCommonClusterConfiguration {
 			return this;
 		}
 
-		public EtcdConfigurationBuilder withCheckerService(IEtcdClusterCheckerService etcdClusterCheckerService) {
-			this.etcdClusterCheckerService = etcdClusterCheckerService;
+		public EtcdConfigurationBuilder withTimeout(long timeout) {
+			this.timeout = timeout;
 			return this;
 		}
 

@@ -1,10 +1,8 @@
-package fr.openwide.core.etcd.master.service;
+package fr.openwide.core.etcd.coordinator.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.exception.EtcdServiceRuntimeException;
 import fr.openwide.core.etcd.common.service.AbstractEtcdClientService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import io.etcd.jetcd.ByteSequence;
@@ -23,28 +22,28 @@ import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
 import io.etcd.jetcd.options.PutOption;
 
-public class EtcdMasterService extends AbstractEtcdClientService implements IEtcdMasterService {
+public class EtcdCoordinatorService extends AbstractEtcdClientService implements IEtcdCoordinatorService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EtcdMasterService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EtcdCoordinatorService.class);
 
 	private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-	public EtcdMasterService(EtcdClientClusterConfiguration config) {
+	public EtcdCoordinatorService(EtcdClientClusterConfiguration config) {
 		super(config);
 	}
 
 	@Override
 	public void start() {
-		// Try to become the master
-		tryBecomeMaster();
+		// Try to become the coordinator
+		tryBecomeCoordinator();
 		// Watch for changes to the master key
-		watchMasterKey();
+		watchCoordinatorKey();
 	}
 
 	@Override
-	public boolean tryBecomeMaster() {
+	public boolean tryBecomeCoordinator() {
 		try {
-			ByteSequence key = ByteSequence.from(getMasterKey(), StandardCharsets.UTF_8);
+			ByteSequence key = ByteSequence.from(getCoordinatorKey(), StandardCharsets.UTF_8);
 			ByteSequence value = ByteSequence.from(getNodeName(), StandardCharsets.UTF_8);
 			// Use a transaction to atomically check if the key exists and put if it doesn't
 			Txn txn = getKvClient().txn()
@@ -60,25 +59,28 @@ public class EtcdMasterService extends AbstractEtcdClientService implements IEtc
 				LOGGER.debug("Node {} is not the master", getNodeName());
 			}
 			return success;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new EtcdServiceRuntimeException("InterruptedException while trying become master", e);
 		} catch (Exception e) {
 			LOGGER.error("Error trying to become master", e);
 		}
 		return false;
 	}
 
-	private void watchMasterKey() {
-		ByteSequence key = ByteSequence.from(getMasterKey(), StandardCharsets.UTF_8);
+	private void watchCoordinatorKey() {
+		ByteSequence key = ByteSequence.from(getCoordinatorKey(), StandardCharsets.UTF_8);
 		getWatchClient().watch(key, watchResponse -> {
 			if (!watchResponse.getEvents().isEmpty()) {
-				executorService.submit(this::tryBecomeMaster);
+				executorService.submit(this::tryBecomeCoordinator);
 			}
 		});
 	}
 	
 	@Override
-	public boolean isMaster() {
+	public boolean isCoordinator() {
 		try {
-			return Objects.equal(getCurrentMaster(), getNodeName());
+			return Objects.equal(getCurrentCoordinator(), getNodeName());
 		} catch (EtcdServiceException e) {
 			LOGGER.error("Unable to check master node", e);
 		}
@@ -86,27 +88,32 @@ public class EtcdMasterService extends AbstractEtcdClientService implements IEtc
 	}
 
 	@Override
-	public String getCurrentMaster() throws EtcdServiceException {
-		ByteSequence key = ByteSequence.from(getMasterKey(), StandardCharsets.UTF_8);
-		// Get the current value of the master key
-		GetResponse response;
+	public String getCurrentCoordinator() throws EtcdServiceException {
 		try {
-			response = getKvClient().get(key).get(10, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to get master node name", e);
-		} catch (TimeoutException e) {
-			throw new EtcdServiceException("Timeout while getting master node name", e);
+			// Get the current value of the master key
+			GetResponse response = getValue(getCoordinatorKey());
+			// Check if the key exists
+			if (response.getKvs().isEmpty()) {
+				return null; // No master elected yet
+			}
+			// Return the nodeName of the current master
+			return response.getKvs().get(0).getValue().toString(StandardCharsets.UTF_8);
+
 		} catch (Exception e) {
 			throw new EtcdServiceException("Failed to get master node name", e);
 		}
 
-		// Check if the key exists
-		if (response.getKvs().isEmpty()) {
-			return null; // No master elected yet
+	}
+
+	@Override
+	public boolean isClusterActive() {
+		try {
+			// Is it enough to simply check that the master node is present ?
+			return getCurrentCoordinator() != null;
+		} catch (EtcdServiceException e) {
+			LOGGER.error("Unable to check if cluster is active", e);
+			return false;
 		}
-		// Return the nodeName of the current master
-		return response.getKvs().get(0).getValue().toString(StandardCharsets.UTF_8);
 	}
 
 }
