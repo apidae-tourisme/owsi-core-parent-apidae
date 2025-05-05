@@ -3,7 +3,9 @@ package fr.openwide.core.etcd.coordinator.service;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,7 @@ import io.etcd.jetcd.kv.TxnResponse;
 import io.etcd.jetcd.op.Cmp;
 import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
+import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.PutOption;
 
 public class EtcdCoordinatorService extends AbstractEtcdClientService implements IEtcdCoordinatorService {
@@ -28,12 +31,15 @@ public class EtcdCoordinatorService extends AbstractEtcdClientService implements
 
 	private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
+	private final AtomicBoolean active = new AtomicBoolean(true);
+
 	public EtcdCoordinatorService(EtcdClientClusterConfiguration config) {
 		super(config);
 	}
 
 	@Override
 	public void start() {
+		active.set(true);
 		// Try to become the coordinator
 		tryBecomeCoordinator();
 		// Watch for changes to the master key
@@ -71,7 +77,8 @@ public class EtcdCoordinatorService extends AbstractEtcdClientService implements
 	private void watchCoordinatorKey() {
 		ByteSequence key = ByteSequence.from(getCoordinatorKey(), StandardCharsets.UTF_8);
 		getWatchClient().watch(key, watchResponse -> {
-			if (!watchResponse.getEvents().isEmpty()) {
+			if (this.getClusterConfig().isUpdateCoordinatorEnable() && active.get()
+					&& !watchResponse.getEvents().isEmpty()) {
 				executorService.submit(this::tryBecomeCoordinator);
 			}
 		});
@@ -114,6 +121,48 @@ public class EtcdCoordinatorService extends AbstractEtcdClientService implements
 			LOGGER.error("Unable to check if cluster is active", e);
 			return false;
 		}
+	}
+
+	@Override
+	public void stop() {
+		active.set(false);
+		deleteCoordinatorKeyIfOwned();
+	}
+
+	private boolean deleteCoordinatorKeyWithValue(String valueToDelete) {
+		try {
+			ByteSequence byteSeqValueToDelete = ByteSequence.from(valueToDelete, StandardCharsets.UTF_8);
+			ByteSequence key = ByteSequence.from(getCoordinatorKey(), StandardCharsets.UTF_8);
+			
+			// Use a transaction to atomically check if coordinator matches and delete if it is.
+			Txn txn = getKvClient().txn()
+					.If(new Cmp(key, Cmp.Op.EQUAL, CmpTarget.value(byteSeqValueToDelete))) // Check if value matches
+					.Then(Op.delete(key, DeleteOption.DEFAULT)).Else();
+
+			final TxnResponse txnResponse = txn.commit().get();
+			if (txnResponse.isSucceeded() && CollectionUtils.isNotEmpty(txnResponse.getDeleteResponses())) {
+				LOGGER.info("Coordinator key has been deleted");
+				return true;
+			} 
+			LOGGER.debug("Coordinator key was not present or value did not match");
+			return false;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new EtcdServiceRuntimeException("InterruptedException while trying to delete coordinator key", e);
+		} catch (Exception e) {
+			LOGGER.error("Error trying to delete coordinator key", e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteCoordinator() throws EtcdServiceException {
+		return deleteValue(getCoordinatorKey());
+	}
+
+	@Override
+	public boolean deleteCoordinatorKeyIfOwned() {
+		return deleteCoordinatorKeyWithValue(getNodeName());
 	}
 
 }

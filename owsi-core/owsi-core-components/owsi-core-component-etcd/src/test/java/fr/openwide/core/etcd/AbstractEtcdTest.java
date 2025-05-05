@@ -45,6 +45,7 @@ public abstract class AbstractEtcdTest {
 			etcdClusterService.init();
 			etcdClusterService.getCacheManager().deleteAllCaches();
 			etcdClusterService.getLockService().deleteAllLocks();
+			etcdClusterService.getCoordinatorService().deleteCoordinator();
 		}
 	}
 

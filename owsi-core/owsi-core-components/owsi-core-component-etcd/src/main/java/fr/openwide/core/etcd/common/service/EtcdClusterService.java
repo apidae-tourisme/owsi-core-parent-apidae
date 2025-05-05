@@ -57,7 +57,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 			new ThreadFactoryBuilder().setNameFormat("etcd-checker-%d").build());
 
 	private final IEtcdActionService actionService;
-	private final IEtcdCoordinatorService masterService;
+	private final IEtcdCoordinatorService coordinatorService;
 
 	public EtcdClusterService(EtcdCommonClusterConfiguration config) {
 		this.config = config;
@@ -66,7 +66,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 		this.etcdCacheManager = new EtcdCacheManager(clientConfiguration);
 		this.lockService = new EtcdLockService(clientConfiguration);
 		this.actionService = new EtcdActionService(this, clientConfiguration);
-		this.masterService = new EtcdCoordinatorService(clientConfiguration);
+		this.coordinatorService = new EtcdCoordinatorService(clientConfiguration);
 
 		initExecutor(this.rebalanceExecutor);
 		initExecutor(this.checkerExecutor);
@@ -89,7 +89,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 		} catch (EtcdServiceException e) {
 			throw new IllegalStateException("Error starting cache manager", e);
 		}
-		masterService.start();
+		coordinatorService.start();
 
 		actionService.start();
 
@@ -125,6 +125,8 @@ public class EtcdClusterService implements IEtcdClusterService {
 		} catch (EtcdServiceException e) {
 			throw new IllegalStateException("Error stopping cache manager", e);
 		}
+
+		coordinatorService.stop();
 
 		Optional.ofNullable(etcdClient).ifPresent(Client::close);
 
@@ -234,7 +236,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	@Override
 	public boolean isClusterActive() {
-		return masterService.isClusterActive();
+		return coordinatorService.isClusterActive();
 	}
 
 	private void doRebalanceRoles(int waitWeight) throws EtcdServiceException {
@@ -298,7 +300,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	private void updateCoordinator() {
 		if (config.isUpdateCoordinatorEnable()) {
-			masterService.tryBecomeCoordinator();
+			coordinatorService.tryBecomeCoordinator();
 		}
 	}
 
@@ -306,7 +308,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 	 * @return whether the local node is the cluster's coordinator
 	 */
 	public boolean isCoordinator() {
-		return masterService.isCoordinator();
+		return coordinatorService.isCoordinator();
 	}
 
 	private void stopExecutor(ScheduledThreadPoolExecutor executor, String executorName) {
@@ -352,6 +354,11 @@ public class EtcdClusterService implements IEtcdClusterService {
 	@Override
 	public void close() throws Exception {
 		stop();
+	}
+
+	@Override
+	public IEtcdCoordinatorService getCoordinatorService() {
+		return coordinatorService;
 	}
 
 }

@@ -6,6 +6,8 @@ public interface IEtcdCoordinatorService {
 
 	void start();
 
+	void stop();
+
 	boolean tryBecomeCoordinator();
 
 	String getCurrentCoordinator() throws EtcdServiceException;
@@ -13,5 +15,9 @@ public interface IEtcdCoordinatorService {
 	boolean isCoordinator();
 
 	boolean isClusterActive();
+
+	boolean deleteCoordinator() throws EtcdServiceException;
+
+	boolean deleteCoordinatorKeyIfOwned();
 
 }

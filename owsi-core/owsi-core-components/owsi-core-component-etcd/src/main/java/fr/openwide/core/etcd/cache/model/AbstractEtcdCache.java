@@ -18,7 +18,6 @@ import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Txn;
-import io.etcd.jetcd.kv.DeleteResponse;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.kv.PutResponse;
 import io.etcd.jetcd.kv.TxnResponse;
@@ -114,18 +113,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 
 	@Override
 	public boolean delete(String key) throws EtcdServiceException {
-		try {
-			String prefixedKey = getCacheKey(key);
-			CompletableFuture<DeleteResponse> deleteFuture = getKvClient()
-					.delete(ByteSequence.from(prefixedKey.getBytes()));
-			DeleteResponse response = deleteFuture.get();
-			return response.getDeleted() > 0;
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Failed to delete key from cache '" + cacheName + "': " + key, e);
-		} catch (ExecutionException e) {
-			throw new EtcdServiceException("Failed to delete key from cache '" + cacheName + "': " + key, e);
-		}
+		return deleteValue(getCacheKey(key));
 	}
 
 	@Override

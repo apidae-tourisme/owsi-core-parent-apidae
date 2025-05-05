@@ -16,6 +16,32 @@ import io.etcd.jetcd.Client;
 
 public class NodeEtcdCacheTest extends AbstractEtcdTest {
 
+	@Test
+	public void deleteCacheWithLeaseTest() throws Exception {
+
+		long leaseTtl = 30;
+
+		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder()
+				.withLeaseTtl(leaseTtl).build();
+
+		String cacheName = "deleteCacheWithLeaseTest";
+
+		String key = "nodeName";
+
+		try (Client client = Client.builder().endpoints(etcdConfig.getEndpoints()).build()) {
+			EtcdClientClusterConfiguration clientConfiguration = new EtcdClientClusterConfiguration(etcdConfig, client);
+			NodeEtcdCache nodeCache = new NodeEtcdCache(cacheName, clientConfiguration);
+			nodeCache.put(key, NodeEtcdValue.from(new Date(), cacheName));
+			final NodeEtcdValue valueFromCache = nodeCache.get(key);
+			assertThat(valueFromCache).isNotNull();
+
+			nodeCache.delete(key);
+			final NodeEtcdValue valueFromCacheAfterDelete = nodeCache.get(key);
+			assertThat(valueFromCacheAfterDelete).isNull();
+		}
+
+	}
+
     @Test
 	public void leaseExpirationCacheTest() throws Exception {
     	

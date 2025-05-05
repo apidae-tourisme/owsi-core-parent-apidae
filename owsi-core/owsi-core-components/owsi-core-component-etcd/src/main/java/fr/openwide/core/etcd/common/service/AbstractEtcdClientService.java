@@ -66,6 +66,19 @@ public class AbstractEtcdClientService {
 		}
 	}
 
+	protected boolean deleteValue(String key) throws EtcdServiceException {
+		try {
+			CompletableFuture<DeleteResponse> deleteFuture = getKvClient().delete(ByteSequence.from(key.getBytes()));
+			DeleteResponse response = deleteFuture.get();
+			return response.getDeleted() > 0;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new EtcdServiceException("Failed to delete key" + key, e);
+		} catch (ExecutionException e) {
+			throw new EtcdServiceException("Failed to delete key" + key, e);
+		}
+	}
+
 	protected List<KeyValue> getAllFromPrefix(String prefix) throws EtcdServiceException {
 		CompletableFuture<GetResponse> getFuture = getKvClient().get(ByteSequence.from(prefix, StandardCharsets.UTF_8),
 				GetOption.builder().withRange(EtcdUtil.prefixEndOf(prefix)).build());
