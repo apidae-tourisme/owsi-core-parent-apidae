@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,7 +22,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.openwide.core.etcd.action.model.RoleRebalanceAction;
+import fr.openwide.core.etcd.action.model.AbstractEtcdActionValue;
+import fr.openwide.core.etcd.action.model.RoleRebalanceEtcdAction;
 import fr.openwide.core.etcd.action.service.EtcdActionService;
 import fr.openwide.core.etcd.action.service.IEtcdActionService;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdValue;
@@ -31,6 +33,7 @@ import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdValue;
 import fr.openwide.core.etcd.cache.service.EtcdCacheManager;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.exception.EtcdServiceRuntimeException;
 import fr.openwide.core.etcd.common.model.DoIfRoleWithLock;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
@@ -65,14 +68,12 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	public EtcdClusterService(EtcdCommonClusterConfiguration config) {
 		this.config = config;
-		this.etcdClient = Client.builder()
-				.endpoints(config.getEndpoints())
-				.waitForReady(true)
+		this.etcdClient = Client.builder().endpoints(config.getEndpoints()).waitForReady(true)
 				.connectTimeout(Duration.ofSeconds(config.getConnectTimeout())).build();
 		this.clientConfiguration = new EtcdClientClusterConfiguration(config, etcdClient);
 		this.etcdCacheManager = new EtcdCacheManager(clientConfiguration);
 		this.lockService = new EtcdLockService(clientConfiguration);
-		this.actionService = new EtcdActionService(this, clientConfiguration);
+		this.actionService = new EtcdActionService(this, clientConfiguration, config.getActionFactory());
 		this.coordinatorService = new EtcdCoordinatorService(clientConfiguration);
 
 		initExecutor(this.rebalanceExecutor);
@@ -151,7 +152,8 @@ public class EtcdClusterService implements IEtcdClusterService {
 		boolean prioritySlotFound = false;
 		List<RoleAttribution> values;
 		try {
-			PriorityQueueEtcdValue queueValue = etcdCacheManager.getPriorityQueueCache().get(lockRequest.getPriorityQueue().getKey());
+			PriorityQueueEtcdValue queueValue = etcdCacheManager.getPriorityQueueCache()
+					.get(lockRequest.getPriorityQueue().getKey());
 			if (queueValue != null) {
 				values = queueValue.getAttributions();
 				for (RoleAttribution attribution : values) {
@@ -210,7 +212,8 @@ public class EtcdClusterService implements IEtcdClusterService {
 							updatedValues.add(attribution);
 						}
 					}
-					PriorityQueueEtcdValue updatedValue = PriorityQueueEtcdValue.from(new Date(), getNodeName(), updatedValues);
+					PriorityQueueEtcdValue updatedValue = PriorityQueueEtcdValue.from(new Date(), getNodeName(),
+							updatedValues);
 					etcdCacheManager.getPriorityQueueCache().put(lockRequest.getPriorityQueue().getKey(), updatedValue);
 				} catch (EtcdServiceException e) {
 					LOGGER.error("Failed to remove from priority queue", e);
@@ -253,6 +256,16 @@ public class EtcdClusterService implements IEtcdClusterService {
 		} finally {
 			// Always release the lock
 			lockService.unlock(lockName);
+		}
+	}
+
+	@Override
+	public <T> T syncedAction(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
+			throws ExecutionException, TimeoutException {
+		try {
+			return actionService.syncedAction(action, timeout, unit);
+		} catch (EtcdServiceException e) {
+			throw new EtcdServiceRuntimeException(e);
 		}
 	}
 
@@ -305,7 +318,7 @@ public class EtcdClusterService implements IEtcdClusterService {
 	private void rebalanceRoles() {
 		if (config.isRoleRebalanceEnable()) {
 			try {
-				actionService.resultLessAction(RoleRebalanceAction.rebalance(getNodeName()));
+				actionService.resultLessAction(RoleRebalanceEtcdAction.rebalance(getNodeName()));
 			} catch (EtcdServiceException e) {
 				LOGGER.error("Error trying to trigger rebalance roles action", e);
 			}
@@ -446,6 +459,15 @@ public class EtcdClusterService implements IEtcdClusterService {
 	@Override
 	public IEtcdCoordinatorService getCoordinatorService() {
 		return coordinatorService;
+	}
+
+	@Override
+	public Set<String> getNodes() {
+		try {
+			return getCacheManager().getNodeCache().getAllKeys();
+		} catch (EtcdServiceException e) {
+			throw new EtcdServiceRuntimeException(e);
+		}
 	}
 
 }

@@ -3,7 +3,10 @@ package fr.openwide.core.etcd.common.service;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import fr.openwide.core.etcd.action.model.AbstractEtcdActionValue;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.service.IEtcdCacheManager;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
@@ -18,6 +21,8 @@ public interface IEtcdClusterService extends AutoCloseable {
 	void init();
 
 	void stop();
+
+	Set<String> getNodes();
 
 	DoIfRoleWithLock doIfRoleWithLock(ILockRequest lockRequest, Runnable runnable) throws EtcdServiceException;
 
@@ -44,5 +49,8 @@ public interface IEtcdClusterService extends AutoCloseable {
 	boolean isClusterActive();
 
 	String getNodeName();
+
+	<T> T syncedAction(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
+			throws ExecutionException, TimeoutException;
 
 }

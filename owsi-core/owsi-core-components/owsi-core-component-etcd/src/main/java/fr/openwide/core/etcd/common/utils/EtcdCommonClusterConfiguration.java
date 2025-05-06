@@ -1,5 +1,6 @@
 package fr.openwide.core.etcd.common.utils;
 
+import fr.openwide.core.etcd.action.factory.IActionEtcdFactory;
 import fr.openwide.core.infinispan.service.IRolesProvider;
 
 public class EtcdCommonClusterConfiguration {
@@ -23,6 +24,8 @@ public class EtcdCommonClusterConfiguration {
 	private final boolean updateCoordinatorEnable;
 
 	private final int connectTimeout;
+	
+	private final IActionEtcdFactory actionFactory;
 
 	private EtcdCommonClusterConfiguration(EtcdConfigurationBuilder builder) {
 		this.endpoints = builder.endpoints;
@@ -35,6 +38,7 @@ public class EtcdCommonClusterConfiguration {
 		this.roleRebalanceEnable = builder.roleRebalanceEnable;
 		this.updateCoordinatorEnable = builder.updateCoordinatorEnable;
 		this.connectTimeout = builder.connectTimeout;
+		this.actionFactory = builder.actionFactory;
 	}
 
 	public String getEndpoints() {
@@ -80,6 +84,10 @@ public class EtcdCommonClusterConfiguration {
 	public int getConnectTimeout() {
 		return connectTimeout;
 	}
+	
+	public IActionEtcdFactory getActionFactory() {
+		return actionFactory;
+	}
 
 	public static class EtcdConfigurationBuilder {
 		private String endpoints;
@@ -101,6 +109,8 @@ public class EtcdCommonClusterConfiguration {
 		private boolean updateCoordinatorEnable = true;
 
 		private int connectTimeout = 15;
+		
+		private IActionEtcdFactory actionFactory;
 
 		private EtcdConfigurationBuilder() {
 		}
@@ -152,6 +162,11 @@ public class EtcdCommonClusterConfiguration {
 
 		public EtcdConfigurationBuilder withConnectTimeout(int connectTimeout) {
 			this.connectTimeout = connectTimeout;
+			return this;
+		}
+		
+		public EtcdConfigurationBuilder withActionFactory(IActionEtcdFactory actionFactory) {
+			this.actionFactory = actionFactory;
 			return this;
 		}
 

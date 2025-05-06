@@ -1,5 +1,7 @@
 package fr.openwide.core.etcd.action.model;
 
+import java.io.Serializable;
+
 import fr.openwide.core.etcd.cache.model.IEtcdCacheValue;
 import fr.openwide.core.etcd.cache.model.action.ActionResultValue;
 import fr.openwide.core.etcd.common.service.IEtcdClusterService;
@@ -30,7 +32,7 @@ public interface IEtcdActionCacheValue extends IEtcdCacheValue {
      * Get the result of the action
      * @return the result
      */
-	ActionResultValue get();
+	Serializable getResult();
 
 	String getTargetNode();
 

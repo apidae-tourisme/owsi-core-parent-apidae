@@ -15,7 +15,7 @@ public interface IEtcdActionService {
 
 	String resultLessAction(AbstractEtcdActionValue action) throws EtcdServiceException;
     
-	<T> T executeAsync(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
+	<T> T syncedAction(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
 			throws EtcdServiceException, ExecutionException, TimeoutException;
     
 	void processAction(String actionId) throws EtcdServiceException;

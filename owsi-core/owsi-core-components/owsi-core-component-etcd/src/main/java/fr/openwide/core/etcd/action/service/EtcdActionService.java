@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.base.Stopwatch;
 
+import fr.openwide.core.etcd.action.factory.IActionEtcdFactory;
 import fr.openwide.core.etcd.action.model.AbstractEtcdActionValue;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.service.IEtcdClusterService;
@@ -24,19 +25,22 @@ import io.etcd.jetcd.options.WatchOption;
 import io.etcd.jetcd.watch.WatchEvent;
 
 public class EtcdActionService implements IEtcdActionService {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(EtcdActionService.class);
-    
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EtcdActionService.class);
+
 	private final IEtcdClusterService clusterService;
 	private final EtcdClientClusterConfiguration config;
 	private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+	private final IActionEtcdFactory actionFactory;
 
 	private Watch.Watcher watcher;
-    
-	public EtcdActionService(IEtcdClusterService clusterService, EtcdClientClusterConfiguration config) {
+
+	public EtcdActionService(IEtcdClusterService clusterService, EtcdClientClusterConfiguration config,
+			IActionEtcdFactory actionFactory) {
 		this.clusterService = clusterService;
 		this.config = config;
-    }
+		this.actionFactory = actionFactory;
+	}
 
 	@Override
 	public String resultLessAction(AbstractEtcdActionValue action) throws EtcdServiceException {
@@ -45,47 +49,47 @@ public class EtcdActionService implements IEtcdActionService {
 		LOGGER.debug("Create action {} of type {}", uniqueID, action.getClass().getSimpleName());
 		return uniqueID;
 	}
-    
+
 	@Override
-	public <T> T executeAsync(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
-            throws EtcdServiceException, ExecutionException, TimeoutException {
+	public <T> T syncedAction(AbstractEtcdActionValue action, int timeout, TimeUnit unit)
+			throws EtcdServiceException, ExecutionException, TimeoutException {
 		String actionId = UUID.randomUUID().toString();
 		clusterService.getCacheManager().getActionCache().put(actionId, action);
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        
-        while (timeout == -1 || stopwatch.elapsed(TimeUnit.MILLISECONDS) < unit.toMillis(timeout)) {
-			AbstractEtcdActionValue result = clusterService.getCacheManager().getActionResultCache()
-					.get(actionId);
-            if (result != null && result.isDone()) {
-                try {
-                    @SuppressWarnings("unchecked")
-                    T typedResult = (T) result.get();
-                    return typedResult;
-                } catch (ClassCastException e) {
-                    throw new ExecutionException("Type mismatch in action result", e);
-                }
-            } else if (result != null && result.isCancelled()) {
-                throw new ExecutionException("Action was cancelled", null);
-            }
-            
-            try {
-                Thread.sleep(100); // Small delay to avoid busy waiting
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new ExecutionException("Action execution interrupted", e);
-            }
-        }
-        throw new TimeoutException("Action execution timed out after " + timeout + " " + unit);
-    }
-    
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		while (timeout == -1 || stopwatch.elapsed(TimeUnit.MILLISECONDS) < unit.toMillis(timeout)) {
+			AbstractEtcdActionValue result = clusterService.getCacheManager().getActionResultCache().get(actionId);
+			if (result != null && result.isDone()) {
+				try {
+					@SuppressWarnings("unchecked")
+					T typedResult = (T) result.getResult();
+					return typedResult;
+				} catch (ClassCastException e) {
+					throw new ExecutionException("Type mismatch in action result", e);
+				}
+			} else if (result != null && result.isCancelled()) {
+				throw new ExecutionException("Action was cancelled", null);
+			}
+
+			try {
+				Thread.sleep(100); // Small delay to avoid busy waiting
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new ExecutionException("Action execution interrupted", e);
+			}
+		}
+		throw new TimeoutException("Action execution timed out after " + timeout + " " + unit);
+	}
+
 	@Override
-    public void processAction(String actionId) throws EtcdServiceException {
+	public void processAction(String actionId) throws EtcdServiceException {
 		LOGGER.debug("Try to process action {}", actionId);
-		AbstractEtcdActionValue action = clusterService.getCacheManager().getActionCache()
-				.get(actionId);
+		AbstractEtcdActionValue action = clusterService.getCacheManager().getActionCache().get(actionId);
 		if (action != null
 				&& (action.broadcast() || Objects.equal(clusterService.getNodeName(), action.getTargetNode()))) {
 			try {
+				if (actionFactory != null) {
+					actionFactory.prepareAction(action);
+				}
 				action.execute(clusterService);
 				if (action.needsResult()) {
 					clusterService.getCacheManager().getActionResultCache().put(actionId, action);
@@ -96,8 +100,8 @@ public class EtcdActionService implements IEtcdActionService {
 				clusterService.getCacheManager().getActionCache().delete(actionId);
 			}
 
-        }
-    }
+		}
+	}
 
 	private String generateUniqueActionId() {
 		return config.getNodeName() + "-" + UUID.randomUUID().toString();
@@ -136,10 +140,8 @@ public class EtcdActionService implements IEtcdActionService {
 			LOGGER.info("Watch successfully started on prefix: {}",
 					clusterService.getCacheManager().getActionCache().getCachePrefix());
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Failed to start watch on prefix: %s"
-							.formatted(clusterService.getCacheManager().getActionCache().getCachePrefix()),
-					e);
+			throw new IllegalStateException("Failed to start watch on prefix: %s"
+					.formatted(clusterService.getCacheManager().getActionCache().getCachePrefix()), e);
 		}
 	}
 
@@ -166,4 +168,4 @@ public class EtcdActionService implements IEtcdActionService {
 			LOGGER.error("Interrupted while waiting for executor service to terminate", e);
 		}
 	}
-} 
+}

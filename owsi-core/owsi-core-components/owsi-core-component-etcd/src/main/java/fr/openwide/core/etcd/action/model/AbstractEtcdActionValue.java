@@ -1,7 +1,9 @@
 package fr.openwide.core.etcd.action.model;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -82,8 +84,8 @@ public abstract class AbstractEtcdActionValue extends AbstractEtcdCacheValue imp
     }
     
     @Override
-	public ActionResultValue get() {
-        return result.get();
+	public Serializable getResult() {
+		return Optional.ofNullable(result.get()).map(ActionResultValue::getValue).orElse(null);
     }
     
     public void cancel() {

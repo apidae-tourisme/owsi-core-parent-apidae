@@ -38,7 +38,7 @@ public class EtcdActionServiceTest extends AbstractEtcdTest {
 		etcdClusterService1.init();
 
 		etcdActionService = new EtcdActionService(etcdClusterService1, new EtcdClientClusterConfiguration(
-				etcdConfigNode1, buildEctdClient(etcdConfigNode1)));
+				etcdConfigNode1, buildEctdClient(etcdConfigNode1)), null);
 		// Reset the execution status before each test
 		actionExecuted.set(0);
 	}
