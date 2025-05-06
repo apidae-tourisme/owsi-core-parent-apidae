@@ -86,13 +86,9 @@ public class EtcdLockServiceTest extends AbstractEtcdTest {
 		}
 
 		CompletableFuture<Boolean> secondTaskFuture = CompletableFuture.supplyAsync(() -> {
-			try {
-				EtcdLockService anotherLockService = new EtcdLockService(
-						new EtcdClientClusterConfiguration(etcdConfig, buildEctdClient(etcdConfig)));
-				return anotherLockService.tryLock(LOCK_1);
-			} catch (EtcdServiceException e) {
-				throw new IllegalStateException(e);
-			}
+			EtcdLockService anotherLockService = new EtcdLockService(
+					new EtcdClientClusterConfiguration(etcdConfig, buildEctdClient(etcdConfig)));
+			return anotherLockService.tryLock(LOCK_1);
 		}, // Wait lease expiration
 				CompletableFuture.delayedExecutor(leaseTtl + 1, TimeUnit.SECONDS));
 

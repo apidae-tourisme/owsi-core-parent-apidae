@@ -36,9 +36,9 @@ jobs:
         image: bitnami/etcd:3.5.11
         env:
           ALLOW_NONE_AUTHENTICATION: yes
-          ETCD_ADVERTISE_CLIENT_URLS: http://localhost:2380
+          ETCD_ADVERTISE_CLIENT_URLS: http://localhost:2389
         ports:
-          - 2380:2379
+          - 2389:2379
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17

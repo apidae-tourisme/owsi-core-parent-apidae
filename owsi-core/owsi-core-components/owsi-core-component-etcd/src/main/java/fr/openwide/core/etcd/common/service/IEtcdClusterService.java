@@ -2,6 +2,7 @@ package fr.openwide.core.etcd.common.service;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.service.IEtcdCacheManager;
@@ -19,6 +20,8 @@ public interface IEtcdClusterService extends AutoCloseable {
 	void stop();
 
 	DoIfRoleWithLock doIfRoleWithLock(ILockRequest lockRequest, Runnable runnable) throws EtcdServiceException;
+
+	boolean doWithLockPriority(ILockRequest lockRequest, Runnable runnable) throws ExecutionException;
 
 	IEtcdCacheManager getCacheManager();
 

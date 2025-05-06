@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.exception.EtcdServiceRuntimeException;
 import fr.openwide.core.etcd.common.service.AbstractEtcdClientService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import io.etcd.jetcd.ByteSequence;
@@ -29,9 +30,14 @@ public class EtcdLockService extends AbstractEtcdClientService implements IEtcdL
     }
 
 	@Override
-	public boolean tryLock(String lockName) throws EtcdServiceException {
+	public boolean tryLock(String lockName) {
 		String fullLockKey = getLockName(lockName);
-		LockResponse lockResponse = lock(fullLockKey);
+		LockResponse lockResponse;
+		try {
+			lockResponse = lock(fullLockKey);
+		} catch (EtcdServiceException e) {
+			throw new EtcdServiceRuntimeException("Exception while trying to lock " + lockName, e);
+		}
 		if (lockResponse != null) {
 			LOGGER.debug("Lock {} acquired for key: {} by node: {}", lockResponse.getKey(), fullLockKey, getNodeName());
 			lockNameToKeyMap.put(fullLockKey, lockResponse.getKey());
@@ -63,7 +69,7 @@ public class EtcdLockService extends AbstractEtcdClientService implements IEtcdL
 	}
 
 	@Override
-	public void unlock(String lockName) throws EtcdServiceException {
+	public void unlock(String lockName) {
         try {
 
 			String fullLockName = getLockName(lockName);
@@ -78,9 +84,9 @@ public class EtcdLockService extends AbstractEtcdClientService implements IEtcdL
 			}
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-			throw new EtcdServiceException("Interrupted while trying to release lock", e);
+			throw new EtcdServiceRuntimeException("Interrupted while trying to release lock", e);
 		} catch (Exception e) {
-			throw new EtcdServiceException("Exception while trying to release lock", e);
+			throw new EtcdServiceRuntimeException("Exception while trying to release lock", e);
 		}
     }
 

@@ -2,6 +2,7 @@ package fr.openwide.core.etcd.cache.service;
 
 import fr.openwide.core.etcd.cache.model.action.ActionEtcdCache;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdCache;
+import fr.openwide.core.etcd.cache.model.priorityqueue.PriorityQueueEtcdCache;
 import fr.openwide.core.etcd.cache.model.queuedtask.QueuedTaskEtcdCache;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdCache;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdCache;
@@ -24,6 +25,8 @@ public interface IEtcdCacheManager {
 	ActionEtcdCache getActionCache();
 
 	ActionEtcdCache getActionResultCache();
+
+	PriorityQueueEtcdCache getPriorityQueueCache();
 
 	void deleteAllCaches() throws EtcdServiceException;
 

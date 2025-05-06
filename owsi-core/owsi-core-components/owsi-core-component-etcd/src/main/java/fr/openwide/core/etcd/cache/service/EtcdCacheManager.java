@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCache;
 import fr.openwide.core.etcd.cache.model.action.ActionEtcdCache;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdCache;
+import fr.openwide.core.etcd.cache.model.priorityqueue.PriorityQueueEtcdCache;
 import fr.openwide.core.etcd.cache.model.queuedtask.QueuedTaskEtcdCache;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdCache;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdCache;
@@ -25,6 +26,7 @@ public class EtcdCacheManager implements IEtcdCacheManager {
 	private final RoleRequestEtcdCache roleRequestEtcdCache;
 	private final ActionEtcdCache actionEtcdCache;
 	private final ActionEtcdCache actionResultEtcdCache;
+	private final PriorityQueueEtcdCache priorityQueueEtcdCache;
 
 	private final List<AbstractEtcdCache<?>> allCaches;
 
@@ -32,7 +34,8 @@ public class EtcdCacheManager implements IEtcdCacheManager {
 	private static final String ROLE_CACHE = "role";
 	private static final String NODE_CACHE = "node";
 	private static final String ACTION_CACHE = "action";
-	private static final String ACTION_RESULT_CACHE = "result";
+	private static final String ACTION_RESULT_CACHE = "result_action";
+	private static final String PRIORITY_QUEUE_CACHE = "priority_queue";
 
 	public EtcdCacheManager(EtcdClientClusterConfiguration config) {
 		queuedTaskEtcdCache = new QueuedTaskEtcdCache(QUEUED_TASK_CACHE, config);
@@ -41,8 +44,9 @@ public class EtcdCacheManager implements IEtcdCacheManager {
 		roleRequestEtcdCache = new RoleRequestEtcdCache(NODE_CACHE, config);
 		actionEtcdCache = new ActionEtcdCache(ACTION_CACHE, config);
 		actionResultEtcdCache = new ActionEtcdCache(ACTION_RESULT_CACHE, config);
+		priorityQueueEtcdCache = new PriorityQueueEtcdCache(PRIORITY_QUEUE_CACHE, config);
 		allCaches = List.of(queuedTaskEtcdCache, roleEtcdCache, nodeEtcdCache, roleRequestEtcdCache, actionEtcdCache,
-				actionResultEtcdCache);
+				actionResultEtcdCache, priorityQueueEtcdCache);
 	}
 
 	@Override
@@ -92,6 +96,11 @@ public class EtcdCacheManager implements IEtcdCacheManager {
 	@Override
 	public ActionEtcdCache getActionResultCache() {
 		return actionResultEtcdCache;
+	}
+
+	@Override
+	public PriorityQueueEtcdCache getPriorityQueueCache() {
+		return priorityQueueEtcdCache;
 	}
 
 	@Override

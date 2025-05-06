@@ -17,7 +17,7 @@ services:
     container_name: owsicore_etcd
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2380
+      - ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2390
     ports:
-      - "2380:2379"
-      - "2381:2380"
+      - "2389:2379"
+      - "2390:2380"

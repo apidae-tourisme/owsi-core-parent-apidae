@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ import fr.openwide.core.etcd.action.model.RoleRebalanceAction;
 import fr.openwide.core.etcd.action.service.EtcdActionService;
 import fr.openwide.core.etcd.action.service.IEtcdActionService;
 import fr.openwide.core.etcd.cache.model.node.NodeEtcdValue;
+import fr.openwide.core.etcd.cache.model.priorityqueue.PriorityQueueEtcdValue;
+import fr.openwide.core.etcd.cache.model.priorityqueue.RoleAttribution;
 import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdValue;
 import fr.openwide.core.etcd.cache.service.EtcdCacheManager;
@@ -136,6 +139,86 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 		stopExecutor(checkerExecutor, "checkerExecutor");
 		stopExecutor(rebalanceExecutor, "executor");
+	}
+
+	@Override
+	public boolean doWithLockPriority(ILockRequest lockRequest, Runnable runnable) throws ExecutionException {
+		if (!isClusterActive()) {
+			return false;
+		}
+
+		// First check if we already have a slot in the priority queue
+		boolean prioritySlotFound = false;
+		List<RoleAttribution> values;
+		try {
+			PriorityQueueEtcdValue queueValue = etcdCacheManager.getPriorityQueueCache().get(lockRequest.getPriorityQueue().getKey());
+			if (queueValue != null) {
+				values = queueValue.getAttributions();
+				for (RoleAttribution attribution : values) {
+					if (attribution.match(getNodeName())) {
+						prioritySlotFound = true;
+						break;
+					}
+				}
+			} else {
+				values = new ArrayList<>();
+			}
+		} catch (EtcdServiceException e) {
+			throw new ExecutionException("Failed to check priority queue", e);
+		}
+
+		// If no slot found, add one
+		if (!prioritySlotFound) {
+			try {
+				values.add(RoleAttribution.from(getNodeName(), new Date()));
+				PriorityQueueEtcdValue newValue = PriorityQueueEtcdValue.from(new Date(), getNodeName(), values);
+				etcdCacheManager.getPriorityQueueCache().put(lockRequest.getPriorityQueue().getKey(), newValue);
+			} catch (EtcdServiceException e) {
+				throw new ExecutionException("Failed to add to priority queue", e);
+			}
+		}
+
+		boolean priorityAllowed = false;
+		// Check if we're first in line
+		if (!values.isEmpty() && values.get(0).match(getNodeName())) {
+			priorityAllowed = true;
+		}
+
+		if (priorityAllowed) {
+			try {
+				// Try to acquire the lock and run the task
+				if (lockRequest.getLock() != null) {
+					boolean lockAcquired = lockService.tryLock(lockRequest.getLock().getKey());
+					if (lockAcquired) {
+						try {
+							runnable.run();
+							return true;
+						} finally {
+							lockService.unlock(lockRequest.getLock().getKey());
+						}
+					}
+				} else {
+					runnable.run();
+					return true;
+				}
+			} finally {
+				// Remove our slot from the priority queue
+				try {
+					List<RoleAttribution> updatedValues = new ArrayList<>();
+					for (RoleAttribution attribution : values) {
+						if (!attribution.match(getNodeName())) {
+							updatedValues.add(attribution);
+						}
+					}
+					PriorityQueueEtcdValue updatedValue = PriorityQueueEtcdValue.from(new Date(), getNodeName(), updatedValues);
+					etcdCacheManager.getPriorityQueueCache().put(lockRequest.getPriorityQueue().getKey(), updatedValue);
+				} catch (EtcdServiceException e) {
+					LOGGER.error("Failed to remove from priority queue", e);
+				}
+			}
+		}
+
+		return false;
 	}
 
 	@Override
