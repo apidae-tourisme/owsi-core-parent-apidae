@@ -9,7 +9,6 @@ import org.junit.Test;
 import fr.openwide.core.etcd.AbstractEtcdTest;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
-import io.etcd.jetcd.Client;
 
 public class RoleEtcdCacheTest extends AbstractEtcdTest {
 
@@ -19,7 +18,7 @@ public class RoleEtcdCacheTest extends AbstractEtcdTest {
 		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
 		String cacheName = "roleCacheTest";
 		EtcdClientClusterConfiguration clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		RoleEtcdCache roleCache = new RoleEtcdCache(cacheName, clientConfiguration2);
 		try {
 
@@ -55,7 +54,7 @@ public class RoleEtcdCacheTest extends AbstractEtcdTest {
 		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
 		String cacheName = "roleCacheTest";
 		EtcdClientClusterConfiguration clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		RoleEtcdCache roleCache = new RoleEtcdCache(cacheName, clientConfiguration2);
 
 		String role1 = "role1";
@@ -82,7 +81,7 @@ public class RoleEtcdCacheTest extends AbstractEtcdTest {
 		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
 		String cacheName = "roleCacheTest";
 		EtcdClientClusterConfiguration clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		RoleEtcdCache roleCache = new RoleEtcdCache(cacheName, clientConfiguration2);
 
 		String role1 = "role1";

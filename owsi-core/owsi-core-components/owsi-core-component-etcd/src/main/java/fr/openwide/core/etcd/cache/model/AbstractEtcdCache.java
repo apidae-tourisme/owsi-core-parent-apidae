@@ -9,21 +9,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
+import fr.openwide.core.etcd.common.exception.EtcdServiceRuntimeException;
 import fr.openwide.core.etcd.common.service.AbstractEtcdClientService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Txn;
+import io.etcd.jetcd.kv.DeleteResponse;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.kv.PutResponse;
 import io.etcd.jetcd.kv.TxnResponse;
 import io.etcd.jetcd.op.Cmp;
 import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
+import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 
@@ -108,6 +112,36 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 			}
 		} catch (Exception e) {
 			throw new EtcdServiceException("Failed to put value in cache '" + cacheName + "' for key: " + key, e);
+		}
+	}
+
+	protected T remove(String key, Class<T> type) {
+		try {
+			String prefixedKey = getCacheKey(key);
+			ByteSequence keyBytes = ByteSequence.from(prefixedKey.getBytes());
+
+			// Use a transaction to atomically get and delete the key if it exists
+			Txn txn = getKvClient().txn()
+					.If(new Cmp(keyBytes, Cmp.Op.GREATER, CmpTarget.createRevision(0))) // Key exists
+					.Then(Op.get(keyBytes, GetOption.DEFAULT), Op.delete(keyBytes, DeleteOption.DEFAULT))
+					.Else(Op.get(keyBytes, GetOption.DEFAULT));
+
+			TxnResponse txnResponse = txn.commit().get();
+			
+			if (txnResponse.isSucceeded()) {
+				// Transaction succeeded, meaning the key existed and we deleted it
+				GetResponse getResponse = txnResponse.getGetResponses().get(0);
+				if (getResponse.getKvs().isEmpty()) {
+					return null;
+				}
+				return deserializeObject(getResponse.getKvs().get(0).getValue().getBytes(), type);
+			} else {
+				// Key didn't exist
+				return null;
+			}
+		} catch (Exception e) {
+			throw new EtcdServiceRuntimeException(
+					"Failed to remove value from cache '" + cacheName + "' for key: " + key, e);
 		}
 	}
 
@@ -206,7 +240,7 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 	}
 
 	@Override
-	public List<String> getAllKeys() throws EtcdServiceException {
+	public Set<String> getAllKeys() throws EtcdServiceException {
 		return getAllKeysFromPrefix(getCachePrefix());
 	}
 
@@ -241,9 +275,10 @@ public abstract class AbstractEtcdCache<T extends IEtcdCacheValue> extends Abstr
 	 *                              operation is interrupted
 	 */
 	@Override
-	public void deleteAllCacheKeys() throws EtcdServiceException {
+	public long deleteAllCacheKeys() throws EtcdServiceException {
 		try {
-			deleteAllKeysFromPrefix(getCachePrefix());
+			final DeleteResponse deleteResponse = deleteAllKeysFromPrefix(getCachePrefix());
+			return deleteResponse != null ? deleteResponse.getDeleted() : 0;
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new EtcdServiceException("Failed to delete all keys from cache '" + cacheName + "'", e);

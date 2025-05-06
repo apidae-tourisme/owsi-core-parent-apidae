@@ -22,6 +22,8 @@ public class EtcdCommonClusterConfiguration {
 
 	private final boolean updateCoordinatorEnable;
 
+	private final int connectTimeout;
+
 	private EtcdCommonClusterConfiguration(EtcdConfigurationBuilder builder) {
 		this.endpoints = builder.endpoints;
 		this.nodeName = builder.nodeName;
@@ -32,6 +34,7 @@ public class EtcdCommonClusterConfiguration {
 		this.roleProvider = builder.roleProvider;
 		this.roleRebalanceEnable = builder.roleRebalanceEnable;
 		this.updateCoordinatorEnable = builder.updateCoordinatorEnable;
+		this.connectTimeout = builder.connectTimeout;
 	}
 
 	public String getEndpoints() {
@@ -74,6 +77,10 @@ public class EtcdCommonClusterConfiguration {
 		return updateCoordinatorEnable;
 	}
 
+	public int getConnectTimeout() {
+		return connectTimeout;
+	}
+
 	public static class EtcdConfigurationBuilder {
 		private String endpoints;
 
@@ -92,6 +99,8 @@ public class EtcdCommonClusterConfiguration {
 		private boolean roleRebalanceEnable = true;
 
 		private boolean updateCoordinatorEnable = true;
+
+		private int connectTimeout = 15;
 
 		private EtcdConfigurationBuilder() {
 		}
@@ -138,6 +147,11 @@ public class EtcdCommonClusterConfiguration {
 
 		public EtcdConfigurationBuilder withUpdateCoordinatorEnable(boolean updateCoordinatorEnable) {
 			this.updateCoordinatorEnable = updateCoordinatorEnable;
+			return this;
+		}
+
+		public EtcdConfigurationBuilder withConnectTimeout(int connectTimeout) {
+			this.connectTimeout = connectTimeout;
 			return this;
 		}
 

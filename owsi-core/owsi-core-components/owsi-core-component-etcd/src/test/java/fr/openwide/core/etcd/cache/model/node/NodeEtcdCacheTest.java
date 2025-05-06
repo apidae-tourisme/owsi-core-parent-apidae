@@ -28,7 +28,7 @@ public class NodeEtcdCacheTest extends AbstractEtcdTest {
 
 		String key = "nodeName";
 
-		try (Client client = Client.builder().endpoints(etcdConfig.getEndpoints()).build()) {
+		try (Client client = buildEctdClient(etcdConfig)) {
 			EtcdClientClusterConfiguration clientConfiguration = new EtcdClientClusterConfiguration(etcdConfig, client);
 			NodeEtcdCache nodeCache = new NodeEtcdCache(cacheName, clientConfiguration);
 			nodeCache.put(key, NodeEtcdValue.from(new Date(), cacheName));
@@ -54,7 +54,7 @@ public class NodeEtcdCacheTest extends AbstractEtcdTest {
 
 		String key = "nodeName";
 
-		try (Client client = Client.builder().endpoints(etcdConfig.getEndpoints()).build()) {
+		try (Client client = buildEctdClient(etcdConfig)) {
 			EtcdClientClusterConfiguration clientConfiguration = new EtcdClientClusterConfiguration(etcdConfig, client);
 			NodeEtcdCache nodeCache = new NodeEtcdCache(cacheName, clientConfiguration);
 			nodeCache.put(key, NodeEtcdValue.from(new Date(), cacheName));

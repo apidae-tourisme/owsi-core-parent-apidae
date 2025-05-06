@@ -24,14 +24,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheN
 		return new NodeEtcdValue(attributionDate.toInstant(), nodeName, null);
 	}
 
-	public Instant getLeaveDate() {
-		return leaveDate;
-	}
-
-	public void setLeaveDate(Instant leaveDate) {
-		this.leaveDate = leaveDate;
-	}
-
 	@Override
 	public String getNodeName() {
 		return nodeName;
@@ -53,13 +45,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheN
 			return false;
 		}
 		NodeEtcdValue other = (NodeEtcdValue) obj;
-		if (leaveDate == null) {
-			if (other.leaveDate != null) {
-				return false;
-			}
-		} else if (!leaveDate.equals(other.leaveDate)) {
-			return false;
-		}
 		if (nodeName == null) {
 			if (other.nodeName != null) {
 				return false;

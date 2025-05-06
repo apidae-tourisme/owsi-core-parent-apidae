@@ -32,11 +32,11 @@ public class EtcdLockServiceTest extends AbstractEtcdTest {
 				.withLeaseTtl(30).withLockTimeout(1).withNodeName("node_EtcdLockServiceTest").build();
 
 		clientConfiguration1 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		lockService1 = new EtcdLockService(clientConfiguration1);
 
 		clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		lockService2 = new EtcdLockService(clientConfiguration2);
     }
 

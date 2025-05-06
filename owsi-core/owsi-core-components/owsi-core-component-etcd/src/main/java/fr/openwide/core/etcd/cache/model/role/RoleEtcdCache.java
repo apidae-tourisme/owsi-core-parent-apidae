@@ -18,6 +18,11 @@ public class RoleEtcdCache extends AbstractEtcdCacheNodeWithLease<RoleEtcdValue>
 	}
 
 	@Override
+	public RoleEtcdValue remove(String key) {
+		return remove(key, RoleEtcdValue.class);
+	}
+
+	@Override
 	public Map<String, RoleEtcdValue> getAll() throws EtcdServiceException {
 		return getAllValues(RoleEtcdValue.class);
 	}

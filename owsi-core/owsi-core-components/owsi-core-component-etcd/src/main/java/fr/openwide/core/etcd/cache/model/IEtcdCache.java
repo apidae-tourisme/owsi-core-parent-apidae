@@ -3,6 +3,7 @@ package fr.openwide.core.etcd.cache.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 
@@ -18,6 +19,8 @@ public interface IEtcdCache<T extends Serializable> {
 	 */
 	T get(String key) throws EtcdServiceException;
 	
+	T remove(String key) throws EtcdServiceException;
+
 	/**
 	 * Puts a value into a specific cache for the given key.
 	 * 
@@ -63,7 +66,7 @@ public interface IEtcdCache<T extends Serializable> {
 	 * @return A list of all keys in the cache
 	 * @throws EtcdServiceException If an error occurs during the operation
 	 */
-	List<String> getAllKeys() throws EtcdServiceException;
+	Set<String> getAllKeys() throws EtcdServiceException;
 
 	/**
 	 * Deletes all keys in the cache in a single atomic operation. This method uses
@@ -73,7 +76,7 @@ public interface IEtcdCache<T extends Serializable> {
 	 * @throws EtcdServiceException if the deletion operation fails or if the
 	 *                              operation is interrupted
 	 */
-	void deleteAllCacheKeys() throws EtcdServiceException;
+	long deleteAllCacheKeys() throws EtcdServiceException;
 
 	/**
 	 * Gets a map of all values from cache.

@@ -2,9 +2,11 @@ package fr.openwide.core.etcd.common.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,15 +95,15 @@ public class AbstractEtcdClientService {
 
 	}
 
-	protected List<String> getAllKeysFromPrefix(String prefix) throws EtcdServiceException {
+	protected Set<String> getAllKeysFromPrefix(String prefix) throws EtcdServiceException {
 		List<KeyValue> keyValues = getAllFromPrefix(prefix);
 		if (keyValues.isEmpty()) {
-			return List.of();
+			return Set.of();
 		}
 
 		return keyValues.stream()
 				.map(kv -> new String(kv.getKey().getBytes(), StandardCharsets.UTF_8).substring(prefix.length()))
-				.toList();
+				.collect(Collectors.toSet());
 	}
 
 	protected DeleteResponse deleteAllKeysFromPrefix(String prefix) throws InterruptedException, ExecutionException {

@@ -17,7 +17,6 @@ import fr.openwide.core.etcd.common.service.EtcdClusterService;
 import fr.openwide.core.etcd.common.service.IEtcdClusterService;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
-import io.etcd.jetcd.Client;
 
 public class EtcdActionServiceTest extends AbstractEtcdTest {
 
@@ -39,7 +38,7 @@ public class EtcdActionServiceTest extends AbstractEtcdTest {
 		etcdClusterService1.init();
 
 		etcdActionService = new EtcdActionService(etcdClusterService1, new EtcdClientClusterConfiguration(
-				etcdConfigNode1, Client.builder().endpoints(etcdConfigNode1.getEndpoints()).build()));
+				etcdConfigNode1, buildEctdClient(etcdConfigNode1)));
 		// Reset the execution status before each test
 		actionExecuted.set(0);
 	}

@@ -4,17 +4,31 @@ import java.time.Instant;
 import java.util.Date;
 
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheValue;
+import fr.openwide.core.etcd.cache.model.IEtcdCacheNodeValue;
 
-public class QueuedTaskEtcdValue extends AbstractEtcdCacheValue {
+public class QueuedTaskEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheNodeValue {
 
 	private static final long serialVersionUID = -5549707966478459308L;
 
-	private QueuedTaskEtcdValue(Instant attributionInstant) {
+	private String nodeName;
+
+	private QueuedTaskEtcdValue(Instant attributionInstant, String nodeName) {
 		super(attributionInstant);
+		this.nodeName = nodeName;
 	}
 
-	public static final QueuedTaskEtcdValue from(Date attributionDate) {
-		return new QueuedTaskEtcdValue(attributionDate.toInstant());
+	public static final QueuedTaskEtcdValue from(Date attributionDate, String nodeName) {
+		return new QueuedTaskEtcdValue(attributionDate.toInstant(), nodeName);
+
+	}
+
+	@Override
+	public String getNodeName() {
+		return nodeName;
+	}
+
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
 	}
 
 	@Override

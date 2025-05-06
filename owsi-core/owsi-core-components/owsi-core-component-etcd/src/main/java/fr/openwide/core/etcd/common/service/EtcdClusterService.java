@@ -1,5 +1,6 @@
 package fr.openwide.core.etcd.common.service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,7 +62,10 @@ public class EtcdClusterService implements IEtcdClusterService {
 
 	public EtcdClusterService(EtcdCommonClusterConfiguration config) {
 		this.config = config;
-		this.etcdClient = Client.builder().endpoints(config.getEndpoints()).build();
+		this.etcdClient = Client.builder()
+				.endpoints(config.getEndpoints())
+				.waitForReady(true)
+				.connectTimeout(Duration.ofSeconds(config.getConnectTimeout())).build();
 		this.clientConfiguration = new EtcdClientClusterConfiguration(config, etcdClient);
 		this.etcdCacheManager = new EtcdCacheManager(clientConfiguration);
 		this.lockService = new EtcdLockService(clientConfiguration);

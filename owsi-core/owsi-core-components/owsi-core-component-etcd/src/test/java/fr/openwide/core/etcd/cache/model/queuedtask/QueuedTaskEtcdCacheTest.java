@@ -9,32 +9,33 @@ import org.junit.Test;
 import fr.openwide.core.etcd.AbstractEtcdTest;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
-import io.etcd.jetcd.Client;
 
 public class QueuedTaskEtcdCacheTest extends AbstractEtcdTest {
 
     @Test
 	public void queuedTaskTest() throws Exception {
     	
+		String node1 = "node1";
+
 		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
 
 		String cacheName1 = "task1";
 		EtcdClientClusterConfiguration clientConfiguration1 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		QueuedTaskEtcdCache cache1 = new QueuedTaskEtcdCache(cacheName1, clientConfiguration1);
 
 		String cacheName2 = "task2";
 		EtcdClientClusterConfiguration clientConfiguration2 = new EtcdClientClusterConfiguration(etcdConfig,
-				Client.builder().endpoints(etcdConfig.getEndpoints()).build());
+				buildEctdClient(etcdConfig));
 		QueuedTaskEtcdCache cache2 = new QueuedTaskEtcdCache(cacheName2, clientConfiguration2);
 
 		try {
 			String key1 = "123";
-			QueuedTaskEtcdValue value1 = QueuedTaskEtcdValue.from(new Date());
+			QueuedTaskEtcdValue value1 = QueuedTaskEtcdValue.from(new Date(), node1);
 			String key2 = "345";
-			QueuedTaskEtcdValue value2 = QueuedTaskEtcdValue.from(new Date());
+			QueuedTaskEtcdValue value2 = QueuedTaskEtcdValue.from(new Date(), node1);
 			String key3 = "678";
-			QueuedTaskEtcdValue value3 = QueuedTaskEtcdValue.from(new Date());
+			QueuedTaskEtcdValue value3 = QueuedTaskEtcdValue.from(new Date(), node1);
 
 			// Init caches
 			cache1.ensureCacheExists();
@@ -79,5 +80,56 @@ public class QueuedTaskEtcdCacheTest extends AbstractEtcdTest {
 			cache2.deleteCache();
 		}
     }
+
+	@Test
+	public void deleteAllCacheKeysTest() throws Exception {
+		String node1 = "node1";
+		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
+		String cacheName1 = "task1";
+		EtcdClientClusterConfiguration clientConfiguration1 = new EtcdClientClusterConfiguration(etcdConfig,
+				buildEctdClient(etcdConfig));
+		QueuedTaskEtcdCache cache1 = new QueuedTaskEtcdCache(cacheName1, clientConfiguration1);
+		try {
+			String key1 = "123";
+			QueuedTaskEtcdValue value1 = QueuedTaskEtcdValue.from(new Date(), node1);
+			String key2 = "345";
+			QueuedTaskEtcdValue value2 = QueuedTaskEtcdValue.from(new Date(), node1);
+			String key3 = "678";
+			QueuedTaskEtcdValue value3 = QueuedTaskEtcdValue.from(new Date(), node1);
+
+			cache1.put(key1, value1);
+			cache1.put(key2, value2);
+			cache1.put(key3, value3);
+
+			assertThat(cache1.getAllKeys()).containsExactlyInAnyOrder(key1, key2, key3);
+			assertThat(cache1.deleteAllCacheKeys()).isEqualTo(3);
+			assertThat(cache1.getAllKeys()).isEmpty();
+		} finally {
+			cache1.deleteCache();
+		}
+	}
+
+	@Test
+	public void removeTest() throws Exception {
+		String node1 = "node1";
+		final EtcdCommonClusterConfiguration etcdConfig = etcdConfigurationBuilderDefaultTestBuilder().build();
+		String cacheName1 = "task1";
+		EtcdClientClusterConfiguration clientConfiguration1 = new EtcdClientClusterConfiguration(etcdConfig,
+				buildEctdClient(etcdConfig));
+		QueuedTaskEtcdCache cache1 = new QueuedTaskEtcdCache(cacheName1, clientConfiguration1);
+		try {
+			String key1 = "123";
+			QueuedTaskEtcdValue value1 = QueuedTaskEtcdValue.from(new Date(), node1);
+			String key2 = "345";
+
+			cache1.put(key1, value1);
+			assertThat(cache1.getAllKeys()).containsExactly(key1);
+			assertThat(cache1.remove(key2)).isNull();
+			assertThat(cache1.remove(key1)).isEqualTo(value1);
+			assertThat(cache1.get(key1)).isNull();
+		} finally {
+			cache1.deleteCache();
+		}
+	}
 
 } 

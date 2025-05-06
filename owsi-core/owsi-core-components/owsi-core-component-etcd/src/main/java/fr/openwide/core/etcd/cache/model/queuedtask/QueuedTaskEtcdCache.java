@@ -2,11 +2,11 @@ package fr.openwide.core.etcd.cache.model.queuedtask;
 
 import java.util.Map;
 
-import fr.openwide.core.etcd.cache.model.AbstractEtcdCache;
+import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheNodeWithLease;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
 import fr.openwide.core.etcd.common.utils.EtcdClientClusterConfiguration;
 
-public class QueuedTaskEtcdCache extends AbstractEtcdCache<QueuedTaskEtcdValue> {
+public class QueuedTaskEtcdCache extends AbstractEtcdCacheNodeWithLease<QueuedTaskEtcdValue> {
 
 	public QueuedTaskEtcdCache(String cacheName, EtcdClientClusterConfiguration config) {
 		super(cacheName, config);
@@ -15,6 +15,11 @@ public class QueuedTaskEtcdCache extends AbstractEtcdCache<QueuedTaskEtcdValue> 
 	@Override
 	public QueuedTaskEtcdValue get(String key) throws EtcdServiceException {
 		return get(key, QueuedTaskEtcdValue.class);
+	}
+
+	@Override
+	public QueuedTaskEtcdValue remove(String key) {
+		return remove(key, QueuedTaskEtcdValue.class);
 	}
 
 	@Override

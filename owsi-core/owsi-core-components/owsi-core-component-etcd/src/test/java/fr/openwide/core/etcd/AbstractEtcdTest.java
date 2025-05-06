@@ -54,7 +54,7 @@ public abstract class AbstractEtcdTest {
 				.withLeaseTtl(1).withLockTimeout(1)
 				.withNodeName("AbstractEtcdTest").build();
 		return new EtcdCacheManager(new EtcdClientClusterConfiguration(etcdConfigCache,
-				Client.builder().endpoints(etcdConfigCache.getEndpoints()).build()));
+				buildEctdClient(etcdConfigCache)));
 	}
 
 	protected NodeEtcdCache newNodeEtcdCache() {

@@ -18,6 +18,11 @@ public class ActionEtcdCache extends AbstractEtcdCache<AbstractEtcdActionValue> 
 		return get(key, AbstractEtcdActionValue.class);
     }
 
+	@Override
+	public AbstractEtcdActionValue remove(String key) {
+		return remove(key, AbstractEtcdActionValue.class);
+	}
+
     @Override
 	public Map<String, AbstractEtcdActionValue> getAll() throws EtcdServiceException {
 		return getAllValues(AbstractEtcdActionValue.class);
