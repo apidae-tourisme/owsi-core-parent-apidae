@@ -118,7 +118,7 @@ public class EtcdQueueTaskManagerServiceImpl implements IEtcdQueueTaskManagerSer
 
 	@Override
 	public Boolean isOneQueueTaskManagerUp() {
-		return etcdClusterService.getNodes().stream()
+		return etcdClusterService.getNodes().keySet().stream()
 				.map(this::getQueueTaskManagerStatus)
 				.filter(Objects::nonNull)
 				.anyMatch(QueueTaskManagerStatus::isQueueManagerActive);

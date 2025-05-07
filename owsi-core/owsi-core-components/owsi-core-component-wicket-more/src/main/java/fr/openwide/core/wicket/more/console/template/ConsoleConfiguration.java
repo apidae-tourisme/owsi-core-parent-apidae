@@ -21,6 +21,7 @@ import fr.openwide.core.wicket.more.console.common.model.ConsoleMenuItemRelatedP
 import fr.openwide.core.wicket.more.console.common.model.ConsoleMenuSection;
 import fr.openwide.core.wicket.more.console.maintenance.authentication.page.ConsoleMaintenanceAuthenticationPage;
 import fr.openwide.core.wicket.more.console.maintenance.ehcache.page.ConsoleMaintenanceEhCachePage;
+import fr.openwide.core.wicket.more.console.maintenance.etcd.page.ConsoleMaintenanceEtcdPage;
 import fr.openwide.core.wicket.more.console.maintenance.file.page.ConsoleMaintenanceFilePage;
 import fr.openwide.core.wicket.more.console.maintenance.gestion.page.ConsoleMaintenanceGestionPage;
 import fr.openwide.core.wicket.more.console.maintenance.infinispan.page.ConsoleMaintenanceInfinispanPage;
@@ -106,6 +107,11 @@ public final class ConsoleConfiguration {
 				maintenanceMenuSection.addMenuItem(queueManagerMenuItem);
 			}
 			
+			if (Boolean.TRUE.equals(propertyService.get(JpaMoreEtcdPropertyIds.ETCD_ENABLED))) {
+				ConsoleMenuItem etcdMenuItem = new ConsoleMenuItem("etcdMenuItem",
+						"console.maintenance.etcd", "etcd", ConsoleMaintenanceEtcdPage.class);
+				maintenanceMenuSection.addMenuItem(etcdMenuItem);
+			}
 
 			INSTANCE.addMenuSection(maintenanceMenuSection);
 			INSTANCE.addCssResourceReference(ConsoleLessCssResourceReference.get());

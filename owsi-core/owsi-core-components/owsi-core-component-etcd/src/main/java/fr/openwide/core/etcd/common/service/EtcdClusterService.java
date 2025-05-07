@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,8 @@ import fr.openwide.core.etcd.common.utils.EtcdCommonClusterConfiguration;
 import fr.openwide.core.etcd.coordinator.service.EtcdCoordinatorService;
 import fr.openwide.core.etcd.coordinator.service.IEtcdCoordinatorService;
 import fr.openwide.core.etcd.lock.service.EtcdLockService;
+import fr.openwide.core.infinispan.action.SwitchRoleResult;
+import fr.openwide.core.infinispan.model.ILock;
 import fr.openwide.core.infinispan.model.ILockRequest;
 import fr.openwide.core.infinispan.model.IRole;
 import fr.openwide.core.infinispan.service.IRolesProvider;
@@ -462,12 +465,36 @@ public class EtcdClusterService implements IEtcdClusterService {
 	}
 
 	@Override
-	public Set<String> getNodes() {
+	public Map<String, NodeEtcdValue> getNodes() {
 		try {
-			return getCacheManager().getNodeCache().getAllKeys();
+			return getCacheManager().getNodeCache().getAll();
 		} catch (EtcdServiceException e) {
 			throw new EtcdServiceRuntimeException(e);
 		}
+	}
+
+	@Override
+	public RoleEtcdValue getRole(IRole roleKey) {
+		if (roleKey == null) {
+			return null;
+		}
+		try {
+			return getCacheManager().getRoleCache().get(roleKey.getKey());
+		} catch (EtcdServiceException e) {
+			throw new EtcdServiceRuntimeException(e);
+		}
+	}
+
+	@Override
+	public Pair<SwitchRoleResult, String> assignRole(IRole iRole, NodeEtcdValue nodeValue) {
+		// FIXME
+		return null;
+	}
+
+	@Override
+	public Set<ILock> getLocks() {
+		// FIXME
+		return null;
 	}
 
 }

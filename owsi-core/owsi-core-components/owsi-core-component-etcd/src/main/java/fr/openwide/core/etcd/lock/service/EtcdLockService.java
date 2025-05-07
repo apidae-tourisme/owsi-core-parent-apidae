@@ -79,6 +79,7 @@ public class EtcdLockService extends AbstractEtcdClientService implements IEtcdL
 				// against rare cases like network stalls or cluster issues
 				getLockClient().unlock(lockKey).get(UNLOCK_TIMEOUT, TimeUnit.SECONDS);
 				LOGGER.debug("Lock released for key: {} by node: {}", lockKey, getNodeName());
+				lockNameToKeyMap.remove(fullLockName);
 			} else {
 				LOGGER.debug("Unknown lock key for name : {}", fullLockName);
 			}

@@ -3,9 +3,12 @@ package fr.openwide.core.etcd.cache.model.role;
 import java.time.Instant;
 import java.util.Date;
 
+import org.bindgen.Bindable;
+
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheValue;
 import fr.openwide.core.etcd.cache.model.IEtcdCacheNodeValue;
 
+@Bindable
 public class RoleEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheNodeValue {
 
 	private static final long serialVersionUID = 8618813999086906312L;

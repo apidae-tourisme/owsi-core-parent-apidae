@@ -3,25 +3,25 @@ package fr.openwide.core.etcd.cache.model.node;
 import java.time.Instant;
 import java.util.Date;
 
+import org.bindgen.Bindable;
+
 import fr.openwide.core.etcd.cache.model.AbstractEtcdCacheValue;
 import fr.openwide.core.etcd.cache.model.IEtcdCacheNodeValue;
 
+@Bindable
 public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheNodeValue {
 
 	private static final long serialVersionUID = -939846120050982502L;
 
-	private Instant leaveDate;
-
 	private String nodeName;
 
-	private NodeEtcdValue(Instant attributionInstant, String nodeName, Instant leaveDate) {
+	private NodeEtcdValue(Instant attributionInstant, String nodeName) {
 		super(attributionInstant);
-		this.leaveDate = leaveDate;
 		this.nodeName = nodeName;
 	}
 
 	public static final NodeEtcdValue from(Date attributionDate, String nodeName) {
-		return new NodeEtcdValue(attributionDate.toInstant(), nodeName, null);
+		return new NodeEtcdValue(attributionDate.toInstant(), nodeName);
 	}
 
 	@Override
@@ -59,7 +59,6 @@ public class NodeEtcdValue extends AbstractEtcdCacheValue implements IEtcdCacheN
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((leaveDate == null) ? 0 : leaveDate.hashCode());
 		result = prime * result + ((nodeName == null) ? 0 : nodeName.hashCode());
 		return result;
 	}

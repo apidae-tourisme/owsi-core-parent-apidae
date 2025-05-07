@@ -3,6 +3,8 @@ package fr.openwide.core.wicket.more.util.binding;
 import org.bindgen.java.util.ListBinding;
 
 import fr.openwide.core.commons.util.mime.MediaTypeBinding;
+import fr.openwide.core.etcd.cache.model.node.NodeEtcdValueBinding;
+import fr.openwide.core.etcd.cache.model.role.RoleEtcdValueBinding;
 import fr.openwide.core.infinispan.model.IAttributionBinding;
 import fr.openwide.core.infinispan.model.ILockAttributionBinding;
 import fr.openwide.core.infinispan.model.ILockBinding;
@@ -25,6 +27,9 @@ public final class CoreWicketMoreBindings {
 
 	private static final INodeBinding I_NODE = new INodeBinding();
 
+	private static final NodeEtcdValueBinding NODE_ETCD_VALUE = new NodeEtcdValueBinding();
+	private static final RoleEtcdValueBinding ROLE_ETCD_VALUE = new RoleEtcdValueBinding();
+
 	private static final ILockBinding I_LOCK = new ILockBinding();
 	private static final ILockAttributionBinding I_LOCK_ATTRIBUTION = new ILockAttributionBinding();
 
@@ -41,6 +46,14 @@ public final class CoreWicketMoreBindings {
 
 	public static IBindableDataProviderBinding iBindableDataProvider() {
 		return IBINDABLE_DATA_PROVIDER;
+	}
+
+	public static NodeEtcdValueBinding nodeEtcdValue() {
+		return NODE_ETCD_VALUE;
+	}
+
+	public static RoleEtcdValueBinding rodeEtcdValue() {
+		return ROLE_ETCD_VALUE;
 	}
 
 	public static ListBinding<?> list() {

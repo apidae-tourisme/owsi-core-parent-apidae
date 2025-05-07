@@ -1,6 +1,7 @@
 package fr.openwide.core.etcd.cache.model;
 
 import java.time.Instant;
+import java.util.Date;
 
 public abstract class AbstractEtcdCacheValue implements IEtcdCacheValue {
 
@@ -13,12 +14,18 @@ public abstract class AbstractEtcdCacheValue implements IEtcdCacheValue {
 		this.attributionInstant = attributionInstant;
 	}
 
+	@Override
 	public Instant getAttributionInstant() {
 		return attributionInstant;
 	}
 
 	public void setAttributionInstant(Instant attributionInstant) {
 		this.attributionInstant = attributionInstant;
+	}
+
+	@Override
+	public Date getAttributionDate() {
+		return attributionInstant != null ? Date.from(attributionInstant) : null;
 	}
 
 	@Override

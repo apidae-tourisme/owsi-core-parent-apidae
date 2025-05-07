@@ -66,7 +66,7 @@ public class ConsoleMaintenanceQueueManagerNodeEtcdPanel extends Panel {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected List<String> load() {
-				return new ArrayList<>(etcdClusterService.getNodes());
+				return new ArrayList<>(etcdClusterService.getNodes().keySet());
 			}
 		};
 		
