@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,8 +33,10 @@ import fr.openwide.core.spring.property.service.IPropertyService;
 })
 public class JpaMoreInfinispanConfig {
 
-	@Bean
-	public IRolesProvider rolesProvider(IPropertyService propertyService) {
+	public static final String INFINISPAN_ROLE_PROVIDER = "infinispanRolesProvider";
+
+	@Bean(name = INFINISPAN_ROLE_PROVIDER)
+	public IRolesProvider infinispanRolesProvider(IPropertyService propertyService) {
 		// FT - allow bean override
 		if (propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_ENABLED)) {
 			return new RolesFromStringSetProvider(
@@ -58,7 +61,8 @@ public class JpaMoreInfinispanConfig {
 	}
 
 	@Bean(destroyMethod = "stop")
-	public IInfinispanClusterService infinispanClusterService(IPropertyService propertyService, @Autowired(required = false) IRolesProvider rolesProvider,
+	public IInfinispanClusterService infinispanClusterService(IPropertyService propertyService,
+			@Autowired(required = false) @Qualifier(value = INFINISPAN_ROLE_PROVIDER) IRolesProvider rolesProvider,
 			IActionFactory springActionFactory, @Autowired(required = false) IInfinispanClusterCheckerService infinispanClusterCheckerService,
 			EntityManagerFactory entityManagerFactory) {
 		if (propertyService.get(JpaMoreInfinispanPropertyIds.INFINISPAN_ENABLED)) {

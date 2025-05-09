@@ -17,6 +17,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       # Label used to access the service container
       postgres:
@@ -37,6 +38,13 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 6432:5432
+      etcd:
+        image: bitnami/etcd:3.5.11
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://localhost:2389
+        ports:
+          - 2389:2379      
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17

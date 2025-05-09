@@ -4,17 +4,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.infinispan.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.openwide.core.etcd.common.service.IEtcdClusterService;
 import fr.openwide.core.infinispan.model.ILock;
 import fr.openwide.core.infinispan.model.ILockRequest;
 import fr.openwide.core.infinispan.model.IPriorityQueue;
 import fr.openwide.core.infinispan.model.impl.LockRequest;
 import fr.openwide.core.infinispan.service.IInfinispanClusterService;
-import fr.openwide.core.infinispan.service.InfinispanClusterServiceImpl;
 
 /**
  * A consumer thread with the ability to try stopping gracefully.
@@ -22,11 +21,14 @@ import fr.openwide.core.infinispan.service.InfinispanClusterServiceImpl;
  */
 class ConsumerInfinispanAwareThread extends ConsumerThread {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanClusterServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerInfinispanAwareThread.class);
 
 	@Autowired(required = false)
 	private IInfinispanClusterService infinispanClusterService;
 	
+	@Autowired(required = false)
+	private IEtcdClusterService etcdClusterService;
+
 	private final ILock lock;
 	private final IPriorityQueue priorityQueue;
 	
@@ -56,32 +58,34 @@ class ConsumerInfinispanAwareThread extends ConsumerThread {
 				try {
 					ILockRequest lockRequest = LockRequest.with(null, lock, priorityQueue);
 					// check role / lock with priority and perform
-					infinispanClusterService.doWithLockPriority(lockRequest, new Runnable() {
-						@Override
-						public void run() {
-							try {
-								Long queuedTaskHolderId = queue.poll(100, TimeUnit.MILLISECONDS);
-								
-								if (queuedTaskHolderId != null) {
-									taskId.set(queuedTaskHolderId);
-									setWorking(true);
-									// if not active, we are about to stop, ignoring task
-									if (active) {
-										entityManagerUtils.openEntityManager();
-										try {
-											tryConsumeTask(queuedTaskHolderId);
-										} finally {
-											entityManagerUtils.closeEntityManager();
-										}
+					final Runnable runnable = () -> {
+						try {
+							Long queuedTaskHolderId = queue.poll(100, TimeUnit.MILLISECONDS);
+							
+							if (queuedTaskHolderId != null) {
+								taskId.set(queuedTaskHolderId);
+								setWorking(true);
+								// if not active, we are about to stop, ignoring task
+								if (active) {
+									entityManagerUtils.openEntityManager();
+									try {
+										tryConsumeTask(queuedTaskHolderId);
+									} finally {
+										entityManagerUtils.closeEntityManager();
 									}
 								}
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt();
-							} finally {
-								setWorking(false);
 							}
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						} finally {
+							setWorking(false);
 						}
-					});
+					};
+					if (isEtcdEnable()) {
+						etcdClusterService.doWithLockPriority(lockRequest, runnable);
+					} else {
+						infinispanClusterService.doWithLockPriority(lockRequest, runnable);
+					}
 				} catch (ExecutionException e) {
 					throw new IllegalStateException(e);
 				} catch(RuntimeException e) {
@@ -95,5 +99,9 @@ class ConsumerInfinispanAwareThread extends ConsumerThread {
 		} catch (InterruptedException interrupted) {
 			Thread.currentThread().interrupt();
 		}
+	}
+
+	private boolean isEtcdEnable() {
+		return etcdClusterService != null;
 	}
 }
