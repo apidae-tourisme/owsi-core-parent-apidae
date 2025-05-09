@@ -1,6 +1,7 @@
 package fr.openwide.core.wicket.more.console.maintenance.etcd.renderer;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -32,6 +33,8 @@ public class NodeEtcdRenderer {
 //	private static final INodeStatusRenderer STATUS = new INodeStatusRenderer();
 //
 	private static final NodeEtcdLocalRenderer LOCAL = new NodeEtcdLocalRenderer();
+
+	private static final NodeEtcdMasterRenderer MASTER = new NodeEtcdMasterRenderer();
 //
 //	public static Renderer<INode> get() {
 //		return INSTANCE;
@@ -47,6 +50,10 @@ public class NodeEtcdRenderer {
 
 	public static NodeEtcdLocalRenderer local() {
 		return LOCAL;
+	}
+
+	public static NodeEtcdMasterRenderer master() {
+		return MASTER;
 	}
 
 //	private static class INodeAnonymousRenderer extends BootstrapRenderer<INode> {
@@ -115,9 +122,6 @@ public class NodeEtcdRenderer {
 		
 		private boolean initialized;
 		
-		public NodeEtcdLocalRenderer() {
-		}
-		
 		@Override
 		protected BootstrapRendererInformation doRender(NodeEtcdValue value, Locale locale) {
 			if (!initialized) {
@@ -132,6 +136,30 @@ public class NodeEtcdRenderer {
 						.build();
 			}
 			
+			return BootstrapRendererInformation.builder().build();
+		}
+	}
+
+	private static class NodeEtcdMasterRenderer extends BootstrapRenderer<NodeEtcdValue> {
+		private static final long serialVersionUID = 1L;
+
+		@SpringBean
+		private IEtcdClusterService etcdClusterService;
+
+		private boolean initialized;
+
+		@Override
+		protected BootstrapRendererInformation doRender(NodeEtcdValue value, Locale locale) {
+			if (!initialized) {
+				Injector.get().inject(this);
+				initialized = true;
+			}
+
+			if (Objects.equals(etcdClusterService.getCurrentCoordinator(), value.getNodeName())) {
+				return BootstrapRendererInformation.builder().icon("fa fa-star")
+						.label(getString("business.etcd.node.master", locale)).build();
+			}
+
 			return BootstrapRendererInformation.builder().build();
 		}
 	}

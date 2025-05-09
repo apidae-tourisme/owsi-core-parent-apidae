@@ -64,4 +64,6 @@ public interface IEtcdClusterService extends AutoCloseable {
 
 	Set<ILock> getLocks();
 
+	String getCurrentCoordinator();
+
 }

@@ -497,4 +497,14 @@ public class EtcdClusterService implements IEtcdClusterService {
 		return null;
 	}
 
+	@Override
+	public String getCurrentCoordinator() {
+		try {
+			return coordinatorService.getCurrentCoordinator();
+		} catch (EtcdServiceException e) {
+			LOGGER.error("Unable to retreive current master node", e);
+			return null;
+		}
+	}
+
 }
