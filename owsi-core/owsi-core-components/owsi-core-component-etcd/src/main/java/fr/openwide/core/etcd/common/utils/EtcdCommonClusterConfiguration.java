@@ -21,8 +21,6 @@ public class EtcdCommonClusterConfiguration {
 
 	private final boolean roleRebalanceEnable;
 
-	private final boolean updateCoordinatorEnable;
-
 	private final int connectTimeout;
 	
 	private final IActionEtcdFactory actionFactory;
@@ -36,7 +34,6 @@ public class EtcdCommonClusterConfiguration {
 		this.timeout = builder.timeout;
 		this.roleProvider = builder.roleProvider;
 		this.roleRebalanceEnable = builder.roleRebalanceEnable;
-		this.updateCoordinatorEnable = builder.updateCoordinatorEnable;
 		this.connectTimeout = builder.connectTimeout;
 		this.actionFactory = builder.actionFactory;
 	}
@@ -77,10 +74,6 @@ public class EtcdCommonClusterConfiguration {
 		return roleRebalanceEnable;
 	}
 
-	public boolean isUpdateCoordinatorEnable() {
-		return updateCoordinatorEnable;
-	}
-
 	public int getConnectTimeout() {
 		return connectTimeout;
 	}
@@ -105,8 +98,6 @@ public class EtcdCommonClusterConfiguration {
 		private IRolesProvider roleProvider;
 
 		private boolean roleRebalanceEnable = true;
-
-		private boolean updateCoordinatorEnable = true;
 
 		private int connectTimeout = 15;
 		
@@ -152,11 +143,6 @@ public class EtcdCommonClusterConfiguration {
 
 		public EtcdConfigurationBuilder withRoleRebalanceEnable(boolean roleRebalanceEnable) {
 			this.roleRebalanceEnable = roleRebalanceEnable;
-			return this;
-		}
-
-		public EtcdConfigurationBuilder withUpdateCoordinatorEnable(boolean updateCoordinatorEnable) {
-			this.updateCoordinatorEnable = updateCoordinatorEnable;
 			return this;
 		}
 

@@ -133,9 +133,4 @@ public class AbstractEtcdClientService {
 		return config.getNodeName();
 	}
 
-	protected String getCoordinatorKey() {
-		return config.getMasterKey();
-	}
-
-
 }
