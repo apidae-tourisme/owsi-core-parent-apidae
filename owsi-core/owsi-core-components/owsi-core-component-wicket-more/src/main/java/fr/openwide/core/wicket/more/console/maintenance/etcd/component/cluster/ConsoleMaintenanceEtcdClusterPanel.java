@@ -89,9 +89,7 @@ public class ConsoleMaintenanceEtcdClusterPanel extends Panel {
 					new CoreLabel("name",
 							BindingModel.of(nodeModel, CoreWicketMoreBindings.nodeEtcdValue().nodeName())),
 					new BootstrapBadge<>("local", BindingModel.of(nodeModel, CoreWicketMoreBindings.nodeEtcdValue()),
-							NodeEtcdRenderer.local()),
-					new BootstrapBadge<>("master", BindingModel.of(nodeModel, CoreWicketMoreBindings.nodeEtcdValue()),
-							NodeEtcdRenderer.master())
+							NodeEtcdRenderer.local())
 			);
 		}
 		

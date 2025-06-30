@@ -16,7 +16,6 @@ import fr.openwide.core.etcd.cache.model.role.RoleEtcdValue;
 import fr.openwide.core.etcd.cache.model.rolerequest.RoleRequestEtcdValue;
 import fr.openwide.core.etcd.cache.service.IEtcdCacheManager;
 import fr.openwide.core.etcd.common.exception.EtcdServiceException;
-import fr.openwide.core.etcd.coordinator.service.IEtcdCoordinatorService;
 import fr.openwide.core.etcd.lock.model.EtcdLock;
 import fr.openwide.core.etcd.lock.service.IEtcdLockService;
 import fr.openwide.core.infinispan.model.DoIfRoleWithLock;
@@ -37,10 +36,7 @@ public interface IEtcdClusterService extends AutoCloseable {
 
 	IEtcdLockService getLockService();
 
-	IEtcdCoordinatorService getCoordinatorService();
-
 	void unassignRole(IRole role) throws EtcdServiceException;
-
 
 	Set<IRole> getAllRolesForAssignation();
 
@@ -62,8 +58,6 @@ public interface IEtcdClusterService extends AutoCloseable {
 	SwitchRoleResultActionResult assignRole(IRole iRole, NodeEtcdValue nodeValue);
 
 	Set<EtcdLock> getLocks();
-
-	String getCurrentCoordinator();
 
 	RoleRequestEtcdValue getRoleRequest(IRole input);
 

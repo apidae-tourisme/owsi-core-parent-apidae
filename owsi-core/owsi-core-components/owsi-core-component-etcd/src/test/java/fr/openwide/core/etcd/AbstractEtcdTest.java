@@ -34,7 +34,7 @@ public abstract class AbstractEtcdTest {
 
 	protected EtcdConfigurationBuilder etcdConfigurationBuilderDefaultTestBuilder() {
 		return EtcdCommonClusterConfiguration.builder().withEndpoints(getEtcdEndpoints())
-				.withUpdateCoordinatorEnable(false).withRoleRebalanceEnable(false).withClusterName("SIT");
+				.withRoleRebalanceEnable(false).withClusterName("SIT");
 	}
 
 	@After
@@ -45,7 +45,6 @@ public abstract class AbstractEtcdTest {
 			etcdClusterService.init();
 			etcdClusterService.getCacheManager().deleteAllCaches();
 			etcdClusterService.getLockService().deleteAllLocks();
-			etcdClusterService.getCoordinatorService().deleteCoordinator();
 		}
 	}
 
