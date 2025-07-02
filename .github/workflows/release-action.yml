@@ -3,6 +3,7 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
 name: Release, deploy and create next iteration
+run-name: Release ${{ inputs.release_version }}, deploy and create next iteration ${{ inputs.next_version }}
 
 on:
   workflow_dispatch:
