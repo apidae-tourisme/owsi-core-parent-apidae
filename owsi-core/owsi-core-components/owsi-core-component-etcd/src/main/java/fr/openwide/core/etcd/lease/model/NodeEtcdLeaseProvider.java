@@ -23,7 +23,7 @@ public class NodeEtcdLeaseProvider implements ILeaseProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NodeEtcdLeaseProvider.class);
 	private static final long REVOKE_LEASE_TIMEOUT = 10;
-	private static final int MAX_CONSECUTIVE_ERRORS = 4;
+	private static final int MAX_CONSECUTIVE_ERRORS = 3;
 
 	private final Client client;
 	private final EtcdCommonClusterConfiguration config;
@@ -43,21 +43,41 @@ public class NodeEtcdLeaseProvider implements ILeaseProvider {
 		return createLeaseWithKeepAlive();
 	}
 
+	@Override
 	public Long getGlobalClientLeaseIdWithKeepAlive() throws EtcdServiceException {
 		LeaseInfo currentLeaseInfo = globalLeaseInfo.get();
 		
 		// If no lease exists or current lease is expired, create a new one
 		if (currentLeaseInfo == null || currentLeaseInfo.isExpired(config.getLeaseTtl())) {
-			LeaseInfo newLeaseInfo = new LeaseInfo(createLeaseWithKeepAlive());
-			// Use compareAndSet to handle race conditions
-			if (!globalLeaseInfo.compareAndSet(currentLeaseInfo, newLeaseInfo)) {
-				// If another thread beat us to creating a new lease, use theirs
-				return globalLeaseInfo.get().getLeaseId();
-			}
-			return newLeaseInfo.getLeaseId();
+			return createOrReuseGlobalLease(currentLeaseInfo);
 		}
 		
 		return currentLeaseInfo.getLeaseId();
+	}
+
+	private synchronized Long createOrReuseGlobalLease(LeaseInfo expiredLeaseInfo) throws EtcdServiceException {
+		// Double-check: another thread might have already created a new lease
+		LeaseInfo currentLeaseInfo = globalLeaseInfo.get();
+		if (currentLeaseInfo != null && currentLeaseInfo != expiredLeaseInfo && 
+			!currentLeaseInfo.isExpired(config.getLeaseTtl())) {
+			LOGGER.debug("Another thread created lease {}, using that instead", currentLeaseInfo.getLeaseId());
+			return currentLeaseInfo.getLeaseId();
+		}
+		
+		LOGGER.info("Creating new lease for node {} (previous lease: {})", 
+			config.getNodeName(), currentLeaseInfo != null ? currentLeaseInfo.getLeaseId() : "none");
+		
+		try {
+			LeaseInfo newLeaseInfo = new LeaseInfo(createLeaseWithKeepAlive());
+			globalLeaseInfo.set(newLeaseInfo);
+			LOGGER.info("Successfully created new lease {} for node {}", newLeaseInfo.getLeaseId(), config.getNodeName());
+			return newLeaseInfo.getLeaseId();
+		} catch (Exception e) {
+			LOGGER.error("Failed to create new lease for node {}", config.getNodeName());
+			// Clear the lease info to force retry on next call
+			globalLeaseInfo.set(null);
+			throw e;
+		}
 	}
 
 	private Long createLeaseWithKeepAlive() throws EtcdServiceException {
@@ -97,8 +117,22 @@ public class NodeEtcdLeaseProvider implements ILeaseProvider {
 				if (isShutdown.get()) {
 					return;
 				}
-				LOGGER.error("Keep-alive stream error by node: {}", config.getNodeName(), t);
-				handleKeepAliveError(leaseId);
+				
+				boolean isLeaseNotFound = t.getMessage() != null && 
+					t.getMessage().toLowerCase().contains("requested lease not found");
+				
+				if (isLeaseNotFound) {
+					LOGGER.error("Keep-alive stream error by node: {} - Lease not found, invalidating immediately", 
+						config.getNodeName(), t);
+					// Immediately invalidate the lease for "lease not found" errors
+					LeaseInfo currentLeaseInfo = globalLeaseInfo.get();
+					if (currentLeaseInfo != null && currentLeaseInfo.getLeaseId() == leaseId) {
+						globalLeaseInfo.set(null);
+					}
+				} else {
+					LOGGER.error("Keep-alive stream error by node: {}", config.getNodeName(), t);
+					handleKeepAliveError(leaseId);
+				}
 			}
 
 			@Override
@@ -114,8 +148,13 @@ public class NodeEtcdLeaseProvider implements ILeaseProvider {
 		LeaseInfo currentLeaseInfo = globalLeaseInfo.get();
 		if (currentLeaseInfo != null && currentLeaseInfo.getLeaseId() == leaseId) {
 			currentLeaseInfo.incrementErrorCount();
+			
+			LOGGER.warn("Keep-alive error for lease {} on node {}, consecutive errors: {}", 
+				leaseId, config.getNodeName(), currentLeaseInfo.getErrorCount());
+
 			if (currentLeaseInfo.getErrorCount() >= MAX_CONSECUTIVE_ERRORS) {
-				LOGGER.warn("Too many consecutive keep-alive errors ({}), invalidating lease", MAX_CONSECUTIVE_ERRORS);
+				LOGGER.warn("Too many consecutive keep-alive errors ({}), invalidating lease {} for node {}", 
+					currentLeaseInfo.getErrorCount(), leaseId, config.getNodeName());
 				globalLeaseInfo.set(null);
 			}
 		}
@@ -188,9 +227,10 @@ public class NodeEtcdLeaseProvider implements ILeaseProvider {
 		public boolean isExpired(long leaseTtlSeconds) {
 			long currentTime = System.currentTimeMillis();
 			long lastKeepAlive = lastKeepAliveTime.get();
-			// Consider lease expired if we haven't received a keep-alive in more than TTL
-			// seconds
-			return (currentTime - lastKeepAlive) > (leaseTtlSeconds * 1000);
+			// Consider lease expired if we haven't received a keep-alive in more than 80% of TTL
+			// This provides a safety margin for network issues and server processing delays
+			long expirationThreshold = (long) (leaseTtlSeconds * 1000 * 0.8);
+			return (currentTime - lastKeepAlive) > expirationThreshold;
 		}
 	}
 }
